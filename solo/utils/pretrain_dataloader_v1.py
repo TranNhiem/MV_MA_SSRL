@@ -75,6 +75,7 @@ class SSL_DataModule(LightningDataModule):
         This is where we can download the dataset. We point to our desired dataset.
         Note we do not make any state assignments in this function (i.e. self.something = ...)
         """
+        pass
 
     def setup(self):
         """
@@ -84,6 +85,7 @@ class SSL_DataModule(LightningDataModule):
         you can set up a condition to allow for both 'fit' related setup and 'test' related setup to run whenever None is passed to stage (or ignore it altogether and exclude any conditionals).
         Note this runs across all GPUs and it is safe to make state assignments here
         """
+        pass
 
     def create_dataset(self, root, transform):
         return ImageFolder(root=root, transform=transform)
