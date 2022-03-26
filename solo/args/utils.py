@@ -32,6 +32,7 @@ N_CLASSES_PER_DATASET = {
     ## cfg same as imagenet
     "mulda": 1000,
     "mulda_v1": 1000,
+    "mv_ma": 1000
 }
 
 

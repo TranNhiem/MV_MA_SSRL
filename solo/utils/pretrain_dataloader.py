@@ -203,7 +203,6 @@ class NCropAugmentation_mv_ma:
         return f"{self.num_crops} x [{self.transform}]"
 
 
-
 class FullTransformPipeline:
     def __init__(self, transforms: Callable) -> None:
         self.transforms = transforms
@@ -318,13 +317,16 @@ def prepare_n_crop_transform_mv_ma(
     Returns:
         NCropAugmentation: an N crop transformation.
     """
-
+    print("len transform", len(transforms))
+    print("len num_crops_per_aug", len(num_crops_per_aug))
     assert len(transforms) == len(num_crops_per_aug)
+    
 
     T = []
-    for _, transform, num_crops in enumerate(zip(transforms, num_crops_per_aug)):
-        T.append(NCropAugmentation_mv_ma(transform, num_crops,crop_size[_], crop_type, min_loc, max_loc, min_glob, max_glob))
-
+    for  transform, num_crops in zip(transforms, num_crops_per_aug):
+        i=0
+        T.append(NCropAugmentation_mv_ma(transform, num_crops,crop_size[i], crop_type, min_loc, max_loc, min_glob, max_glob))
+        i+=1
     return FullTransformPipeline(T)
 class BaseTransform:
     """Adds callable base class to implement different transformation pipelines."""
@@ -611,7 +613,7 @@ def prepare_transform(dataset: str, trfs_kwargs, da_kwargs=None) -> Any:
         fast_da = Fast_AutoAugment(policy_type=fda_policy).get_trfs()
         
         #  ret [simclr_da, rand_da, auto_da, fast_da]  4 views trfs
-        return [ CustomTransform_no_crop(**trfs_kwargs), rand_da, auto_da, fast_da ]#fast_da
+        return [ CustomTransform_no_crop(**trfs_kwargs), rand_da, auto_da, fast_da, CustomTransform_no_crop(**trfs_kwargs), rand_da, auto_da, fast_da ]#fast_da
         
     else:
         raise ValueError(f"{dataset} is not currently supported.")

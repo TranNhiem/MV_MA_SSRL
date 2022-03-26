@@ -1,7 +1,7 @@
 python3 ../../../mv_ma_pretrain_edit.py \
     --dataset mv_ma \
     --backbone resnet50 \
-    --data_dir /data \
+    --data_dir /data1/1K_New \
     --train_dir train \
     --val_dir val \
     --max_epochs 100 \
@@ -21,7 +21,7 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --weight_decay 1e-6 \
     --batch_size 100 \
     --num_workers 4 \
-    --brightness 0.4 0.4 0.4 0.4, 0.4\
+    --brightness 0.4 0.4 0.4 0.4 0.4 0.4 0.4 0.4 \
     --contrast 0.4 \
     --saturation 0.2 \
     --hue 0.1 \
@@ -30,19 +30,17 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --horizontal_flip_prob 0.5 \
     --gaussian_prob 1.0  \
     --solarization_prob 0.2  \
-
-    --crop_size 224,224,224,224, 96 \
-    --crop_type random_uniform
+    --crop_size 224 224 224 224 96 96 96 96  \
+    --crop_type random_uniform \
     --min_scale_loc 0.13 \
     --max_scale_loc 0.34 \
     --min_scale_glob 0.2 \
     --max_scale_glob 1.0 \
-
     --rda_num_ops 2 \
     --rda_magnitude 9 \
     --ada_policy imagenet \
     --fda_policy imagenet \
-    --num_crops_per_aug 1 1 1 1 3 \
+    --num_crops_per_aug 1 1 1 1 1 1 1 1   \
     --name MV_MASSL-resnet50-imagenet-100ep \
     --entity mlbrl \
     --project solo_MASSL \
