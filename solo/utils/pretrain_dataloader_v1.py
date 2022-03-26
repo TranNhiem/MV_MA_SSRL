@@ -59,7 +59,17 @@ class SSL_DataModule(LightningDataModule):
         return transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 
     @property
-    def train_transform(self):
+    def AutoAugment_transform(self):
+        return transforms.Compose(
+            [
+                transforms.Resize((224, 224)),
+                transforms.RandomHorizontalFlip(),
+                transforms.ToTensor(),
+                self.normalize_transform,
+            ]
+        )
+    @property
+    def Simclr_transform(self):
         return transforms.Compose(
             [
                 transforms.Resize((224, 224)),
@@ -69,6 +79,23 @@ class SSL_DataModule(LightningDataModule):
             ]
         )
 
+    @property
+    def Rand_transform(self):
+        return transforms.Compose(
+            [
+                transforms.Resize((224, 224)),
+                transforms.RandomHorizontalFlip(),
+                transforms.ToTensor(),
+                self.normalize_transform,
+            ]
+        )
+
+
+    @property
+    def croping_strategies(): 
+        pass
+
+
     def prepare_data(self):
         """
         prepare_data()
@@ -77,7 +104,15 @@ class SSL_DataModule(LightningDataModule):
         """
         pass
 
-    def setup(self):
+    def setup(self): Branch 1 MV-(No mask) -- Branch 2 MV-mask Cropping
+        croping --> Augmentations (Branch 1)
+        cropping (1 RGB image , 2 Binary Mask) --> Cropping (IoU Including Object 5 Times) (Branch 2)
+        
+        (Indexing --> Central Point)
+        
+        
+
+        
         """
         Loads in data from file and prepares PyTorch tensor datasets for each split (train, val, test).
         Setup expects a 'stage' arg which is used to separate logic for 'fit' and 'test'.(Optional for now)
@@ -90,13 +125,15 @@ class SSL_DataModule(LightningDataModule):
     def create_dataset(self, root, transform):
         return ImageFolder(root=root, transform=transform)
 
-
     def train_dataloader(self,):
         """
         train_dataloader(), val_dataloader(), and test_dataloader() 
         all return PyTorch DataLoader instances that are created by wrapping their respective datasets that we prepared in setup()
         """
-        pass
+        pass Baseline [batch_size, x1, x2]
+          [batch_size, [x1, x2]]
+          [batc_size[x3...x6]]
 
+    
     def val_dataloader(self,):
         pass
