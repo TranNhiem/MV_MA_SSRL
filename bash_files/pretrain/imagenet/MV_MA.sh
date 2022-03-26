@@ -4,7 +4,7 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --data_dir /data \
     --train_dir train \
     --val_dir val \
-    --max_epochs 300 \
+    --max_epochs 100 \
     --gpus 0,1,2,3,4,5,6,7 \
     --accelerator gpu \
     --strategy ddp \
@@ -30,15 +30,20 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --horizontal_flip_prob 0.5 \
     --gaussian_prob 1.0  \
     --solarization_prob 0.2  \
+
     --crop_size 224,224,224,224, 96 \
-    --min_scale 0.08 \
-    --max_scale 1.0 \
+    --crop_type random_uniform
+    --min_scale_loc 0.13 \
+    --max_scale_loc 0.34 \
+    --min_scale_glob 0.2 \
+    --max_scale_glob 1.0 \
+
     --rda_num_ops 2 \
     --rda_magnitude 9 \
     --ada_policy imagenet \
     --fda_policy imagenet \
     --num_crops_per_aug 1 1 1 1 3 \
-    --name MV_MASSL-resnet50-imagenet-300ep \
+    --name MV_MASSL-resnet50-imagenet-100ep \
     --entity mlbrl \
     --project solo_MASSL \
     --wandb \
@@ -51,4 +56,4 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --final_tau_momentum 1.0 \
     --momentum_classifier \
     --checkpoint_dir /data1/solo_MASSL_ckpt \
-    --checkpoint_frequency 10 
+    --checkpoint_frequency 20 

@@ -82,7 +82,7 @@ def main():
         # asymmetric augmentations
         if args.unique_augs > 1:  # note : --brightness 0.4 0.4 0.4 0.4 \  # 4 params to bypass inner chk mechnaism in sh file
             # pluggin proposed multiple-DA
-            if args.dataset == "mulda" or "mulda_v1":
+            if args.dataset == "mulda" or "mulda_v1", or "mv_ma":
                 transform = prepare_transform(args.dataset, args.transform_kwargs, args.mulda_kwargs) 
             else: # normal case, this way plz ~ ~
                 transform = [
@@ -94,7 +94,7 @@ def main():
         
 
 
-        transform = prepare_n_crop_transform_mv_ma(transform, num_crops_per_aug=args.num_crops_per_aug, )
+        transform = prepare_n_crop_transform_mv_ma(transform, num_crops_per_aug=args.num_crops_per_aug,crop_size=args.crop_size )
         
         if args.debug_augmentations:
             print("Transforms:")

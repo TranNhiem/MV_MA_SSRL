@@ -79,7 +79,12 @@ def augmentations_args(parser: ArgumentParser):
     parser.add_argument("--crop_size", type=int, default=[224], nargs="+")
     parser.add_argument("--min_scale", type=float, default=[0.08], nargs="+")
     parser.add_argument("--max_scale", type=float, default=[1.0], nargs="+")
-
+    
+    parser.add_argument("--crop_type", type=str, default=["random_uniform"], choice=["random_uniform", "inception_crop"])
+    parser.add_argument("--min_scale_loc", type=float, default=[0.1], nargs="+")
+    parser.add_argument("--max_scale_loc", type=float, default=[0.34], nargs="+")
+    parser.add_argument("--min_scale_glob", type=float, default=[0.2], nargs="+")
+    parser.add_argument("--max_scale_glob", type=float, default=[1.0], nargs="+")
     # debug
     parser.add_argument("--debug_augmentations", action="store_true")
 
