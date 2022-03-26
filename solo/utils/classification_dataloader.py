@@ -213,7 +213,7 @@ def prepare_datasets(
             transform=T_val,
         )
 
-    elif dataset in ["imagenet", "imagenet100", "custom", "mulda", "mulda_v1"]:
+    elif dataset in ["imagenet", "imagenet100", "custom", "mulda", "mulda_v1", "mv_ma"]:
         train_dir = data_dir / train_dir
         val_dir = data_dir / val_dir
 

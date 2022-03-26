@@ -183,11 +183,11 @@ class NCropAugmentation_mv_ma:
         elif self.crop_type == "random_uniform":
             if self.crop_size >150: 
                 crop_strategy=T.Compose([T.RandomResizedCrop(size=self.crop_size,
-                scale=(self.min_scale, self.max_scale),
+                scale=(self.min_scale_loc, self.max_scale_loc),
                     interpolation=T.InterpolationMode.BICUBIC)])
             else: 
                 crop_strategy=T.Compose([T.RandomResizedCrop(size=self.crop_size,
-                scale=(self.min_scale, self.max_scale),
+                scale=(self.min_scale_glob, self.max_scale_glob),
                     interpolation=T.InterpolationMode.BICUBIC)])
         else: 
             raise ValueError("Croping_strategy_Invalid")
