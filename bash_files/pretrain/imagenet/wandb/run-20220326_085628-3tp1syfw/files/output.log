@@ -1,0 +1,640 @@
+
+I'm in here
+[34m[1mwandb[39m[22m: logging graph, to disable use `wandb.watch(log_graph=False)`
+Using 16bit native Automatic Mixed Precision (AMP)
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/configuration_validator.py:281: LightningDeprecationWarning: Base `LightningModule.on_train_batch_end` hook signature has changed in v1.5. The `dataloader_idx` argument will be removed in v1.7.
+  f"Base `LightningModule.{hook}` hook signature has changed in v1.5."
+4
+Global seed set to 5
+Global seed set to 5
+len transform 8
+len num_crops_per_aug 8
+4
+len transform 8
+len num_crops_per_aug 8
+Global seed set to 5
+4
+Global seed set to 5
+4
+len transform 8
+len num_crops_per_aug 8
+Global seed set to 5
+initializing distributed: GLOBAL_RANK: 1, MEMBER: 2/8
+len transform 8
+len num_crops_per_aug 8
+I'm in here
+Global seed set to 5
+initializing distributed: GLOBAL_RANK: 2, MEMBER: 3/8
+I'm in here
+Global seed set to 5
+4
+Global seed set to 5
+Global seed set to 5
+initializing distributed: GLOBAL_RANK: 3, MEMBER: 4/8
+Global seed set to 5
+len transform 8
+len num_crops_per_aug 8
+4
+initializing distributed: GLOBAL_RANK: 0, MEMBER: 1/8
+Global seed set to 5
+initializing distributed: GLOBAL_RANK: 4, MEMBER: 5/8
+Global seed set to 5
+Global seed set to 5
+initializing distributed: GLOBAL_RANK: 5, MEMBER: 6/8
+Global seed set to 5
+initializing distributed: GLOBAL_RANK: 6, MEMBER: 7/8
+Global seed set to 5
+initializing distributed: GLOBAL_RANK: 7, MEMBER: 8/8
+----------------------------------------------------------------------------------------------------
+distributed_backend=nccl
+All distributed processes registered. Starting with 8 processes
+----------------------------------------------------------------------------------------------------
+I'm in here
+len transform 8
+len num_crops_per_aug 8
+I'm in here
+4
+len transform 8
+len num_crops_per_aug 8
+I'm in here
+I'm in here
+I'm in here
+LOCAL_RANK: 7 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
+LOCAL_RANK: 6 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
+LOCAL_RANK: 2 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
+LOCAL_RANK: 3 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
+LOCAL_RANK: 1 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
+LOCAL_RANK: 5 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
+LOCAL_RANK: 4 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
+  | Name                | Type       | Params
+---------------------------------------------------
+0 | backbone            | ResNet     | 23.5 M
+1 | classifier          | Linear     | 2.0 M
+2 | momentum_backbone   | ResNet     | 23.5 M
+3 | momentum_classifier | Linear     | 2.0 M
+4 | projector           | Sequential | 10.5 M
+5 | momentum_projector  | Sequential | 10.5 M
+6 | predictor           | Sequential | 4.2 M
+---------------------------------------------------
+42.3 M    Trainable params
+34.0 M    Non-trainable params
+76.3 M    Total params
+152.637   Total estimated model params size (MB)
+
+Epoch 0:   0%|                                                                                                                       | 0/1664 [00:00<?, ?it/s]
+Global seed set to 5
+Global seed set to 5
+Global seed set to 5
+Global seed set to 5
+Global seed set to 5
+Global seed set to 5
+Global seed set to 5
+Global seed set to 5
+Traceback (most recent call last):
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/mv_ma_pretrain_edit.py", line 214, in <module>
+    main()
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/mv_ma_pretrain_edit.py", line 210, in main
+    trainer.fit(model, train_loader, val_loader, ckpt_path=ckpt_path)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 738, in fit
+    self._fit_impl, model, train_dataloaders, val_dataloaders, datamodule, ckpt_path
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 682, in _call_and_handle_interrupt
+    return trainer_fn(*args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 772, in _fit_impl
+    self._run(model, ckpt_path=ckpt_path)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1195, in _run
+    self._dispatch()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1274, in _dispatch
+    self.training_type_plugin.start_training(self)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/plugins/training_type/training_type_plugin.py", line 202, in start_training
+    self._results = trainer.run_stage()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1284, in run_stage
+    return self._run_train()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1314, in _run_train
+    self.fit_loop.run()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/base.py", line 145, in run
+    self.advance(*args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/fit_loop.py", line 234, in advance
+    self.epoch_loop.run(data_fetcher)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/base.py", line 140, in run
+    self.on_run_start(*args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/epoch/training_epoch_loop.py", line 141, in on_run_start
+    self._dataloader_iter = _update_dataloader_iter(data_fetcher, self.batch_idx + 1)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/utilities.py", line 121, in _update_dataloader_iter
+    dataloader_iter = enumerate(data_fetcher, batch_idx)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/fetching.py", line 199, in __iter__
+    self.prefetching(self.prefetch_batches)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/fetching.py", line 258, in prefetching
+    self._fetch_next_batch()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/fetching.py", line 300, in _fetch_next_batch
+    batch = next(self.dataloader_iter)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/supporters.py", line 550, in __next__
+    return self.request_next_batch(self.loader_iters)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/supporters.py", line 562, in request_next_batch
+    return apply_to_collection(loader_iters, Iterator, next)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/apply_func.py", line 92, in apply_to_collection
+    return function(data, *args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 521, in __next__
+    data = self._next_data()
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 1203, in _next_data
+    return self._process_data(data)
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 1229, in _process_data
+    data.reraise()
+  File "/opt/conda/lib/python3.7/site-packages/torch/_utils.py", line 434, in reraise
+    raise exception
+AttributeError: Caught AttributeError in DataLoader worker process 0.
+Original Traceback (most recent call last):
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/_utils/worker.py", line 287, in _worker_loop
+    data = fetcher.fetch(index)
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/_utils/fetch.py", line 49, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/_utils/fetch.py", line 49, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/solo/utils/pretrain_dataloader.py", line 53, in __getitem__
+    data = super().__getitem__(index)
+  File "/opt/conda/lib/python3.7/site-packages/torchvision/datasets/folder.py", line 234, in __getitem__
+    sample = self.transform(sample)
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/solo/utils/pretrain_dataloader.py", line 222, in __call__
+    out.extend(transform(x))
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/solo/utils/pretrain_dataloader.py", line 186, in __call__
+    scale=(self.min_scale, self.max_scale),
+AttributeError: 'NCropAugmentation_mv_ma' object has no attribute 'min_scale'
+Traceback (most recent call last):
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/mv_ma_pretrain_edit.py", line 214, in <module>
+    main()
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/mv_ma_pretrain_edit.py", line 210, in main
+    trainer.fit(model, train_loader, val_loader, ckpt_path=ckpt_path)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 738, in fit
+    self._fit_impl, model, train_dataloaders, val_dataloaders, datamodule, ckpt_path
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 682, in _call_and_handle_interrupt
+    return trainer_fn(*args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 772, in _fit_impl
+    self._run(model, ckpt_path=ckpt_path)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1195, in _run
+    self._dispatch()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1274, in _dispatch
+    self.training_type_plugin.start_training(self)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/plugins/training_type/training_type_plugin.py", line 202, in start_training
+    self._results = trainer.run_stage()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1284, in run_stage
+    return self._run_train()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1314, in _run_train
+    self.fit_loop.run()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/base.py", line 145, in run
+    self.advance(*args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/fit_loop.py", line 234, in advance
+    self.epoch_loop.run(data_fetcher)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/base.py", line 140, in run
+    self.on_run_start(*args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/epoch/training_epoch_loop.py", line 141, in on_run_start
+    self._dataloader_iter = _update_dataloader_iter(data_fetcher, self.batch_idx + 1)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/utilities.py", line 121, in _update_dataloader_iter
+    dataloader_iter = enumerate(data_fetcher, batch_idx)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/fetching.py", line 199, in __iter__
+    self.prefetching(self.prefetch_batches)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/fetching.py", line 258, in prefetching
+    self._fetch_next_batch()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/fetching.py", line 300, in _fetch_next_batch
+    batch = next(self.dataloader_iter)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/supporters.py", line 550, in __next__
+    return self.request_next_batch(self.loader_iters)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/supporters.py", line 562, in request_next_batch
+    return apply_to_collection(loader_iters, Iterator, next)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/apply_func.py", line 92, in apply_to_collection
+    return function(data, *args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 521, in __next__
+    data = self._next_data()
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 1203, in _next_data
+    return self._process_data(data)
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 1229, in _process_data
+    data.reraise()
+  File "/opt/conda/lib/python3.7/site-packages/torch/_utils.py", line 434, in reraise
+    raise exception
+AttributeError: Caught AttributeError in DataLoader worker process 0.
+Original Traceback (most recent call last):
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/_utils/worker.py", line 287, in _worker_loop
+    data = fetcher.fetch(index)
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/_utils/fetch.py", line 49, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/_utils/fetch.py", line 49, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/solo/utils/pretrain_dataloader.py", line 53, in __getitem__
+    data = super().__getitem__(index)
+  File "/opt/conda/lib/python3.7/site-packages/torchvision/datasets/folder.py", line 234, in __getitem__
+    sample = self.transform(sample)
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/solo/utils/pretrain_dataloader.py", line 222, in __call__
+    out.extend(transform(x))
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/solo/utils/pretrain_dataloader.py", line 186, in __call__
+    scale=(self.min_scale, self.max_scale),
+AttributeError: 'NCropAugmentation_mv_ma' object has no attribute 'min_scale'
+Traceback (most recent call last):
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/mv_ma_pretrain_edit.py", line 214, in <module>
+    main()
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/mv_ma_pretrain_edit.py", line 210, in main
+    trainer.fit(model, train_loader, val_loader, ckpt_path=ckpt_path)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 738, in fit
+    self._fit_impl, model, train_dataloaders, val_dataloaders, datamodule, ckpt_path
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 682, in _call_and_handle_interrupt
+    return trainer_fn(*args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 772, in _fit_impl
+    self._run(model, ckpt_path=ckpt_path)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1195, in _run
+    self._dispatch()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1274, in _dispatch
+    self.training_type_plugin.start_training(self)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/plugins/training_type/training_type_plugin.py", line 202, in start_training
+    self._results = trainer.run_stage()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1284, in run_stage
+    return self._run_train()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1314, in _run_train
+    self.fit_loop.run()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/base.py", line 145, in run
+    self.advance(*args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/fit_loop.py", line 234, in advance
+    self.epoch_loop.run(data_fetcher)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/base.py", line 140, in run
+    self.on_run_start(*args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/epoch/training_epoch_loop.py", line 141, in on_run_start
+    self._dataloader_iter = _update_dataloader_iter(data_fetcher, self.batch_idx + 1)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/utilities.py", line 121, in _update_dataloader_iter
+    dataloader_iter = enumerate(data_fetcher, batch_idx)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/fetching.py", line 199, in __iter__
+    self.prefetching(self.prefetch_batches)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/fetching.py", line 258, in prefetching
+    self._fetch_next_batch()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/fetching.py", line 300, in _fetch_next_batch
+    batch = next(self.dataloader_iter)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/supporters.py", line 550, in __next__
+    return self.request_next_batch(self.loader_iters)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/supporters.py", line 562, in request_next_batch
+    return apply_to_collection(loader_iters, Iterator, next)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/apply_func.py", line 92, in apply_to_collection
+    return function(data, *args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 521, in __next__
+    data = self._next_data()
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 1203, in _next_data
+    return self._process_data(data)
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 1229, in _process_data
+    data.reraise()
+  File "/opt/conda/lib/python3.7/site-packages/torch/_utils.py", line 434, in reraise
+    raise exception
+AttributeError: Caught AttributeError in DataLoader worker process 0.
+Original Traceback (most recent call last):
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/_utils/worker.py", line 287, in _worker_loop
+    data = fetcher.fetch(index)
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/_utils/fetch.py", line 49, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/_utils/fetch.py", line 49, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/solo/utils/pretrain_dataloader.py", line 53, in __getitem__
+    data = super().__getitem__(index)
+  File "/opt/conda/lib/python3.7/site-packages/torchvision/datasets/folder.py", line 234, in __getitem__
+    sample = self.transform(sample)
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/solo/utils/pretrain_dataloader.py", line 222, in __call__
+    out.extend(transform(x))
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/solo/utils/pretrain_dataloader.py", line 186, in __call__
+    scale=(self.min_scale, self.max_scale),
+AttributeError: 'NCropAugmentation_mv_ma' object has no attribute 'min_scale'
+Traceback (most recent call last):
+  File "../../../mv_ma_pretrain_edit.py", line 214, in <module>
+    main()
+  File "../../../mv_ma_pretrain_edit.py", line 210, in main
+    trainer.fit(model, train_loader, val_loader, ckpt_path=ckpt_path)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 738, in fit
+    self._fit_impl, model, train_dataloaders, val_dataloaders, datamodule, ckpt_path
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 682, in _call_and_handle_interrupt
+    return trainer_fn(*args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 772, in _fit_impl
+    self._run(model, ckpt_path=ckpt_path)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1195, in _run
+    self._dispatch()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1274, in _dispatch
+    self.training_type_plugin.start_training(self)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/plugins/training_type/training_type_plugin.py", line 202, in start_training
+    self._results = trainer.run_stage()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1284, in run_stage
+    return self._run_train()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1314, in _run_train
+    self.fit_loop.run()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/base.py", line 145, in run
+    self.advance(*args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/fit_loop.py", line 234, in advance
+    self.epoch_loop.run(data_fetcher)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/base.py", line 140, in run
+    self.on_run_start(*args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/epoch/training_epoch_loop.py", line 141, in on_run_start
+    self._dataloader_iter = _update_dataloader_iter(data_fetcher, self.batch_idx + 1)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/utilities.py", line 121, in _update_dataloader_iter
+    dataloader_iter = enumerate(data_fetcher, batch_idx)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/fetching.py", line 199, in __iter__
+    self.prefetching(self.prefetch_batches)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/fetching.py", line 258, in prefetching
+    self._fetch_next_batch()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/fetching.py", line 300, in _fetch_next_batch
+    batch = next(self.dataloader_iter)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/supporters.py", line 550, in __next__
+    return self.request_next_batch(self.loader_iters)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/supporters.py", line 562, in request_next_batch
+    return apply_to_collection(loader_iters, Iterator, next)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/apply_func.py", line 92, in apply_to_collection
+    return function(data, *args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 521, in __next__
+    data = self._next_data()
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 1203, in _next_data
+    return self._process_data(data)
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 1229, in _process_data
+    data.reraise()
+  File "/opt/conda/lib/python3.7/site-packages/torch/_utils.py", line 434, in reraise
+    raise exception
+AttributeError: Caught AttributeError in DataLoader worker process 0.
+Original Traceback (most recent call last):
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/_utils/worker.py", line 287, in _worker_loop
+    data = fetcher.fetch(index)
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/_utils/fetch.py", line 49, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/_utils/fetch.py", line 49, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/solo/utils/pretrain_dataloader.py", line 53, in __getitem__
+    data = super().__getitem__(index)
+  File "/opt/conda/lib/python3.7/site-packages/torchvision/datasets/folder.py", line 234, in __getitem__
+    sample = self.transform(sample)
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/solo/utils/pretrain_dataloader.py", line 222, in __call__
+    out.extend(transform(x))
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/solo/utils/pretrain_dataloader.py", line 186, in __call__
+    scale=(self.min_scale, self.max_scale),
+AttributeError: 'NCropAugmentation_mv_ma' object has no attribute 'min_scale'
+Traceback (most recent call last):
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/mv_ma_pretrain_edit.py", line 214, in <module>
+    main()
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/mv_ma_pretrain_edit.py", line 210, in main
+    trainer.fit(model, train_loader, val_loader, ckpt_path=ckpt_path)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 738, in fit
+    self._fit_impl, model, train_dataloaders, val_dataloaders, datamodule, ckpt_path
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 682, in _call_and_handle_interrupt
+    return trainer_fn(*args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 772, in _fit_impl
+    self._run(model, ckpt_path=ckpt_path)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1195, in _run
+    self._dispatch()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1274, in _dispatch
+    self.training_type_plugin.start_training(self)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/plugins/training_type/training_type_plugin.py", line 202, in start_training
+    self._results = trainer.run_stage()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1284, in run_stage
+Traceback (most recent call last):
+    return self._run_train()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1314, in _run_train
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/mv_ma_pretrain_edit.py", line 214, in <module>
+    self.fit_loop.run()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/base.py", line 145, in run
+    self.advance(*args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/fit_loop.py", line 234, in advance
+    self.epoch_loop.run(data_fetcher)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/base.py", line 140, in run
+    self.on_run_start(*args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/epoch/training_epoch_loop.py", line 141, in on_run_start
+    self._dataloader_iter = _update_dataloader_iter(data_fetcher, self.batch_idx + 1)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/utilities.py", line 121, in _update_dataloader_iter
+    dataloader_iter = enumerate(data_fetcher, batch_idx)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/fetching.py", line 199, in __iter__
+    self.prefetching(self.prefetch_batches)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/fetching.py", line 258, in prefetching
+    main()
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/mv_ma_pretrain_edit.py", line 210, in main
+    self._fetch_next_batch()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/fetching.py", line 300, in _fetch_next_batch
+    trainer.fit(model, train_loader, val_loader, ckpt_path=ckpt_path)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 738, in fit
+    batch = next(self.dataloader_iter)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/supporters.py", line 550, in __next__
+    return self.request_next_batch(self.loader_iters)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/supporters.py", line 562, in request_next_batch
+    self._fit_impl, model, train_dataloaders, val_dataloaders, datamodule, ckpt_path
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 682, in _call_and_handle_interrupt
+    return apply_to_collection(loader_iters, Iterator, next)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/apply_func.py", line 92, in apply_to_collection
+    return function(data, *args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 521, in __next__
+    return trainer_fn(*args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 772, in _fit_impl
+    data = self._next_data()
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 1203, in _next_data
+    self._run(model, ckpt_path=ckpt_path)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1195, in _run
+    return self._process_data(data)
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 1229, in _process_data
+    self._dispatch()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1274, in _dispatch
+    data.reraise()
+  File "/opt/conda/lib/python3.7/site-packages/torch/_utils.py", line 434, in reraise
+    self.training_type_plugin.start_training(self)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/plugins/training_type/training_type_plugin.py", line 202, in start_training
+    raise exception
+AttributeError: Caught AttributeError in DataLoader worker process 0.
+Original Traceback (most recent call last):
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/_utils/worker.py", line 287, in _worker_loop
+    data = fetcher.fetch(index)
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/_utils/fetch.py", line 49, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/_utils/fetch.py", line 49, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/solo/utils/pretrain_dataloader.py", line 53, in __getitem__
+    data = super().__getitem__(index)
+  File "/opt/conda/lib/python3.7/site-packages/torchvision/datasets/folder.py", line 234, in __getitem__
+    sample = self.transform(sample)
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/solo/utils/pretrain_dataloader.py", line 222, in __call__
+    out.extend(transform(x))
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/solo/utils/pretrain_dataloader.py", line 186, in __call__
+    scale=(self.min_scale, self.max_scale),
+AttributeError: 'NCropAugmentation_mv_ma' object has no attribute 'min_scale'
+    self._results = trainer.run_stage()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1284, in run_stage
+    return self._run_train()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1314, in _run_train
+    self.fit_loop.run()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/base.py", line 145, in run
+    self.advance(*args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/fit_loop.py", line 234, in advance
+    self.epoch_loop.run(data_fetcher)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/base.py", line 140, in run
+    self.on_run_start(*args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/epoch/training_epoch_loop.py", line 141, in on_run_start
+    self._dataloader_iter = _update_dataloader_iter(data_fetcher, self.batch_idx + 1)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/utilities.py", line 121, in _update_dataloader_iter
+    dataloader_iter = enumerate(data_fetcher, batch_idx)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/fetching.py", line 199, in __iter__
+    self.prefetching(self.prefetch_batches)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/fetching.py", line 258, in prefetching
+    self._fetch_next_batch()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/fetching.py", line 300, in _fetch_next_batch
+    batch = next(self.dataloader_iter)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/supporters.py", line 550, in __next__
+    return self.request_next_batch(self.loader_iters)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/supporters.py", line 562, in request_next_batch
+    return apply_to_collection(loader_iters, Iterator, next)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/apply_func.py", line 92, in apply_to_collection
+    return function(data, *args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 521, in __next__
+    data = self._next_data()
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 1203, in _next_data
+    return self._process_data(data)
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 1229, in _process_data
+    data.reraise()
+  File "/opt/conda/lib/python3.7/site-packages/torch/_utils.py", line 434, in reraise
+    raise exception
+AttributeError: Caught AttributeError in DataLoader worker process 0.
+Original Traceback (most recent call last):
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/_utils/worker.py", line 287, in _worker_loop
+    data = fetcher.fetch(index)
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/_utils/fetch.py", line 49, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/_utils/fetch.py", line 49, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/solo/utils/pretrain_dataloader.py", line 53, in __getitem__
+    data = super().__getitem__(index)
+  File "/opt/conda/lib/python3.7/site-packages/torchvision/datasets/folder.py", line 234, in __getitem__
+    sample = self.transform(sample)
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/solo/utils/pretrain_dataloader.py", line 222, in __call__
+    out.extend(transform(x))
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/solo/utils/pretrain_dataloader.py", line 186, in __call__
+    scale=(self.min_scale, self.max_scale),
+AttributeError: 'NCropAugmentation_mv_ma' object has no attribute 'min_scale'
+Traceback (most recent call last):
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/mv_ma_pretrain_edit.py", line 214, in <module>
+    main()
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/mv_ma_pretrain_edit.py", line 210, in main
+    trainer.fit(model, train_loader, val_loader, ckpt_path=ckpt_path)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 738, in fit
+    self._fit_impl, model, train_dataloaders, val_dataloaders, datamodule, ckpt_path
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 682, in _call_and_handle_interrupt
+    return trainer_fn(*args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 772, in _fit_impl
+    self._run(model, ckpt_path=ckpt_path)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1195, in _run
+    self._dispatch()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1274, in _dispatch
+    self.training_type_plugin.start_training(self)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/plugins/training_type/training_type_plugin.py", line 202, in start_training
+    self._results = trainer.run_stage()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1284, in run_stage
+    return self._run_train()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1314, in _run_train
+    self.fit_loop.run()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/base.py", line 145, in run
+    self.advance(*args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/fit_loop.py", line 234, in advance
+    self.epoch_loop.run(data_fetcher)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/base.py", line 140, in run
+    self.on_run_start(*args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/epoch/training_epoch_loop.py", line 141, in on_run_start
+    self._dataloader_iter = _update_dataloader_iter(data_fetcher, self.batch_idx + 1)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/utilities.py", line 121, in _update_dataloader_iter
+    dataloader_iter = enumerate(data_fetcher, batch_idx)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/fetching.py", line 199, in __iter__
+    self.prefetching(self.prefetch_batches)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/fetching.py", line 258, in prefetching
+    self._fetch_next_batch()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/fetching.py", line 300, in _fetch_next_batch
+    batch = next(self.dataloader_iter)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/supporters.py", line 550, in __next__
+    return self.request_next_batch(self.loader_iters)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/supporters.py", line 562, in request_next_batch
+    return apply_to_collection(loader_iters, Iterator, next)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/apply_func.py", line 92, in apply_to_collection
+    return function(data, *args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 521, in __next__
+    data = self._next_data()
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 1203, in _next_data
+    return self._process_data(data)
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 1229, in _process_data
+    data.reraise()
+  File "/opt/conda/lib/python3.7/site-packages/torch/_utils.py", line 434, in reraise
+    raise exception
+AttributeError: Caught AttributeError in DataLoader worker process 0.
+Original Traceback (most recent call last):
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/_utils/worker.py", line 287, in _worker_loop
+    data = fetcher.fetch(index)
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/_utils/fetch.py", line 49, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/_utils/fetch.py", line 49, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/solo/utils/pretrain_dataloader.py", line 53, in __getitem__
+    data = super().__getitem__(index)
+  File "/opt/conda/lib/python3.7/site-packages/torchvision/datasets/folder.py", line 234, in __getitem__
+    sample = self.transform(sample)
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/solo/utils/pretrain_dataloader.py", line 222, in __call__
+    out.extend(transform(x))
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/solo/utils/pretrain_dataloader.py", line 186, in __call__
+    scale=(self.min_scale, self.max_scale),
+AttributeError: 'NCropAugmentation_mv_ma' object has no attribute 'min_scale'
+Traceback (most recent call last):
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/mv_ma_pretrain_edit.py", line 214, in <module>
+    main()
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/mv_ma_pretrain_edit.py", line 210, in main
+    trainer.fit(model, train_loader, val_loader, ckpt_path=ckpt_path)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 738, in fit
+    self._fit_impl, model, train_dataloaders, val_dataloaders, datamodule, ckpt_path
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 682, in _call_and_handle_interrupt
+    return trainer_fn(*args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 772, in _fit_impl
+    self._run(model, ckpt_path=ckpt_path)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1195, in _run
+    self._dispatch()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1274, in _dispatch
+    self.training_type_plugin.start_training(self)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/plugins/training_type/training_type_plugin.py", line 202, in start_training
+    self._results = trainer.run_stage()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1284, in run_stage
+    return self._run_train()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py", line 1314, in _run_train
+    self.fit_loop.run()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/base.py", line 145, in run
+    self.advance(*args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/fit_loop.py", line 234, in advance
+    self.epoch_loop.run(data_fetcher)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/base.py", line 140, in run
+    self.on_run_start(*args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/epoch/training_epoch_loop.py", line 141, in on_run_start
+    self._dataloader_iter = _update_dataloader_iter(data_fetcher, self.batch_idx + 1)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/loops/utilities.py", line 121, in _update_dataloader_iter
+    dataloader_iter = enumerate(data_fetcher, batch_idx)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/fetching.py", line 199, in __iter__
+    self.prefetching(self.prefetch_batches)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/fetching.py", line 258, in prefetching
+    self._fetch_next_batch()
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/fetching.py", line 300, in _fetch_next_batch
+    batch = next(self.dataloader_iter)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/supporters.py", line 550, in __next__
+    return self.request_next_batch(self.loader_iters)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/supporters.py", line 562, in request_next_batch
+    return apply_to_collection(loader_iters, Iterator, next)
+  File "/opt/conda/lib/python3.7/site-packages/pytorch_lightning/utilities/apply_func.py", line 92, in apply_to_collection
+    return function(data, *args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 521, in __next__
+    data = self._next_data()
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 1203, in _next_data
+    return self._process_data(data)
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 1229, in _process_data
+    data.reraise()
+  File "/opt/conda/lib/python3.7/site-packages/torch/_utils.py", line 434, in reraise
+    raise exception
+AttributeError: Caught AttributeError in DataLoader worker process 0.
+Original Traceback (most recent call last):
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/_utils/worker.py", line 287, in _worker_loop
+    data = fetcher.fetch(index)
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/_utils/fetch.py", line 49, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/opt/conda/lib/python3.7/site-packages/torch/utils/data/_utils/fetch.py", line 49, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/solo/utils/pretrain_dataloader.py", line 53, in __getitem__
+    data = super().__getitem__(index)
+  File "/opt/conda/lib/python3.7/site-packages/torchvision/datasets/folder.py", line 234, in __getitem__
+    sample = self.transform(sample)
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/solo/utils/pretrain_dataloader.py", line 222, in __call__
+    out.extend(transform(x))
+  File "/home/harry/MV_MA_SSL/MV_MV_SSRL/solo/utils/pretrain_dataloader.py", line 186, in __call__
+    scale=(self.min_scale, self.max_scale),
+AttributeError: 'NCropAugmentation_mv_ma' object has no attribute 'min_scale'
