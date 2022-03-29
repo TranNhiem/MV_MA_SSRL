@@ -78,14 +78,18 @@ def augmentations_args(parser: ArgumentParser):
 
     # cropping
     parser.add_argument("--crop_size", type=int, default=[224], nargs="+")
+    parser.add_argument("--num_crop_glob", type=int, default=2 )
+    parser.add_argument("--num_crop_loc", type=int, default=3)
+    parser.add_argument("--crop_size_glob", type=int, default=224 )
+    parser.add_argument("--crop_size_loc", type=int, default=96)
     parser.add_argument("--min_scale", type=float, default=[0.08], nargs="+")
     parser.add_argument("--max_scale", type=float, default=[1.0], nargs="+")
     
     parser.add_argument("--crop_type", type=str, default=["random_uniform"], choices=["random_uniform", "inception_crop"])
-    parser.add_argument("--min_scale_loc", type=float, default=[0.1], nargs="+")
-    parser.add_argument("--max_scale_loc", type=float, default=[0.34], nargs="+")
-    parser.add_argument("--min_scale_glob", type=float, default=[0.2], nargs="+")
-    parser.add_argument("--max_scale_glob", type=float, default=[1.0], nargs="+")
+    parser.add_argument("--min_scale_loc", type=float, default=0.1,)
+    parser.add_argument("--max_scale_loc", type=float, default=0.34)
+    parser.add_argument("--min_scale_glob", type=float, default=0.2)
+    parser.add_argument("--max_scale_glob", type=float, default=1.0)
     # debug
     parser.add_argument("--debug_augmentations", action="store_true")
 

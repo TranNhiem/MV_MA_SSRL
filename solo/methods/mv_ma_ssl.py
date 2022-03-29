@@ -109,7 +109,7 @@ class MASSL(BaseMomentumMethod):
         
         ## Consider Editing Part for Extra 2 more Views
         out = super().forward(X, *args, **kwargs)
-
+        print(out.shape)
 
         z = self.projector(out["feats"])
         p = self.predictor(z)
@@ -129,7 +129,8 @@ class MASSL(BaseMomentumMethod):
         # ------- negative consine similarity loss -------
         
         neg_cos_sim = 0
-        ## If the Multi View the Loop Iteratively Corresponding 
+        ## If the Multi View the Loop Iteratively Corresponding
+        print("length of Large Crops",self.num_large_crops ) 
         for v1 in range(self.num_large_crops):
             # Views 2 remove the prior Views
             for v2 in np.delete(range(self.num_crops), v1):

@@ -165,6 +165,7 @@ class NCropAugmentation_mv_ma:
         self.max_scale_loc= max_scale_loc
         self.min_scale_glob= min_scale_glob
         self.max_scale_glob= max_scale_glob
+    
     def __call__(self, x: Image) -> List[torch.Tensor]:
         """Applies transforms n times to generate n crops.
 
@@ -197,6 +198,7 @@ class NCropAugmentation_mv_ma:
             x_view = crop_strategy(x)
             x_crops.append(x_view)
 
+        # Transform all Croping Views 
         return [self.transform(x_) for x_ in x_crops]
 
     def __repr__(self) -> str:
@@ -258,10 +260,97 @@ class FullTransformPipeline_v1:
             out.extend(transform(x1))
             out.extend(transform(x2))
         random.shuffle(out)
+      
         return out
 
     def __repr__(self) -> str:
         return "\n".join([str(transform) for transform in self.transforms])
+
+
+class FullTransformPipeline_ma_mv:
+    def __init__(self, transforms: Callable, num_crops_glob: int, crop_size_glob: int,
+                    num_crops_loc: int, crop_size_loc: int, crop_type: str, 
+                    min_scale_loc=0.1, max_scale_loc=0.34,  min_scale_glob=0.3, max_scale_glob=1.0) -> None:
+        
+        self.transforms = transforms
+        self.num_crop_glob = num_crops_glob
+        self.num_crop_loc = num_crops_loc
+        self.crop_size_glob= crop_size_glob
+        self.crop_size_loc= crop_size_loc
+        self.crop_type= crop_type
+        self.min_scale_loc= min_scale_loc
+        self.max_scale_loc= max_scale_loc
+        self.min_scale_glob= min_scale_glob
+        self.max_scale_glob= max_scale_glob
+
+    def __call__(self, x: Image) -> List[torch.Tensor]:
+        """Applies transforms n times to generate n crops.
+
+        Args:
+            x (Image): an image in the PIL.Image format.
+
+        Returns:
+            List[torch.Tensor]: an image in the tensor format.
+        """
+        # Try to generate Crop for 2
+
+        x_glob_crops=[]
+        for _ in range(self.num_crop_glob): 
+            
+            if self.crop_type == "inception_crop": 
+                crop_strategy=T.Compose([T.RandomResizedCrop(size=self.crop_size_glob,
+                    interpolation=T.InterpolationMode.BICUBIC)])
+            
+            elif self.crop_type == "random_uniform":
+                    crop_strategy=T.Compose([T.RandomResizedCrop(size=self.crop_size_glob,
+                    scale=(self.min_scale_glob, self.max_scale_glob),
+                        interpolation=T.InterpolationMode.BICUBIC)])
+            else: 
+                raise ValueError("Croping_strategy_Invalid")
+            crop_view = crop_strategy(x)
+            x_glob_crops.append(crop_view)
+
+        x_loc_crops=[]
+        for _ in range(self.num_crop_loc): 
+            
+            if self.crop_type == "inception_crop": 
+                crop_strategy=T.Compose([T.RandomResizedCrop(size=self.crop_size_loc,
+                    interpolation=T.InterpolationMode.BICUBIC)])
+            
+            elif self.crop_type == "random_uniform":
+                    crop_strategy=T.Compose([T.RandomResizedCrop(size=self.crop_size_loc,
+                    scale=(self.min_scale_loc, self.max_scale_loc),
+                        interpolation=T.InterpolationMode.BICUBIC)])
+            else: 
+                raise ValueError("Croping_strategy_Invalid")
+            crop_view = crop_strategy(x)
+            x_loc_crops.append(crop_view)
+
+        out = []
+        if len(x_loc_crops) & len(x_glob_crops) >= 1: 
+            #print("Transform Global AND Local Crops")
+            out_glob=[]
+            for x_glob in x_glob_crops:
+                for idx, transform in enumerate(self.transforms):
+                    out_glob.extend(transform(x_glob))
+            random.shuffle(out_glob)
+            
+            out_loc=[]
+            for x_loc in x_loc_crops:
+                for idx, transform in enumerate(self.transforms):
+                    out_loc.extend(transform(x_loc))
+            random.shuffle(out_loc)
+        
+            out.extend(out_glob)
+            out.extend(out_loc)
+        else: 
+            raise ValueError("Croping should have num_glob_crop & num_loc_crop")
+        
+        return out
+
+    def __repr__(self) -> str:
+        return "\n".join([str(transform) for transform in self.transforms])
+
 
 def prepare_n_crop_transform(
     transforms: List[Callable], num_crops_per_aug: List[int]
@@ -282,6 +371,7 @@ def prepare_n_crop_transform(
     for transform, num_crops in zip(transforms, num_crops_per_aug):
         T.append(NCropAugmentation(transform, num_crops))
     return FullTransformPipeline(T)
+    
 
 def prepare_n_crop_transform_v1(
     transforms: List[Callable], num_crops_per_aug: List[int], 
@@ -304,7 +394,7 @@ def prepare_n_crop_transform_v1(
     return FullTransformPipeline_v1(T)
 
 def prepare_n_crop_transform_mv_ma(
-    transforms: List[Callable], num_crops_per_aug: List[int],crop_size: List[int]
+    transforms: List[Callable], num_crops_per_aug: List[int], crop_size: List[int]
                                 ,crop_type: str, min_loc: float =0.1, max_loc: float=0.34,
                                  min_glob: float=0.3, max_glob: float=1.0
 ) -> NCropAugmentation_mv_ma:
@@ -328,6 +418,34 @@ def prepare_n_crop_transform_mv_ma(
         T.append(NCropAugmentation_mv_ma(transform, num_crops,crop_size[i], crop_type, min_loc, max_loc, min_glob, max_glob))
         i+=1
     return FullTransformPipeline(T)
+
+def prepare_n_crop_transform_mv_ma_v1(
+    transforms: List[Callable], num_crops_per_aug: List[int],  num_crop_glob:int, crop_size_glob: int,num_crop_loc:int, crop_size_loc: int
+                                ,crop_type: str, min_loc: float =0.1, max_loc: float=0.34,
+                                 min_glob: float=0.3, max_glob: float=1.0
+) -> NCropAugmentation:
+    """Turns a single crop transformation to an N crops transformation.
+
+    Args:
+        transforms (List[Callable]): list of transformations.
+        num_crops_per_aug (List[int]): number of crops per pipeline.
+
+    Returns:
+        NCropAugmentation: an N crop transformation.
+    """
+    print("len transform", len(transforms))
+    print("len num_crops_per_aug", len(num_crops_per_aug))
+    assert len(transforms) == len(num_crops_per_aug)
+    
+
+    T = []
+    for transform, num_crops in zip(transforms, num_crops_per_aug):
+        T.append(NCropAugmentation(transform, num_crops))
+
+
+    return FullTransformPipeline_ma_mv(T, num_crop_glob, crop_size_glob,num_crop_loc, crop_size_loc
+                                ,crop_type,min_scale_loc=min_loc, max_scale_loc=max_loc,
+                                 min_scale_glob=min_glob, max_scale_glob=max_glob )
 class BaseTransform:
     """Adds callable base class to implement different transformation pipelines."""
 
@@ -613,7 +731,7 @@ def prepare_transform(dataset: str, trfs_kwargs, da_kwargs=None) -> Any:
         fast_da = Fast_AutoAugment(policy_type=fda_policy).get_trfs()
         
         #  ret [simclr_da, rand_da, auto_da, fast_da]  4 views trfs
-        return [ CustomTransform_no_crop(**trfs_kwargs), rand_da, auto_da, fast_da, CustomTransform_no_crop(**trfs_kwargs), rand_da, auto_da, fast_da ]#fast_da
+        return [ CustomTransform_no_crop(**trfs_kwargs), rand_da, auto_da, fast_da,  ]#fast_da
         
     else:
         raise ValueError(f"{dataset} is not currently supported.")

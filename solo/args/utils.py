@@ -200,6 +200,7 @@ def additional_setup_pretrain(args: Namespace):
                 num_small_crops += n_crops
         # print("number of large crop", num_large_crops)
         # print("number of large crop",num_small_crops)
+        num_small_crops=args.num_crop_loc
         args.num_large_crops = num_large_crops
         args.num_small_crops = num_small_crops
         

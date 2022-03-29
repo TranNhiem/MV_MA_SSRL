@@ -187,6 +187,7 @@ def main():
 
     trainer = Trainer.from_argparse_args(
         args,
+        # fast_dev_run= True,
         logger=wandb_logger if args.wandb else None,
         callbacks=callbacks,
         enable_checkpointing=False,
@@ -196,12 +197,16 @@ def main():
     print("\n\nI'm in here \n\n")
     # it's very not good... the issue occurs in train_loader, i'm not sure which da-method cause the img have invalid size
     # while i will go deep into each trfs 'Composer'
-    # for x1, x2, x3, x4 in train_loader:
-    #     #print(im.shape)
-    #     # unpack
-    #     #x1, x2, x3, x4 = im
-    #     print(x1.shape)
-    #     break
+    # for x1, x2, x3 in train_loader:
+        #print(im.shape)
+        # unpack
+        # #x1, x2, x3, x4 = im
+        # print(len(x2))
+        # x1_=x2[5]
+        # print(x1.shape)
+        # print(x1_.shape)
+        # print(x3.shape)
+        # break
 
 
     if args.dali:

@@ -50,7 +50,7 @@ from solo.utils.classification_dataloader import prepare_data as prepare_data_cl
 from solo.utils.pretrain_dataloader import (
     prepare_dataloader,
     prepare_datasets,
-    prepare_n_crop_transform_mv_ma,
+    prepare_n_crop_transform_mv_ma_v1,
     prepare_transform,
 )
 
@@ -94,7 +94,10 @@ def main():
         
 
 
-        transform = prepare_n_crop_transform_mv_ma(transform, num_crops_per_aug=args.num_crops_per_aug, crop_size=args.crop_size, crop_type=args.crop_type)
+        transform = prepare_n_crop_transform_mv_ma_v1(transform,  num_crops_per_aug=args.num_crops_per_aug,num_crop_glob=args.num_crop_glob, crop_size_glob=args.crop_size_glob,
+                                               num_crop_loc=args.num_crop_loc, crop_size_loc=args.crop_size_loc, crop_type=args.crop_type,
+                                               min_loc=args.min_scale_loc, max_loc=args.max_scale_loc,  min_glob=args.min_scale_glob, max_glob=args.max_scale_glob
+                                               )
         
         if args.debug_augmentations:
             print("Transforms:")
@@ -187,6 +190,7 @@ def main():
 
     trainer = Trainer.from_argparse_args(
         args,
+        fast_dev_run= True,
         logger=wandb_logger if args.wandb else None,
         callbacks=callbacks,
         enable_checkpointing=False,
@@ -196,13 +200,16 @@ def main():
     print("\n\nI'm in here \n\n")
     # it's very not good... the issue occurs in train_loader, i'm not sure which da-method cause the img have invalid size
     # while i will go deep into each trfs 'Composer'
-    # for x1, x2, x3, x4 in train_loader:
+    # for x1, x2, x3 in train_loader:
     #     #print(im.shape)
     #     # unpack
     #     #x1, x2, x3, x4 = im
+    #     print(len(x2))
+    #     x1_=x2[7]
     #     print(x1.shape)
+    #     print(x1_.shape)
+    #     print(x3.shape)
     #     break
-
 
     if args.dali:
         trainer.fit(model, val_dataloaders=val_loader, ckpt_path=ckpt_path)
