@@ -54,6 +54,12 @@ from solo.utils.pretrain_dataloader import (
     prepare_transform,
 )
 
+from solo.utils.value_schedule import (
+    Alpha_schedule,
+    Beta_schedule,
+    batch_size_schedule, 
+    Stochastic_Weight_Avg
+)
 
 def main():
     seed_everything(5)
@@ -188,6 +194,9 @@ def main():
         ckpt_path = args.resume_from_checkpoint
         del args.resume_from_checkpoint
 
+    alpha_schedule = Alpha_schedule(args,args.max_epochs, 0.6,args.alpha)
+    callbacks.append(alpha_schedule)
+    
     trainer = Trainer.from_argparse_args(
         args,
         fast_dev_run= True,

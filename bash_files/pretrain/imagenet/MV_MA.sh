@@ -58,5 +58,6 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --base_tau_momentum 0.99 \
     --final_tau_momentum 1.0 \
     --momentum_classifier \
+    --alpha 0.5\
     --checkpoint_dir /data1/solo_MASSL_ckpt \
     --checkpoint_frequency 20 

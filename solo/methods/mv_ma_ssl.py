@@ -70,6 +70,10 @@ class MVAR(BaseMomentumMethod):
         # predictor
         parser.add_argument("--pred_hidden_dim", type=int, default=512)
 
+        # parameters
+        parser.add_argument("--alpha", type=str, default="0.5")
+        parser.add_argument("--beta", type=str, default="0.5")
+
         return parent_parser
 
     @property
@@ -152,11 +156,11 @@ class MVAR(BaseMomentumMethod):
             for v2 in np.delete(range(self.num_crops-self.num_large_crops), v1):
                 neg_cos_sim_loc += byol_loss_func(P[(v2+self.num_large_crops)-1], Z_momentum[v1], )
 
-        neg_cos_sim = (neg_cos_sim_glob + neg_cos_sim_loc)/2
+        neg_cos_sim = (self.alpha*neg_cos_sim_glob + (1-self.alpha)*neg_cos_sim_loc)
         # calculate std of features
         with torch.no_grad():
             z_std_loc = F.normalize(torch.stack(Z[self.num_large_crops : ]), dim=-1).std(dim=1).mean()
-        z_std=z_std_glob + z_std_loc
+        z_std=(self.alpha*z_std_glob + (1-self.alpha)*z_std_loc)
         
         return neg_cos_sim, z_std
 
