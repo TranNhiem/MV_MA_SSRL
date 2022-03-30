@@ -1,0 +1,559 @@
+wandb_version: 1
+
+_wandb:
+  desc: null
+  value:
+    cli_version: 0.12.10
+    framework: lightning
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    m:
+    - 1: trainer/global_step
+      6:
+      - 3
+    python_version: 3.7.11
+    start_time: 1648605463
+    t:
+      1:
+      - 1
+      - 5
+      - 9
+      2:
+      - 1
+      - 5
+      - 9
+      3:
+      - 1
+      - 7
+      - 13
+      4: 3.7.11
+      5: 0.12.10
+      8:
+      - 5
+accelerator:
+  desc: null
+  value: gpu
+accumulate_grad_batches:
+  desc: null
+  value: 2
+ada_policy:
+  desc: null
+  value: imagenet
+amp_backend:
+  desc: null
+  value: native
+amp_level:
+  desc: null
+  value: None
+auto_lr_find:
+  desc: null
+  value: false
+auto_resume:
+  desc: null
+  value: false
+auto_scale_batch_size:
+  desc: null
+  value: false
+auto_select_gpus:
+  desc: null
+  value: false
+auto_umap:
+  desc: null
+  value: false
+backbone:
+  desc: null
+  value: resnet50
+backbone_args/cifar:
+  desc: null
+  value: false
+backbone_args/zero_init_residual:
+  desc: null
+  value: false
+base_tau_momentum:
+  desc: null
+  value: 0.99
+batch_size:
+  desc: null
+  value: 100
+benchmark:
+  desc: null
+  value: false
+brightness:
+  desc: null
+  value:
+  - 0.4
+  - 0.4
+  - 0.4
+  - 0.4
+check_val_every_n_epoch:
+  desc: null
+  value: 1
+checkpoint_callback:
+  desc: null
+  value: None
+checkpoint_dir:
+  desc: null
+  value: /data1/solo_MASSL_ckpt
+checkpoint_frequency:
+  desc: null
+  value: 20
+classifier_lr:
+  desc: null
+  value: 0.2
+color_jitter_prob:
+  desc: null
+  value:
+  - 0.8
+  - 0.8
+  - 0.8
+  - 0.8
+contrast:
+  desc: null
+  value:
+  - 0.4
+  - 0.4
+  - 0.4
+  - 0.4
+crop_size:
+  desc: null
+  value:
+  - 224
+  - 224
+  - 224
+  - 224
+crop_size_glob:
+  desc: null
+  value: 224
+crop_size_loc:
+  desc: null
+  value: 96
+crop_type:
+  desc: null
+  value: random_uniform
+dali:
+  desc: null
+  value: false
+dali_device:
+  desc: null
+  value: gpu
+data_dir:
+  desc: null
+  value: /img_data
+dataset:
+  desc: null
+  value: mv_ma
+debug_augmentations:
+  desc: null
+  value: false
+default_root_dir:
+  desc: null
+  value: None
+detect_anomaly:
+  desc: null
+  value: false
+deterministic:
+  desc: null
+  value: false
+devices:
+  desc: null
+  value: None
+enable_checkpointing:
+  desc: null
+  value: true
+enable_model_summary:
+  desc: null
+  value: true
+enable_progress_bar:
+  desc: null
+  value: true
+encode_indexes_into_labels:
+  desc: null
+  value: false
+entity:
+  desc: null
+  value: mlbrl
+eta_lars:
+  desc: null
+  value: 0.001
+exclude_bias_n_norm:
+  desc: null
+  value: true
+extra_optimizer_args/momentum:
+  desc: null
+  value: 0.9
+fast_dev_run:
+  desc: null
+  value: false
+fda_policy:
+  desc: null
+  value: imagenet
+final_tau_momentum:
+  desc: null
+  value: 1.0
+flush_logs_every_n_steps:
+  desc: null
+  value: None
+gaussian_prob:
+  desc: null
+  value:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+gpus:
+  desc: null
+  value:
+  - 0
+  - 1
+  - 2
+  - 3
+grad_clip_lars:
+  desc: null
+  value: false
+gradient_clip_algorithm:
+  desc: null
+  value: None
+gradient_clip_val:
+  desc: null
+  value: None
+gray_scale_prob:
+  desc: null
+  value:
+  - 0.2
+  - 0.2
+  - 0.2
+  - 0.2
+horizontal_flip_prob:
+  desc: null
+  value:
+  - 0.5
+  - 0.5
+  - 0.5
+  - 0.5
+hue:
+  desc: null
+  value:
+  - 0.1
+  - 0.1
+  - 0.1
+  - 0.1
+ipus:
+  desc: null
+  value: None
+knn_eval:
+  desc: null
+  value: false
+knn_k:
+  desc: null
+  value: 20
+lars:
+  desc: null
+  value: true
+limit_predict_batches:
+  desc: null
+  value: 1.0
+limit_test_batches:
+  desc: null
+  value: 1.0
+limit_train_batches:
+  desc: null
+  value: 1.0
+limit_val_batches:
+  desc: null
+  value: 1.0
+log_every_n_steps:
+  desc: null
+  value: 50
+log_gpu_memory:
+  desc: null
+  value: None
+logger:
+  desc: null
+  value: true
+lr:
+  desc: null
+  value: 0.625
+lr_decay_steps:
+  desc: null
+  value: None
+max_epochs:
+  desc: null
+  value: 100
+max_scale:
+  desc: null
+  value:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+max_scale_glob:
+  desc: null
+  value: 1.0
+max_scale_loc:
+  desc: null
+  value: 0.34
+max_steps:
+  desc: null
+  value: -1
+max_time:
+  desc: null
+  value: None
+mean:
+  desc: null
+  value:
+  - 0.485
+  - 0.456
+  - 0.406
+method:
+  desc: null
+  value: massl
+min_epochs:
+  desc: null
+  value: None
+min_lr:
+  desc: null
+  value: 0.0
+min_scale:
+  desc: null
+  value:
+  - 0.08
+  - 0.08
+  - 0.08
+  - 0.08
+min_scale_glob:
+  desc: null
+  value: 0.2
+min_scale_loc:
+  desc: null
+  value: 0.13
+min_steps:
+  desc: null
+  value: None
+momentum_classifier:
+  desc: null
+  value: true
+move_metrics_to_cpu:
+  desc: null
+  value: false
+mulda_kwargs/ada_policy:
+  desc: null
+  value: imagenet
+mulda_kwargs/fda_policy:
+  desc: null
+  value: imagenet
+mulda_kwargs/rda_magnitude:
+  desc: null
+  value: 9
+mulda_kwargs/rda_num_ops:
+  desc: null
+  value: 2
+multiple_trainloader_mode:
+  desc: null
+  value: max_size_cycle
+name:
+  desc: null
+  value: MV_MASSL-resnet50-imagenet-100ep
+no_labels:
+  desc: null
+  value: false
+num_classes:
+  desc: null
+  value: 1000
+num_crop_glob:
+  desc: null
+  value: 2
+num_crop_loc:
+  desc: null
+  value: 2
+num_crops_per_aug:
+  desc: null
+  value:
+  - 1
+  - 1
+  - 1
+  - 1
+num_large_crops:
+  desc: null
+  value: 8
+num_nodes:
+  desc: null
+  value: 1
+num_processes:
+  desc: null
+  value: 1
+num_sanity_val_steps:
+  desc: null
+  value: 2
+num_small_crops:
+  desc: null
+  value: 8
+num_workers:
+  desc: null
+  value: 4
+offline:
+  desc: null
+  value: false
+optimizer:
+  desc: null
+  value: sgd
+overfit_batches:
+  desc: null
+  value: 0.0
+plugins:
+  desc: null
+  value: None
+precision:
+  desc: null
+  value: 16
+pred_hidden_dim:
+  desc: null
+  value: 4096
+prepare_data_per_node:
+  desc: null
+  value: None
+process_position:
+  desc: null
+  value: 0
+profiler:
+  desc: null
+  value: None
+progress_bar_refresh_rate:
+  desc: null
+  value: None
+proj_hidden_dim:
+  desc: null
+  value: 4096
+proj_output_dim:
+  desc: null
+  value: 512
+project:
+  desc: null
+  value: solo_MASSL
+rda_magnitude:
+  desc: null
+  value: 9
+rda_num_ops:
+  desc: null
+  value: 2
+reload_dataloaders_every_epoch:
+  desc: null
+  value: false
+reload_dataloaders_every_n_epochs:
+  desc: null
+  value: 0
+replace_sampler_ddp:
+  desc: null
+  value: true
+resume_from_checkpoint:
+  desc: null
+  value: None
+saturation:
+  desc: null
+  value:
+  - 0.2
+  - 0.2
+  - 0.2
+  - 0.2
+save_checkpoint:
+  desc: null
+  value: true
+scheduler:
+  desc: null
+  value: warmup_cosine
+solarization_prob:
+  desc: null
+  value:
+  - 0.2
+  - 0.2
+  - 0.2
+  - 0.2
+std:
+  desc: null
+  value:
+  - 0.228
+  - 0.224
+  - 0.225
+stochastic_weight_avg:
+  desc: null
+  value: false
+strategy:
+  desc: null
+  value: ddp
+sync_batchnorm:
+  desc: null
+  value: true
+terminate_on_nan:
+  desc: null
+  value: None
+tpu_cores:
+  desc: null
+  value: None
+track_grad_norm:
+  desc: null
+  value: -1
+train_dir:
+  desc: null
+  value: train
+transform_kwargs/brightness:
+  desc: null
+  value: 0.4
+transform_kwargs/color_jitter_prob:
+  desc: null
+  value: 0.8
+transform_kwargs/contrast:
+  desc: null
+  value: 0.4
+transform_kwargs/crop_size:
+  desc: null
+  value: 224
+transform_kwargs/gaussian_prob:
+  desc: null
+  value: 1.0
+transform_kwargs/gray_scale_prob:
+  desc: null
+  value: 0.2
+transform_kwargs/horizontal_flip_prob:
+  desc: null
+  value: 0.5
+transform_kwargs/hue:
+  desc: null
+  value: 0.1
+transform_kwargs/max_scale:
+  desc: null
+  value: 1.0
+transform_kwargs/min_scale:
+  desc: null
+  value: 0.08
+transform_kwargs/saturation:
+  desc: null
+  value: 0.2
+transform_kwargs/solarization_prob:
+  desc: null
+  value: 0.2
+unique_augs:
+  desc: null
+  value: 4
+val_check_interval:
+  desc: null
+  value: 1.0
+val_dir:
+  desc: null
+  value: val
+wandb:
+  desc: null
+  value: true
+warmup_epochs:
+  desc: null
+  value: 10
+warmup_start_lr:
+  desc: null
+  value: 3.0e-05
+weight_decay:
+  desc: null
+  value: 1.0e-06
+weights_save_path:
+  desc: null
+  value: None
+weights_summary:
+  desc: null
+  value: top

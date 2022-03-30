@@ -1,2 +1,2 @@
-# MV_MV_SSRL
- Multi-Views, Multi-Augmentation Self-Supervised Representation Learning
+# MVAR_SSRL
+ Multi-View, Multi-Augmentation Representation Learning for Self-Supervised Pre-training

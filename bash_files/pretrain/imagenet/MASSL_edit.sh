@@ -1,11 +1,12 @@
-python3 ../../../main_pretrain_edit.py \
+python3 ../../../massl_pretrain_edit.py \
     --dataset mulda_v1 \
+    --massl_training True \
     --backbone resnet50 \
-    --data_dir /data \
+    --data_dir /img_data \
     --train_dir train \
     --val_dir val \
-    --max_epochs 600 \
-    --gpus 0,1,2,3,4,5,6,7 \
+    --max_epochs 100 \
+    --gpus 0,1,2,3 \
     --accelerator gpu \
     --strategy ddp \
     --sync_batchnorm \

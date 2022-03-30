@@ -32,6 +32,7 @@ N_CLASSES_PER_DATASET = {
     ## cfg same as imagenet
     "mulda": 1000,
     "mulda_v1": 1000,
+    "mv_ma": 1000
 }
 
 
@@ -197,8 +198,16 @@ def additional_setup_pretrain(args: Namespace):
                 num_large_crops += n_crops
             else:
                 num_small_crops += n_crops
-        # print("number of large crop", num_large_crops)
-        # print("number of large crop",num_small_crops)
+        if args.mvar_training: 
+            num_small_crops=args.num_crop_loc * 4
+            num_large_crops=args.num_crop_glob * 4
+        if args.massl_training: 
+            num_large_crops=num_large_crops * 2
+            num_small_crops=num_small_crops * 2
+        
+        print("number of large crop", num_large_crops)
+        print("number of small crop",num_small_crops)
+        
         args.num_large_crops = num_large_crops
         args.num_small_crops = num_small_crops
         

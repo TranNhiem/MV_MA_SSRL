@@ -1,0 +1,1 @@
+{"lr-Optimizer/backbone": 6e-05, "lr-Optimizer/classifier": 6e-05, "lr-Optimizer/momentum_classifier": 6e-05, "lr-Optimizer/pg4": 6e-05, "lr-Optimizer/pg5": 6e-05, "trainer/global_step": 0, "_runtime": 48, "_timestamp": 1648285036, "_step": 0, "_wandb": {"runtime": 53}}
