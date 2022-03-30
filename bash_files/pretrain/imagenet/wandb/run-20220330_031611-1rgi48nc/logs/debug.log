@@ -1,0 +1,187 @@
+2022-03-30 03:16:11,849 INFO    MainThread:21337 [wandb_setup.py:_flush():75] Loading settings from /root/.config/wandb/settings
+2022-03-30 03:16:11,850 INFO    MainThread:21337 [wandb_setup.py:_flush():75] Loading settings from /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/settings
+2022-03-30 03:16:11,850 INFO    MainThread:21337 [wandb_setup.py:_flush():75] Loading settings from environment variables: {}
+2022-03-30 03:16:11,850 INFO    MainThread:21337 [wandb_setup.py:_flush():75] Inferring run settings from compute environment: {'program_relpath': 'massl_pretrain_edit.py', 'program': '../../../massl_pretrain_edit.py'}
+2022-03-30 03:16:11,850 INFO    MainThread:21337 [wandb_init.py:_log_setup():386] Logging user logs to /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220330_031611-1rgi48nc/logs/debug.log
+2022-03-30 03:16:11,850 INFO    MainThread:21337 [wandb_init.py:_log_setup():387] Logging internal logs to /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220330_031611-1rgi48nc/logs/debug-internal.log
+2022-03-30 03:16:11,850 INFO    MainThread:21337 [wandb_init.py:init():420] calling init triggers
+2022-03-30 03:16:11,850 INFO    MainThread:21337 [wandb_init.py:init():427] wandb.init called with sweep_config: {}
+config: {}
+2022-03-30 03:16:11,850 INFO    MainThread:21337 [wandb_init.py:init():471] starting backend
+2022-03-30 03:16:11,850 INFO    MainThread:21337 [backend.py:_multiprocessing_setup():101] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2022-03-30 03:16:11,866 INFO    MainThread:21337 [backend.py:ensure_launched():219] starting backend process...
+2022-03-30 03:16:11,882 INFO    MainThread:21337 [backend.py:ensure_launched():225] started backend process with pid: 21621
+2022-03-30 03:16:11,884 INFO    MainThread:21337 [wandb_init.py:init():480] backend started and connected
+2022-03-30 03:16:11,893 INFO    MainThread:21337 [wandb_init.py:init():550] updated telemetry
+2022-03-30 03:16:11,927 INFO    MainThread:21337 [wandb_init.py:init():581] communicating current version
+2022-03-30 03:16:12,511 INFO    MainThread:21337 [wandb_init.py:init():586] got version response upgrade_message: "wandb version 0.12.11 is available!  To upgrade, please run:\n $ pip install wandb --upgrade"
+
+2022-03-30 03:16:12,511 INFO    MainThread:21337 [wandb_init.py:init():596] communicating run to backend with 30 second timeout
+2022-03-30 03:16:12,721 INFO    MainThread:21337 [wandb_init.py:init():624] starting run threads in backend
+2022-03-30 03:16:14,569 INFO    MainThread:21337 [wandb_run.py:_console_start():1827] atexit reg
+2022-03-30 03:16:14,569 INFO    MainThread:21337 [wandb_run.py:_redirect():1701] redirect: SettingsConsole.REDIRECT
+2022-03-30 03:16:14,569 INFO    MainThread:21337 [wandb_run.py:_redirect():1706] Redirecting console.
+2022-03-30 03:16:14,572 INFO    MainThread:21337 [wandb_run.py:_redirect():1762] Redirects installed.
+2022-03-30 03:16:14,572 INFO    MainThread:21337 [wandb_init.py:init():651] run started, returning control to user process
+2022-03-30 03:16:14,572 INFO    MainThread:21337 [wandb_watch.py:watch():43] Watching
+2022-03-30 03:16:14,580 INFO    MainThread:21337 [wandb_run.py:_config_callback():966] config_cb None None {'dataset': 'mulda_v1', 'data_dir': '/img_data', 'train_dir': 'train', 'val_dir': 'val', 'dali': False, 'dali_device': 'gpu', 'num_crops_per_aug': [1, 1, 1, 1], 'brightness': [0.4, 0.4, 0.4, 0.4], 'contrast': [0.4, 0.4, 0.4, 0.4], 'saturation': [0.2, 0.2, 0.2, 0.2], 'hue': [0.1, 0.1, 0.1, 0.1], 'color_jitter_prob': [0.8, 0.8, 0.8, 0.8], 'gray_scale_prob': [0.2, 0.2, 0.2, 0.2], 'horizontal_flip_prob': [0.5, 0.5, 0.5, 0.5], 'gaussian_prob': [1.0, 1.0, 1.0, 1.0], 'solarization_prob': [0.2, 0.2, 0.2, 0.2], 'crop_size': [224, 224, 224, 224], 'mvar_training': False, 'massl_training': True, 'num_crop_glob': 2, 'num_crop_loc': 3, 'crop_size_glob': 224, 'crop_size_loc': 96, 'min_scale': [0.08, 0.08, 0.08, 0.08], 'max_scale': [1.0, 1.0, 1.0, 1.0], 'crop_type': ['random_uniform'], 'min_scale_loc': 0.1, 'max_scale_loc': 0.34, 'min_scale_glob': 0.2, 'max_scale_glob': 1.0, 'debug_augmentations': False, 'no_labels': False, 'mean': [0.485, 0.456, 0.406], 'std': [0.228, 0.224, 0.225], 'logger': True, 'checkpoint_callback': 'None', 'enable_checkpointing': True, 'default_root_dir': 'None', 'gradient_clip_val': 'None', 'gradient_clip_algorithm': 'None', 'process_position': 0, 'num_nodes': 1, 'num_processes': 1, 'devices': 'None', 'gpus': [0, 1, 2, 3], 'auto_select_gpus': False, 'tpu_cores': 'None', 'ipus': 'None', 'log_gpu_memory': 'None', 'progress_bar_refresh_rate': 'None', 'enable_progress_bar': True, 'overfit_batches': 0.0, 'track_grad_norm': -1, 'check_val_every_n_epoch': 1, 'fast_dev_run': False, 'accumulate_grad_batches': 2, 'max_epochs': 100, 'min_epochs': 'None', 'max_steps': -1, 'min_steps': 'None', 'max_time': 'None', 'limit_train_batches': 1.0, 'limit_val_batches': 1.0, 'limit_test_batches': 1.0, 'limit_predict_batches': 1.0, 'val_check_interval': 1.0, 'flush_logs_every_n_steps': 'None', 'log_every_n_steps': 50, 'accelerator': 'gpu', 'strategy': 'ddp', 'sync_batchnorm': True, 'precision': 16, 'enable_model_summary': True, 'weights_summary': 'top', 'weights_save_path': 'None', 'num_sanity_val_steps': 2, 'resume_from_checkpoint': 'None', 'profiler': 'None', 'benchmark': False, 'deterministic': False, 'reload_dataloaders_every_n_epochs': 0, 'reload_dataloaders_every_epoch': False, 'auto_lr_find': False, 'replace_sampler_ddp': True, 'detect_anomaly': False, 'auto_scale_batch_size': False, 'prepare_data_per_node': 'None', 'plugins': 'None', 'amp_backend': 'native', 'amp_level': 'None', 'move_metrics_to_cpu': False, 'multiple_trainloader_mode': 'max_size_cycle', 'stochastic_weight_avg': False, 'terminate_on_nan': 'None', 'method': 'massl_edit', 'backbone': 'resnet50', 'batch_size': 100, 'lr': 0.78125, 'classifier_lr': 0.2, 'weight_decay': 1e-06, 'num_workers': 4, 'name': 'MASSL_newDesign-resnet50-imagenet-600ep', 'project': 'solo_MASSL', 'entity': 'mlbrl', 'wandb': True, 'offline': False, 'optimizer': 'sgd', 'lars': True, 'grad_clip_lars': False, 'eta_lars': 0.001, 'exclude_bias_n_norm': True, 'scheduler': 'warmup_cosine', 'lr_decay_steps': 'None', 'min_lr': 0.0, 'warmup_start_lr': 3e-05, 'warmup_epochs': 10, 'encode_indexes_into_labels': False, 'knn_eval': False, 'knn_k': 20, 'base_tau_momentum': 0.99, 'final_tau_momentum': 1.0, 'momentum_classifier': True, 'proj_output_dim': 512, 'proj_hidden_dim': 4096, 'pred_hidden_dim': 4096, 'save_checkpoint': True, 'auto_umap': False, 'auto_resume': False, 'rda_num_ops': 2, 'rda_magnitude': 9, 'ada_policy': 'imagenet', 'fda_policy': 'imagenet', 'checkpoint_dir': '/data1/solo_MASSL_ckpt', 'checkpoint_frequency': 10, 'mulda_kwargs/rda_num_ops': 2, 'mulda_kwargs/rda_magnitude': 9, 'mulda_kwargs/ada_policy': 'imagenet', 'mulda_kwargs/fda_policy': 'imagenet', 'num_classes': 1000, 'unique_augs': 4, 'transform_kwargs/brightness': 0.4, 'transform_kwargs/contrast': 0.4, 'transform_kwargs/saturation': 0.2, 'transform_kwargs/hue': 0.1, 'transform_kwargs/color_jitter_prob': 0.8, 'transform_kwargs/gray_scale_prob': 0.2, 'transform_kwargs/horizontal_flip_prob': 0.5, 'transform_kwargs/gaussian_prob': 1.0, 'transform_kwargs/solarization_prob': 0.2, 'transform_kwargs/crop_size': 224, 'transform_kwargs/min_scale': 0.08, 'transform_kwargs/max_scale': 1.0, 'num_large_crops': 8, 'num_small_crops': 0, 'backbone_args/cifar': False, 'backbone_args/zero_init_residual': False, 'extra_optimizer_args/momentum': 0.9}
+2022-03-30 03:17:00,334 INFO    MainThread:21337 [wandb_run.py:_atexit_cleanup():1797] got exitcode: 0
+2022-03-30 03:17:00,335 INFO    MainThread:21337 [wandb_run.py:_restore():1769] restore
+2022-03-30 03:17:03,023 INFO    MainThread:21337 [wandb_run.py:_wait_for_finish():1929] got exit ret: file_counts {
+  wandb_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 3031
+  total_bytes: 3031
+}
+
+2022-03-30 03:17:03,410 INFO    MainThread:21337 [wandb_run.py:_wait_for_finish():1929] got exit ret: file_counts {
+  wandb_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 3031
+  total_bytes: 3031
+}
+
+2022-03-30 03:17:03,610 INFO    MainThread:21337 [wandb_run.py:_wait_for_finish():1929] got exit ret: file_counts {
+  wandb_count: 1
+}
+pusher_stats {
+  uploaded_bytes: 3031
+  total_bytes: 3031
+}
+
+2022-03-30 03:17:03,753 INFO    MainThread:21337 [wandb_run.py:_wait_for_finish():1929] got exit ret: file_counts {
+  wandb_count: 6
+}
+pusher_stats {
+  uploaded_bytes: 3031
+  total_bytes: 27049
+}
+
+2022-03-30 03:17:03,855 INFO    MainThread:21337 [wandb_run.py:_wait_for_finish():1929] got exit ret: file_counts {
+  wandb_count: 6
+}
+pusher_stats {
+  uploaded_bytes: 3031
+  total_bytes: 27049
+}
+
+2022-03-30 03:17:03,956 INFO    MainThread:21337 [wandb_run.py:_wait_for_finish():1929] got exit ret: file_counts {
+  wandb_count: 6
+}
+pusher_stats {
+  uploaded_bytes: 27022
+  total_bytes: 27049
+}
+
+2022-03-30 03:17:04,058 INFO    MainThread:21337 [wandb_run.py:_wait_for_finish():1929] got exit ret: file_counts {
+  wandb_count: 6
+}
+pusher_stats {
+  uploaded_bytes: 27022
+  total_bytes: 27049
+}
+
+2022-03-30 03:17:04,160 INFO    MainThread:21337 [wandb_run.py:_wait_for_finish():1929] got exit ret: file_counts {
+  wandb_count: 6
+}
+pusher_stats {
+  uploaded_bytes: 27022
+  total_bytes: 27049
+}
+
+2022-03-30 03:17:04,261 INFO    MainThread:21337 [wandb_run.py:_wait_for_finish():1929] got exit ret: file_counts {
+  wandb_count: 6
+}
+pusher_stats {
+  uploaded_bytes: 27022
+  total_bytes: 27049
+}
+
+2022-03-30 03:17:04,363 INFO    MainThread:21337 [wandb_run.py:_wait_for_finish():1929] got exit ret: file_counts {
+  wandb_count: 6
+}
+pusher_stats {
+  uploaded_bytes: 27022
+  total_bytes: 27049
+}
+
+2022-03-30 03:17:04,464 INFO    MainThread:21337 [wandb_run.py:_wait_for_finish():1929] got exit ret: file_counts {
+  wandb_count: 6
+}
+pusher_stats {
+  uploaded_bytes: 27022
+  total_bytes: 27049
+}
+
+2022-03-30 03:17:04,566 INFO    MainThread:21337 [wandb_run.py:_wait_for_finish():1929] got exit ret: file_counts {
+  wandb_count: 6
+}
+pusher_stats {
+  uploaded_bytes: 27022
+  total_bytes: 27049
+}
+
+2022-03-30 03:17:04,668 INFO    MainThread:21337 [wandb_run.py:_wait_for_finish():1929] got exit ret: file_counts {
+  wandb_count: 6
+}
+pusher_stats {
+  uploaded_bytes: 27022
+  total_bytes: 27049
+}
+
+2022-03-30 03:17:04,769 INFO    MainThread:21337 [wandb_run.py:_wait_for_finish():1929] got exit ret: file_counts {
+  wandb_count: 6
+}
+pusher_stats {
+  uploaded_bytes: 27049
+  total_bytes: 27049
+}
+
+2022-03-30 03:17:04,871 INFO    MainThread:21337 [wandb_run.py:_wait_for_finish():1929] got exit ret: file_counts {
+  wandb_count: 6
+}
+pusher_stats {
+  uploaded_bytes: 27049
+  total_bytes: 27049
+}
+
+2022-03-30 03:17:04,973 INFO    MainThread:21337 [wandb_run.py:_wait_for_finish():1929] got exit ret: file_counts {
+  wandb_count: 6
+}
+pusher_stats {
+  uploaded_bytes: 27049
+  total_bytes: 27049
+}
+
+2022-03-30 03:17:05,074 INFO    MainThread:21337 [wandb_run.py:_wait_for_finish():1929] got exit ret: file_counts {
+  wandb_count: 6
+}
+pusher_stats {
+  uploaded_bytes: 27049
+  total_bytes: 27049
+}
+
+2022-03-30 03:17:05,960 INFO    MainThread:21337 [wandb_run.py:_wait_for_finish():1929] got exit ret: file_counts {
+  wandb_count: 6
+}
+pusher_stats {
+  uploaded_bytes: 27049
+  total_bytes: 27049
+}
+
+2022-03-30 03:17:06,638 INFO    MainThread:21337 [wandb_run.py:_wait_for_finish():1929] got exit ret: done: true
+exit_result {
+}
+file_counts {
+  wandb_count: 6
+}
+pusher_stats {
+  uploaded_bytes: 27049
+  total_bytes: 27049
+}
+local_info {
+}
+
+2022-03-30 03:17:07,943 INFO    MainThread:21337 [wandb_run.py:_append_files():2194] logging synced files

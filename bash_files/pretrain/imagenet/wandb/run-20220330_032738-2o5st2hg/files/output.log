@@ -1,0 +1,106 @@
+
+I'm in here
+[34m[1mwandb[39m[22m: logging graph, to disable use `wandb.watch(log_graph=False)`
+Using 16bit native Automatic Mixed Precision (AMP)
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+Running in fast_dev_run mode: will run a full train, val, test and prediction loop using 1 batch(es).
+/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/configuration_validator.py:281: LightningDeprecationWarning: Base `LightningModule.on_train_batch_end` hook signature has changed in v1.5. The `dataloader_idx` argument will be removed in v1.7.
+  f"Base `LightningModule.{hook}` hook signature has changed in v1.5."
+number of large crop 8
+number of small crop 8
+8
+Global seed set to 5
+Global seed set to 5
+initializing distributed: GLOBAL_RANK: 0, MEMBER: 1/4
+len transform 4
+len num_crops_per_aug 4
+number of large crop 8
+number of small crop 8
+8
+len transform 4
+len num_crops_per_aug 4
+number of large crop 8
+number of small crop 8
+8
+len transform 4
+len num_crops_per_aug 4
+I'm in here
+I'm in here
+I'm in here
+Global seed set to 5
+Global seed set to 5
+Global seed set to 5
+initializing distributed: GLOBAL_RANK: 1, MEMBER: 2/4
+Global seed set to 5
+initializing distributed: GLOBAL_RANK: 2, MEMBER: 3/4
+Global seed set to 5
+initializing distributed: GLOBAL_RANK: 3, MEMBER: 4/4
+----------------------------------------------------------------------------------------------------
+distributed_backend=nccl
+All distributed processes registered. Starting with 4 processes
+----------------------------------------------------------------------------------------------------
+Epoch 0:   0%|                                                                                                                | 0/2 [00:00<?, ?it/s]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3]
+LOCAL_RANK: 2 - CUDA_VISIBLE_DEVICES: [0,1,2,3]
+LOCAL_RANK: 3 - CUDA_VISIBLE_DEVICES: [0,1,2,3]
+LOCAL_RANK: 1 - CUDA_VISIBLE_DEVICES: [0,1,2,3]
+  | Name                | Type       | Params
+---------------------------------------------------
+0 | backbone            | ResNet     | 23.5 M
+1 | classifier          | Linear     | 2.0 M
+2 | momentum_backbone   | ResNet     | 23.5 M
+3 | momentum_classifier | Linear     | 2.0 M
+4 | projector           | Sequential | 10.5 M
+5 | momentum_projector  | Sequential | 10.5 M
+6 | predictor           | Sequential | 4.2 M
+---------------------------------------------------
+42.3 M    Trainable params
+34.0 M    Non-trainable params
+76.3 M    Total params
+152.637   Total estimated model params size (MB)
+/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/data_loading.py:408: UserWarning: The number of training samples (1) is smaller than the logging interval Trainer(log_every_n_steps=50). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
+Epoch 0:   0%|                                                                                                                | 0/2 [00:00<?, ?it/s]len data input 16
+number of crops 16
+len data input 16
+number of crops 16
+len data input 16
+number of crops 16
+len data input 16
+number of crops 16
+Using Multi_Crops
+Using Multi_Crops
+Using Multi_Crops
+Using Multi_Crops
+length from Targe encod 16
+length of Online encod 16
+length from Targe encod 16
+length of Online encod 16
+length from Targe encod 16
+length of Online encod 16
+length from Targe encod 16
+length of Online encod 16
+length of Large Crops training 8
+length of Large Crops training 8
+length of Large Crops training 8
+length of Large Crops training 8
+Length of small crop training 8
+Length of small crop training 8
+Length of small crop training 8
+Length of small crop training 8
+Epoch 0:  50%|███████████████████████████████████████████                                           | 1/2 [00:14<00:14, 14.71s/it, loss=128, v_num=]
+Validating:   0%|                                                                                                             | 0/1 [00:00<?, ?it/s]
+[W reducer.cpp:1303] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[W reducer.cpp:1303] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[W reducer.cpp:1303] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[W reducer.cpp:1303] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+/opt/conda/lib/python3.7/site-packages/torch/optim/lr_scheduler.py:134: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+  "https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate", UserWarning)
+/opt/conda/lib/python3.7/site-packages/torch/optim/lr_scheduler.py:134: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+  "https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate", UserWarning)
+/opt/conda/lib/python3.7/site-packages/torch/optim/lr_scheduler.py:134: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+  "https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate", UserWarning)
+/opt/conda/lib/python3.7/site-packages/torch/optim/lr_scheduler.py:134: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+
+  "https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate", UserWarning)

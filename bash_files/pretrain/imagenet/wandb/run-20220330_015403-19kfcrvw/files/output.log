@@ -1,0 +1,163 @@
+
+I'm in here
+[34m[1mwandb[39m[22m: logging graph, to disable use `wandb.watch(log_graph=False)`
+Using 16bit native Automatic Mixed Precision (AMP)
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+Running in fast_dev_run mode: will run a full train, val, test and prediction loop using 1 batch(es).
+/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/configuration_validator.py:281: LightningDeprecationWarning: Base `LightningModule.on_train_batch_end` hook signature has changed in v1.5. The `dataloader_idx` argument will be removed in v1.7.
+  f"Base `LightningModule.{hook}` hook signature has changed in v1.5."
+4
+Global seed set to 5
+Global seed set to 5
+len transform 4
+len num_crops_per_aug 4
+4
+len transform 4
+len num_crops_per_aug 4
+initializing distributed: GLOBAL_RANK: 0, MEMBER: 1/4
+Global seed set to 5
+Traceback (most recent call last):
+  File "/code_spec/MVAR_SSL/bash_files/pretrain/imagenet/../../../mv_ma_pretrain_edit.py", line 221, in <module>
+Traceback (most recent call last):
+  File "/code_spec/MVAR_SSL/bash_files/pretrain/imagenet/../../../mv_ma_pretrain_edit.py", line 27, in <module>
+    main()
+  File "/code_spec/MVAR_SSL/bash_files/pretrain/imagenet/../../../mv_ma_pretrain_edit.py", line 111, in main
+    from solo.args.setup import parse_args_pretrain
+  File "/code_spec/MVAR_SSL/solo/__init__.py", line 21, in <module>
+    no_labels=args.no_labels,
+    from solo import args, losses, methods, utils
+  File "/code_spec/MVAR_SSL/solo/utils/pretrain_dataloader.py", line 789, in prepare_datasets
+  File "/code_spec/MVAR_SSL/solo/args/__init__.py", line 20, in <module>
+    from solo.args import dataset, setup, utils
+  File "/code_spec/MVAR_SSL/solo/args/setup.py", line 30, in <module>
+    from solo.methods import METHODS
+  File "/code_spec/MVAR_SSL/solo/methods/__init__.py", line 20, in <module>
+    from solo.methods.barlow_twins import BarlowTwins
+  File "/code_spec/MVAR_SSL/solo/methods/barlow_twins.py", line 25, in <module>
+    train_dataset = dataset_with_index(ImageFolder)(train_dir, transform)
+    from solo.losses.barlow import barlow_loss_func
+  File "/opt/conda/lib/python3.7/site-packages/torchvision/datasets/folder.py", line 313, in __init__
+  File "/code_spec/MVAR_SSL/solo/losses/__init__.py", line 27, in <module>
+    from solo.losses.simclr import simclr_loss_func
+  File "/code_spec/MVAR_SSL/solo/losses/simclr.py", line 22, in <module>
+    from solo.utils.misc import gather, get_rank
+  File "/code_spec/MVAR_SSL/solo/utils/__init__.py", line 54, in <module>
+    is_valid_file=is_valid_file)
+  File "/opt/conda/lib/python3.7/site-packages/torchvision/datasets/folder.py", line 146, in __init__
+    from solo.utils import auto_umap  # noqa: F401
+  File "/code_spec/MVAR_SSL/solo/utils/auto_umap.py", line 34, in <module>
+    import umap
+    samples = self.make_dataset(self.root, class_to_idx, extensions, is_valid_file)
+Traceback (most recent call last):
+  File "/opt/conda/lib/python3.7/site-packages/torchvision/datasets/folder.py", line 192, in make_dataset
+  File "/opt/conda/lib/python3.7/site-packages/umap/__init__.py", line 2, in <module>
+  File "/code_spec/MVAR_SSL/bash_files/pretrain/imagenet/../../../mv_ma_pretrain_edit.py", line 221, in <module>
+    from .umap_ import UMAP
+    return make_dataset(directory, class_to_idx, extensions=extensions, is_valid_file=is_valid_file)
+  File "/opt/conda/lib/python3.7/site-packages/umap/umap_.py", line 47, in <module>
+  File "/opt/conda/lib/python3.7/site-packages/torchvision/datasets/folder.py", line 87, in make_dataset
+    from pynndescent import NNDescent
+  File "/opt/conda/lib/python3.7/site-packages/pynndescent/__init__.py", line 3, in <module>
+    for root, _, fnames in sorted(os.walk(target_dir, followlinks=True)):
+  File "/opt/conda/lib/python3.7/os.py", line 362, in walk
+    from .pynndescent_ import NNDescent, PyNNDescentTransformer
+  File "/opt/conda/lib/python3.7/site-packages/pynndescent/pynndescent_.py", line 16, in <module>
+    import pynndescent.sparse as sparse
+  File "/opt/conda/lib/python3.7/site-packages/pynndescent/sparse.py", line 11, in <module>
+    from pynndescent.distances import (
+    entry = next(scandir_it)
+  File "/opt/conda/lib/python3.7/site-packages/pynndescent/distances.py", line 594, in <module>
+KeyboardInterrupt
+    "i": numba.types.uint16,
+  File "/opt/conda/lib/python3.7/site-packages/numba/core/decorators.py", line 219, in wrapper
+    disp.compile(sig)
+  File "/opt/conda/lib/python3.7/site-packages/numba/core/dispatcher.py", line 965, in compile
+    main()
+    cres = self._compiler.compile(args, return_type)
+  File "/code_spec/MVAR_SSL/bash_files/pretrain/imagenet/../../../mv_ma_pretrain_edit.py", line 111, in main
+  File "/opt/conda/lib/python3.7/site-packages/numba/core/dispatcher.py", line 125, in compile
+    no_labels=args.no_labels,
+    status, retval = self._compile_cached(args, return_type)
+  File "/opt/conda/lib/python3.7/site-packages/numba/core/dispatcher.py", line 139, in _compile_cached
+  File "/code_spec/MVAR_SSL/solo/utils/pretrain_dataloader.py", line 789, in prepare_datasets
+    retval = self._compile_core(args, return_type)
+  File "/opt/conda/lib/python3.7/site-packages/numba/core/dispatcher.py", line 157, in _compile_core
+    pipeline_class=self.pipeline_class)
+  File "/opt/conda/lib/python3.7/site-packages/numba/core/compiler.py", line 693, in compile_extra
+    train_dataset = dataset_with_index(ImageFolder)(train_dir, transform)
+  File "/opt/conda/lib/python3.7/site-packages/torchvision/datasets/folder.py", line 313, in __init__
+    return pipeline.compile_extra(func)
+  File "/opt/conda/lib/python3.7/site-packages/numba/core/compiler.py", line 429, in compile_extra
+    is_valid_file=is_valid_file)
+    return self._compile_bytecode()
+  File "/opt/conda/lib/python3.7/site-packages/torchvision/datasets/folder.py", line 146, in __init__
+  File "/opt/conda/lib/python3.7/site-packages/numba/core/compiler.py", line 497, in _compile_bytecode
+    samples = self.make_dataset(self.root, class_to_idx, extensions, is_valid_file)
+  File "/opt/conda/lib/python3.7/site-packages/torchvision/datasets/folder.py", line 192, in make_dataset
+    return self._compile_core()
+  File "/opt/conda/lib/python3.7/site-packages/numba/core/compiler.py", line 463, in _compile_core
+    return make_dataset(directory, class_to_idx, extensions=extensions, is_valid_file=is_valid_file)
+  File "/opt/conda/lib/python3.7/site-packages/torchvision/datasets/folder.py", line 89, in make_dataset
+    if is_valid_file(fname):
+  File "/opt/conda/lib/python3.7/site-packages/torchvision/datasets/folder.py", line 76, in is_valid_file
+    pm.run(self.state)
+  File "/opt/conda/lib/python3.7/site-packages/numba/core/compiler_machinery.py", line 341, in run
+    return has_file_allowed_extension(x, cast(Tuple[str, ...], extensions))
+  File "/opt/conda/lib/python3.7/typing.py", line 751, in __getitem__
+    self._runPass(idx, pass_inst, state)
+  File "/opt/conda/lib/python3.7/site-packages/numba/core/compiler_lock.py", line 35, in _acquire_compile_lock
+    return func(*args, **kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/numba/core/compiler_machinery.py", line 296, in _runPass
+    return self.__getitem_inner__(params)
+    mutated |= check(pss.run_pass, internal_state)
+  File "/opt/conda/lib/python3.7/typing.py", line 251, in inner
+  File "/opt/conda/lib/python3.7/site-packages/numba/core/compiler_machinery.py", line 269, in check
+    return cached(*args, **kwds)
+    mangled = func(compiler_state)
+  File "/opt/conda/lib/python3.7/typing.py", line 670, in __hash__
+  File "/opt/conda/lib/python3.7/site-packages/numba/core/typed_passes.py", line 112, in run_pass
+    raise_errors=self._raise_errors)
+  File "/opt/conda/lib/python3.7/site-packages/numba/core/typed_passes.py", line 83, in type_inference_stage
+    errs = infer.propagate(raise_errors=raise_errors)
+  File "/opt/conda/lib/python3.7/site-packages/numba/core/typeinfer.py", line 1078, in propagate
+    if self.__origin__ is Union:
+KeyboardInterrupt
+    errors = self.constraints.propagate(self)
+  File "/opt/conda/lib/python3.7/site-packages/numba/core/typeinfer.py", line 155, in propagate
+    constraint(typeinfer)
+  File "/opt/conda/lib/python3.7/site-packages/numba/core/typeinfer.py", line 704, in __call__
+    self.resolve(typeinfer, typeinfer.typevars, fnty=fnty)
+  File "/opt/conda/lib/python3.7/site-packages/numba/core/typeinfer.py", line 601, in resolve
+    sig = typeinfer.resolve_call(fnty, pos_args, kw_args)
+  File "/opt/conda/lib/python3.7/site-packages/numba/core/typeinfer.py", line 1555, in resolve_call
+    return self.context.resolve_function_type(fnty, pos_args, kw_args)
+  File "/opt/conda/lib/python3.7/site-packages/numba/core/typing/context.py", line 196, in resolve_function_type
+    res = self._resolve_user_function_type(func, args, kws)
+  File "/opt/conda/lib/python3.7/site-packages/numba/core/typing/context.py", line 248, in _resolve_user_function_type
+    return func.get_call_type(self, args, kws)
+  File "/opt/conda/lib/python3.7/site-packages/numba/core/types/functions.py", line 292, in get_call_type
+    fnkey=self.key[0])
+  File "/opt/conda/lib/python3.7/site-packages/numba/core/utils.py", line 329, in order_by_target_specificity
+    md = getattr(temp_cls, "metadata", {})
+KeyboardInterrupt
+/opt/conda/lib/python3.7/site-packages/pytorch_lightning/trainer/trainer.py:685: UserWarning: Detected KeyboardInterrupt, attempting graceful shutdown...
+  rank_zero_warn("Detected KeyboardInterrupt, attempting graceful shutdown...")
+Exception in thread ChkStopThr:
+Traceback (most recent call last):
+  File "/opt/conda/lib/python3.7/threading.py", line 926, in _bootstrap_inner
+    self.run()
+  File "/opt/conda/lib/python3.7/threading.py", line 870, in run
+    self._target(*self._args, **self._kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/wandb/sdk/wandb_run.py", line 166, in check_status
+    status_response = self._interface.communicate_stop_status()
+  File "/opt/conda/lib/python3.7/site-packages/wandb/sdk/interface/interface.py", line 114, in communicate_stop_status
+    resp = self._communicate_stop_status(status)
+  File "/opt/conda/lib/python3.7/site-packages/wandb/sdk/interface/interface_shared.py", line 378, in _communicate_stop_status
+    resp = self._communicate(req, local=True)
+  File "/opt/conda/lib/python3.7/site-packages/wandb/sdk/interface/interface_shared.py", line 213, in _communicate
+    return self._communicate_async(rec, local=local).get(timeout=timeout)
+  File "/opt/conda/lib/python3.7/site-packages/wandb/sdk/interface/interface_shared.py", line 218, in _communicate_async
+    raise Exception("The wandb backend process has shutdown")
+Exception: The wandb backend process has shutdown

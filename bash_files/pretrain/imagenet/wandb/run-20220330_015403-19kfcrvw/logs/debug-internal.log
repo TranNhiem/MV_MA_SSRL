@@ -1,0 +1,50 @@
+2022-03-30 01:54:03,673 INFO    MainThread:81562 [internal.py:wandb_internal():92] W&B internal server running at pid: 81562, started at: 2022-03-30 01:54:03.673723
+2022-03-30 01:54:03,675 DEBUG   HandlerThread:81562 [handler.py:handle_request():131] handle_request: check_version
+2022-03-30 01:54:03,676 INFO    WriterThread:81562 [datastore.py:open_for_write():77] open: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220330_015403-19kfcrvw/run-19kfcrvw.wandb
+2022-03-30 01:54:03,677 DEBUG   SenderThread:81562 [sender.py:send():235] send: header
+2022-03-30 01:54:03,677 DEBUG   SenderThread:81562 [sender.py:send_request():249] send_request: check_version
+2022-03-30 01:54:03,731 DEBUG   SenderThread:81562 [sender.py:send():235] send: run
+2022-03-30 01:54:03,732 INFO    SenderThread:81562 [sender.py:_maybe_setup_resume():490] checking resume status for mlbrl/solo_MASSL/19kfcrvw
+2022-03-30 01:54:04,361 INFO    SenderThread:81562 [dir_watcher.py:__init__():169] watching files in: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220330_015403-19kfcrvw/files
+2022-03-30 01:54:04,361 INFO    SenderThread:81562 [sender.py:_start_run_threads():812] run started: 19kfcrvw with start time 1648605243
+2022-03-30 01:54:04,361 DEBUG   SenderThread:81562 [sender.py:send():235] send: summary
+2022-03-30 01:54:04,361 DEBUG   HandlerThread:81562 [handler.py:handle_request():131] handle_request: run_start
+2022-03-30 01:54:04,362 INFO    SenderThread:81562 [sender.py:_save_file():944] saving file wandb-summary.json with policy end
+2022-03-30 01:54:04,385 DEBUG   HandlerThread:81562 [meta.py:__init__():36] meta init
+2022-03-30 01:54:04,385 DEBUG   HandlerThread:81562 [meta.py:__init__():50] meta init done
+2022-03-30 01:54:04,385 DEBUG   HandlerThread:81562 [meta.py:probe():210] probe
+2022-03-30 01:54:04,402 DEBUG   HandlerThread:81562 [meta.py:_setup_git():200] setup git
+2022-03-30 01:54:04,413 DEBUG   HandlerThread:81562 [meta.py:_setup_git():207] setup git done
+2022-03-30 01:54:04,413 DEBUG   HandlerThread:81562 [meta.py:_save_pip():54] save pip
+2022-03-30 01:54:04,414 DEBUG   HandlerThread:81562 [meta.py:_save_pip():68] save pip done
+2022-03-30 01:54:04,414 DEBUG   HandlerThread:81562 [meta.py:_save_conda():75] save conda
+2022-03-30 01:54:05,362 INFO    Thread-8  :81562 [dir_watcher.py:_on_file_created():217] file/dir created: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220330_015403-19kfcrvw/files/requirements.txt
+2022-03-30 01:54:05,363 INFO    Thread-8  :81562 [dir_watcher.py:_on_file_created():217] file/dir created: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220330_015403-19kfcrvw/files/conda-environment.yaml
+2022-03-30 01:54:05,363 INFO    Thread-8  :81562 [dir_watcher.py:_on_file_created():217] file/dir created: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220330_015403-19kfcrvw/files/wandb-summary.json
+2022-03-30 01:54:06,067 DEBUG   HandlerThread:81562 [meta.py:_save_conda():85] save conda done
+2022-03-30 01:54:06,067 DEBUG   HandlerThread:81562 [meta.py:probe():248] probe done
+2022-03-30 01:54:06,106 DEBUG   SenderThread:81562 [sender.py:send():235] send: files
+2022-03-30 01:54:06,106 INFO    SenderThread:81562 [sender.py:_save_file():944] saving file wandb-metadata.json with policy now
+2022-03-30 01:54:06,110 DEBUG   HandlerThread:81562 [handler.py:handle_request():131] handle_request: stop_status
+2022-03-30 01:54:06,111 DEBUG   SenderThread:81562 [sender.py:send_request():249] send_request: stop_status
+2022-03-30 01:54:06,181 DEBUG   SenderThread:81562 [sender.py:send():235] send: metric
+2022-03-30 01:54:06,182 DEBUG   SenderThread:81562 [sender.py:send():235] send: metric
+2022-03-30 01:54:06,182 WARNING SenderThread:81562 [sender.py:send_metric():902] Seen metric with glob (shouldnt happen)
+2022-03-30 01:54:06,182 DEBUG   SenderThread:81562 [sender.py:send():235] send: metric
+2022-03-30 01:54:06,182 DEBUG   SenderThread:81562 [sender.py:send():235] send: metric
+2022-03-30 01:54:06,182 WARNING SenderThread:81562 [sender.py:send_metric():902] Seen metric with glob (shouldnt happen)
+2022-03-30 01:54:06,182 DEBUG   SenderThread:81562 [sender.py:send():235] send: config
+2022-03-30 01:54:06,363 INFO    Thread-8  :81562 [dir_watcher.py:_on_file_modified():230] file/dir modified: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220330_015403-19kfcrvw/files/conda-environment.yaml
+2022-03-30 01:54:06,363 INFO    Thread-8  :81562 [dir_watcher.py:_on_file_created():217] file/dir created: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220330_015403-19kfcrvw/files/output.log
+2022-03-30 01:54:06,364 INFO    Thread-8  :81562 [dir_watcher.py:_on_file_created():217] file/dir created: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220330_015403-19kfcrvw/files/wandb-metadata.json
+2022-03-30 01:54:06,540 INFO    Thread-11 :81562 [upload_job.py:push():137] Uploaded file /tmp/tmpbtxi68sjwandb/1wsjyqqw-wandb-metadata.json
+2022-03-30 01:54:08,364 INFO    Thread-8  :81562 [dir_watcher.py:_on_file_modified():230] file/dir modified: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220330_015403-19kfcrvw/files/output.log
+2022-03-30 01:54:14,366 INFO    Thread-8  :81562 [dir_watcher.py:_on_file_modified():230] file/dir modified: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220330_015403-19kfcrvw/files/output.log
+2022-03-30 01:54:18,016 WARNING MainThread:81562 [internal.py:wandb_internal():152] Internal process interrupt: 1
+2022-03-30 01:54:33,693 DEBUG   SenderThread:81562 [sender.py:send():235] send: stats
+2022-03-30 01:54:34,372 INFO    Thread-8  :81562 [dir_watcher.py:_on_file_modified():230] file/dir modified: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220330_015403-19kfcrvw/files/config.yaml
+2022-03-30 01:55:04,698 DEBUG   SenderThread:81562 [sender.py:send():235] send: stats
+2022-03-30 01:55:35,833 DEBUG   SenderThread:81562 [sender.py:send():235] send: stats
+2022-03-30 01:55:55,278 WARNING MainThread:81562 [internal.py:wandb_internal():152] Internal process interrupt: 2
+2022-03-30 01:55:55,278 ERROR   MainThread:81562 [internal.py:wandb_internal():155] Internal process interrupted.
+2022-03-30 01:55:55,675 INFO    MainThread:81562 [internal.py:handle_exit():79] Internal process exited
