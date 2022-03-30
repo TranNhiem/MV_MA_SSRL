@@ -140,8 +140,9 @@ class MVAR(BaseMomentumMethod):
         for v1 in range(self.num_small_crops):
             # Views 2 remove the prior Views
             for v2 in np.delete(range(self.num_crops-self.num_large_crops), v1):
-                neg_cos_sim_loc += byol_loss_func((P[(v2+self.num_large_crops)-1], Z_momentum[v1], )
+                neg_cos_sim_loc += byol_loss_func(P[(v2+self.num_large_crops)-1], Z_momentum[v1], )
 
+        neg_cos_sim = (neg_cos_sim_glob + neg_cos_sim_loc)/2
         # calculate std of features
         with torch.no_grad():
             z_std = F.normalize(torch.stack(Z[: self.num_small_crops]), dim=-1).std(dim=1).mean()
