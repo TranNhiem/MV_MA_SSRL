@@ -121,7 +121,8 @@ class MVAR(BaseMomentumMethod):
 
         Z = [self.projector(f) for f in feats]
         P = [self.predictor(z) for z in Z]
-
+        print("Shape from Targe encod",Z.shape)
+        print("Shape of Online encod", P.shape)
         # forward momentum backbone
         with torch.no_grad():
             Z_momentum = [self.momentum_projector(f) for f in momentum_feats]
@@ -130,13 +131,18 @@ class MVAR(BaseMomentumMethod):
         
         neg_cos_sim_glob = 0
         ## If the Multi View the Loop Iteratively Corresponding
-        print("length of Large Crops",self.num_large_crops ) 
+        print("length of Large Crops training",self.num_large_crops ) 
         for v1 in range(self.num_large_crops):
             # Views 2 remove the prior Views
             for v2 in np.delete(range(self.num_crops-self.num_small_crops), v1):
                 neg_cos_sim_glob += byol_loss_func(P[v2], Z_momentum[v1], )
         
+        # calculate std of features
+        with torch.no_grad():
+            z_std_glob = F.normalize(torch.stack(Z[: self.num_small_crops]), dim=-1).std(dim=1).mean()
+
         neg_cos_sim_loc= 0
+        print("Length of small crop training", self.num_small_crops)
         for v1 in range(self.num_small_crops):
             # Views 2 remove the prior Views
             for v2 in np.delete(range(self.num_crops-self.num_large_crops), v1):
@@ -145,8 +151,9 @@ class MVAR(BaseMomentumMethod):
         neg_cos_sim = (neg_cos_sim_glob + neg_cos_sim_loc)/2
         # calculate std of features
         with torch.no_grad():
-            z_std = F.normalize(torch.stack(Z[: self.num_small_crops]), dim=-1).std(dim=1).mean()
-
+            z_std_loc = F.normalize(torch.stack(Z[self.num_large_crops : ]), dim=-1).std(dim=1).mean()
+        z_std=z_std_glob + z_std_loc
+        
         return neg_cos_sim, z_std
 
     def training_step(self, batch: Sequence[Any], batch_idx: int) -> torch.Tensor:
