@@ -16,7 +16,7 @@ from solo.methods.base import BaseMomentumMethod
 from solo.utils.momentum import initialize_momentum_params
 
 
-class MASSL(BaseMomentumMethod):
+class MVAR(BaseMomentumMethod):
     def __init__(
         self,
         proj_output_dim: int,
@@ -60,7 +60,7 @@ class MASSL(BaseMomentumMethod):
 
     @staticmethod
     def add_model_specific_args(parent_parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
-        parent_parser = super(MASSL, MASSL).add_model_specific_args(parent_parser)
+        parent_parser = super(MVAR, MVAR).add_model_specific_args(parent_parser)
         parser = parent_parser.add_argument_group("byol")
 
         # projector
@@ -128,17 +128,23 @@ class MASSL(BaseMomentumMethod):
 
         # ------- negative consine similarity loss -------
         
-        neg_cos_sim = 0
+        neg_cos_sim_glob = 0
         ## If the Multi View the Loop Iteratively Corresponding
         print("length of Large Crops",self.num_large_crops ) 
         for v1 in range(self.num_large_crops):
             # Views 2 remove the prior Views
-            for v2 in np.delete(range(self.num_crops), v1):
-                neg_cos_sim += byol_loss_func(P[v2], Z_momentum[v1], )
+            for v2 in np.delete(range(self.num_crops-self.num_small_crops), v1):
+                neg_cos_sim_glob += byol_loss_func(P[v2], Z_momentum[v1], )
+        
+        neg_cos_sim_loc= 0
+        for v1 in range(self.num_small_crops):
+            # Views 2 remove the prior Views
+            for v2 in np.delete(range(self.num_crops-self.num_large_crops), v1):
+                neg_cos_sim_loc += byol_loss_func((P[(v2+self.num_large_crops)-1], Z_momentum[v1], )
 
         # calculate std of features
         with torch.no_grad():
-            z_std = F.normalize(torch.stack(Z[: self.num_large_crops]), dim=-1).std(dim=1).mean()
+            z_std = F.normalize(torch.stack(Z[: self.num_small_crops]), dim=-1).std(dim=1).mean()
 
         return neg_cos_sim, z_std
 

@@ -21,6 +21,7 @@ from solo.methods.barlow_twins import BarlowTwins
 from solo.methods.base import BaseMethod
 from solo.methods.byol import BYOL
 from solo.methods.massl import MASSL
+from solo.methods.mv_ma_ssl import MVAR
 from solo.methods.massl_edit import MASSL_edit
 from solo.methods.deepclusterv2 import DeepClusterV2
 from solo.methods.dino import DINO
@@ -46,6 +47,7 @@ METHODS = {
     "barlow_twins": BarlowTwins,
     "byol": BYOL,
     "massl":MASSL,
+    "mvar": MVAR,
     "massl_edit":MASSL_edit,
     "deepclusterv2": DeepClusterV2,
     "dino": DINO,
@@ -66,6 +68,7 @@ __all__ = [
     "BarlowTwins",
     "BYOL",
     "MASSL",
+    "MVAR"
     "MASSL_edit",
     "BaseMethod",
     "DeepClusterV2",
