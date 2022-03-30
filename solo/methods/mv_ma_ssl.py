@@ -121,8 +121,8 @@ class MVAR(BaseMomentumMethod):
 
         Z = [self.projector(f) for f in feats]
         P = [self.predictor(z) for z in Z]
-        print("Shape from Targe encod",Z.shape)
-        print("Shape of Online encod", P.shape)
+        print("length from Targe encod",len(Z))
+        print("length of Online encod", len(P))
         # forward momentum backbone
         with torch.no_grad():
             Z_momentum = [self.momentum_projector(f) for f in momentum_feats]
@@ -140,7 +140,7 @@ class MVAR(BaseMomentumMethod):
         # calculate std of features
         with torch.no_grad():
             z_std_glob = F.normalize(torch.stack(Z[: self.num_small_crops]), dim=-1).std(dim=1).mean()
-
+           
         neg_cos_sim_loc= 0
         print("Length of small crop training", self.num_small_crops)
         for v1 in range(self.num_small_crops):
