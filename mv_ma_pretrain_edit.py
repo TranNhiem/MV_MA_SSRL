@@ -205,16 +205,18 @@ def main():
     #     # unpack
     #     #x1, x2, x3, x4 = im
     #     print(len(x2))
-    #     x1_=x2[7]
+    #     print("Rick Double Check Global Views shape", x2[args.num_large_crops-2].shape )
+    #     print("Rick Double Check  Local Views shape", x2[args.num_large_crops+2].shape)
+    #     #x1_=x2[7]
     #     print(x1.shape)
-    #     print(x1_.shape)
+    #     #print(x1_.shape)
     #     print(x3.shape)
     #     break
 
-    if args.dali:
-        trainer.fit(model, val_dataloaders=val_loader, ckpt_path=ckpt_path)
-    else:
-        trainer.fit(model, train_loader, val_loader, ckpt_path=ckpt_path)
+    # if args.dali:
+    #     trainer.fit(model, val_dataloaders=val_loader, ckpt_path=ckpt_path)
+    # else:
+    #     trainer.fit(model, train_loader, val_loader, ckpt_path=ckpt_path)
 
 
 if __name__ == "__main__":

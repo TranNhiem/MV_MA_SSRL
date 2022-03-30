@@ -1,5 +1,6 @@
 python3 ../../../mv_ma_pretrain_edit.py \
     --dataset mv_ma \
+    --mvar_training True \
     --backbone resnet50 \
     --data_dir /img_data/ \
     --train_dir train \
@@ -50,7 +51,7 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --project solo_MASSL \
     --wandb \
     --save_checkpoint \
-    --method massl \
+    --method mvar \
     --proj_output_dim 512 \
     --proj_hidden_dim 4096 \
     --pred_hidden_dim 4096 \

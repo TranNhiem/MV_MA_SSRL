@@ -138,6 +138,8 @@ class MASSL_edit(BaseMomentumMethod):
         
         neg_cos_sim = 0
         ## If the Multi View the Loop Iteratively Corresponding 
+        print("length of Online Encoder", len(P))
+        print("Number of large Crops", self.num_large_crops)
         for v1 in range(self.num_large_crops):
             # Views 2 remove the prior Views
             for v2 in np.delete(range(self.num_crops), v1):

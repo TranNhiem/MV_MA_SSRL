@@ -194,8 +194,8 @@ class BaseMethod(pl.LightningModule):
         self.warmup_epochs = warmup_epochs
         self.MASSL_new= MASSL_new
         #print("Hooray You implement new design")
-        self.num_large_crops = num_large_crops*2 # Attention at this Part Need update for Automatic Configure
-        self.num_small_crops = num_small_crops*2 #num_small_crops *2
+        self.num_large_crops = num_large_crops# Attention at this Part Need update for Automatic Configure
+        self.num_small_crops = num_small_crops #num_small_crops *2
         self.eta_lars = eta_lars
         self.grad_clip_lars = grad_clip_lars
         self.knn_eval = knn_eval
@@ -469,13 +469,18 @@ class BaseMethod(pl.LightningModule):
         X = [X] if isinstance(X, torch.Tensor) else X
 
         # check that we received the desired number of crops
+        print("len data input",len(X))
+        print("number of crops", self.num_crops)
         assert len(X) == self.num_crops
+
 
         outs = [self._base_shared_step(x, targets) for x in X[: self.num_large_crops]]
         outs = {k: [out[k] for out in outs] for k in outs[0].keys()}
 
         if self.multicrop:
+            print("Using Multi_Crops")
             outs["feats"].extend([self.backbone(x) for x in X[self.num_large_crops :]])
+        
 
         # loss and stats
         outs["loss"] = sum(outs["loss"]) / self.num_large_crops

@@ -108,8 +108,11 @@ class MVAR(BaseMomentumMethod):
         """
         
         ## Consider Editing Part for Extra 2 more Views
+        print("Rick Double Check Global Views shape", X[self.num_large_crops-2].shape )
+        print("Rick Double Check  Local Views shape", X[self.num_large_crops+2].shape)
         out = super().forward(X, *args, **kwargs)
-        print(out.shape)
+        
+        
 
         z = self.projector(out["feats"])
         p = self.predictor(z)
@@ -118,11 +121,12 @@ class MVAR(BaseMomentumMethod):
     def _shared_step(
         self, feats: List[torch.Tensor], momentum_feats: List[torch.Tensor]
     ) -> torch.Tensor:
-
+       
         Z = [self.projector(f) for f in feats]
         P = [self.predictor(z) for z in Z]
         print("length from Targe encod",len(Z))
         print("length of Online encod", len(P))
+       
         # forward momentum backbone
         with torch.no_grad():
             Z_momentum = [self.momentum_projector(f) for f in momentum_feats]

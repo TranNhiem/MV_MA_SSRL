@@ -187,7 +187,7 @@ def main():
 
     trainer = Trainer.from_argparse_args(
         args,
-        # fast_dev_run= True,
+        fast_dev_run= True,
         logger=wandb_logger if args.wandb else None,
         callbacks=callbacks,
         enable_checkpointing=False,

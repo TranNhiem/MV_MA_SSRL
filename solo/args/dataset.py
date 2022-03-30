@@ -78,6 +78,8 @@ def augmentations_args(parser: ArgumentParser):
 
     # cropping
     parser.add_argument("--crop_size", type=int, default=[224], nargs="+")
+    parser.add_argument("--mvar_training", type=bool, default=False )
+    parser.add_argument("--massl_training", type=bool, default=False )
     parser.add_argument("--num_crop_glob", type=int, default=2 )
     parser.add_argument("--num_crop_loc", type=int, default=3)
     parser.add_argument("--crop_size_glob", type=int, default=224 )
