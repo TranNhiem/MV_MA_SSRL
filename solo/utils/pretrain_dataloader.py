@@ -393,6 +393,8 @@ def prepare_n_crop_transform_v1(
         T.append(NCropAugmentation(transform, num_crops))
     return FullTransformPipeline_v1(T)
 
+
+## dev
 def prepare_n_crop_transform_mv_ma(
     transforms: List[Callable], num_crops_per_aug: List[int], crop_size: List[int]
                                 ,crop_type: str, min_loc: float =0.1, max_loc: float=0.34,
@@ -419,6 +421,8 @@ def prepare_n_crop_transform_mv_ma(
         i+=1
     return FullTransformPipeline(T)
 
+
+## stable version
 def prepare_n_crop_transform_mv_ma_v1(
     transforms: List[Callable], num_crops_per_aug: List[int],  num_crop_glob:int, crop_size_glob: int,num_crop_loc:int, crop_size_loc: int
                                 ,crop_type: str, min_loc: float =0.1, max_loc: float=0.34,
@@ -446,6 +450,7 @@ def prepare_n_crop_transform_mv_ma_v1(
     return FullTransformPipeline_ma_mv(T, num_crop_glob, crop_size_glob,num_crop_loc, crop_size_loc
                                 ,crop_type,min_scale_loc=min_loc, max_scale_loc=max_loc,
                                  min_scale_glob=min_glob, max_scale_glob=max_glob )
+
 class BaseTransform:
     """Adds callable base class to implement different transformation pipelines."""
 
@@ -790,7 +795,6 @@ def prepare_datasets(
 
     return train_dataset
 
-
 def prepare_dataloader(
     train_dataset: Dataset, batch_size: int = 64, num_workers: int = 4
 ) -> DataLoader:
@@ -812,3 +816,33 @@ def prepare_dataloader(
         drop_last=True,
     )
     return train_loader
+
+
+# Note that, the code snippet below can not be directly executed
+if __name__ == "__main__":
+    # Seems the multi-view work almost done by combining Transform & Dataset
+    from pretrain_dataloader_v2 import Imagenet_DataModule
+
+    params = {'data_dir':'/data', 'batch_size':64}
+    imgnet_ds = Imagenet_DataModule(**params)
+
+    # i keep valid_transform, but it should be the same way to assign the trfs.
+    imgnet_ds.train_transform = prepare_transform(dataset="mv_ma")
+
+    # confirm the multi-view transform
+    print(f"train trfs : {imgnet_ds.train_transform}\n")
+    print(f"valid trfs : {imgnet_ds.valid_transform}\n")
+
+    ## After we confirm this part, we can put it into prepare_dataset function :
+    '''
+    # 
+    ... 
+
+    elif dataset == "mulda" or "mulda_v1" or "mv_ma":
+        train_dir = data_dir / train_dir
+        imgnet_ds = Imagenet_DataModule(data_dir=train_dir)
+        imgnet_ds.train_transform = transform
+
+        return imgnet_ds.train_dataloader()
+
+    '''
