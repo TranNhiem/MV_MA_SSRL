@@ -282,6 +282,41 @@ def cutout():
     pass
 
 
+## Extended version of transformation space
+def brightness_func(img, factor):
+    brightness = ColorJitter(brightness=factor, contrast=0, saturation=0, hue=0)
+    img = brightness(img)
+    return img
+    
+
+def contrast_func(img, factor):
+    contrast = ColorJitter(brightness=0, contrast=factor, saturation=0, hue=0)
+    img = contrast(img)
+    return img
+    
+
+def saturation_func(img, factor):
+    saturation = ColorJitter(brightness=0, contrast=0, saturation=factor, hue=0)
+    img = saturation(img)
+    return img
+
+def hue_func(img, factor):
+    hue = ColorJitter(brightness=0, contrast=0, saturation=0, hue=factor)
+    img = hue(img)
+    return img
+
+def blur_func(img, factor):
+    blur = GaussianBlur(kernel_size=int(factor), sigma=(0.1, 2.0))
+    img = blur(img)
+    return img
+
+# it doesn't have the params to search, only random apply
+def grayscale_func(img, factor):
+    gray_scale = Grayscale() 
+    img = gray_scale(img)  
+    return img
+
+
 func_dict = {
     'Identity': identity_func,
     'AutoContrast': autocontrast_func,
@@ -297,6 +332,14 @@ func_dict = {
     'TranslateY': translate_y_func,
     'Posterize': posterize_func,
     'ShearY': shear_y_func,
+
+    ## addition 
+    "rand_brightness" : brightness_func,
+    "rand_contrast": contrast_func,
+    "rand_saturation": saturation_func,
+    "rand_hue": hue_func,
+    "rand_gaussian_blur": blur_func,
+    "rand_gray_scale":  grayscale_func,
 }
 
 translate_const = 10
@@ -321,6 +364,14 @@ arg_dict = {
     ),
     'Posterize': posterize_level_to_args(MAX_LEVEL),
     'ShearY': shear_level_to_args(MAX_LEVEL, replace_value),
+
+    ## addition 
+    "rand_brightness" : lambda : raise NotImplementedError("not implemnt level to args func"),
+    "rand_contrast": lambda : raise NotImplementedError("not implemnt level to args func"),
+    "rand_saturation": lambda : raise NotImplementedError("not implemnt level to args func"),
+    "rand_hue": lambda : raise NotImplementedError("not implemnt level to args func"),
+    "rand_gaussian_blur": lambda : raise NotImplementedError("not implemnt level to args func"),
+    "rand_gray_scale":  none_level_to_args,
 }
 
 
