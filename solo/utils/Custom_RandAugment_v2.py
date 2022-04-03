@@ -7,17 +7,31 @@ from torchvision.transforms import ColorJitter, Grayscale, GaussianBlur
 # typing check
 from typing import List, Tuple, Optional, Dict
 from torch import Tensor
+import math
 
 ## The original data augmentation of SimCLR repository 
 #  plz referes : https://github.com/sthalles/SimCLR/blob/master/data_aug/contrastive_learning_dataset.py
 class Extended_RangAugment(RandAugment):
     ## public interface
     def __init__(self, num_ops: int = 2, magnitude: int = 9, num_magnitude_bins: int = 31, 
-                        interpolation: InterpolationMode = InterpolationMode.NEAREST, fill: Optional[List[float]] = None,
+                        interpolation: InterpolationMode = InterpolationMode.NEAREST, 
+                        fill: Optional[List[float]] = None, sigma: Tuple[int, int] = (0.1, 2.0),
+                        debug_flag: bool = False
     ) -> None:
         super().__init__(num_ops, magnitude, num_magnitude_bins, interpolation, fill)
+        self.sigma = sigma
+        self.debug_flag = debug_flag
 
-    def _ext_apply_op(self, img, op_name, magnitude, interpolation, fill):
+        ## debug info data-structure (you can remove it in release version)
+        if self.debug_flag:
+            self.im_idx = 0
+            self.DEBUG_LIST = list() 
+
+    def reset_im_idx(self):
+        if self.debug_flag:
+            self.im_idx = 0
+
+    def _ext_apply_op(self, img, op_name, magnitude, interpolation, fill, sigma):
         # extended version of data aug and we allow the independent search :
         #   [Color_jitter (brightness, contrast, saturation, hue), 
         #                 Gaussian_blur, Gray_scale (rgb2gray)]
@@ -38,7 +52,9 @@ class Extended_RangAugment(RandAugment):
             img = hue(img)
 
         elif op_name == "rand_gaussian_blur":
-            blur = GaussianBlur(kernel_size=int(magnitude), sigma=(0.1, 2.0))
+            # (option) since our kernel map range is safe, it could be +1 to enlarge the kernel effect 
+            odd_mag = int(magnitude) if int(magnitude) % 2 == 1 else int(magnitude) - 1
+            blur = GaussianBlur(kernel_size=odd_mag, sigma=sigma)
             img = blur(img)
 
         elif op_name == "rand_gray_scale": 
@@ -61,7 +77,7 @@ class Extended_RangAugment(RandAugment):
                 shear=[math.degrees(math.atan(magnitude)), 0.0],
                 interpolation=interpolation,
                 fill=fill,
-                center=[0, 0],
+                #center=[0, 0],
             )
         elif op_name == "ShearY":
             # magnitude should be arctan(magnitude)
@@ -74,7 +90,7 @@ class Extended_RangAugment(RandAugment):
                 shear=[0.0, math.degrees(math.atan(magnitude))],
                 interpolation=interpolation,
                 fill=fill,
-                center=[0, 0],
+                #center=[0, 0],
             )
         elif op_name == "TranslateX":
             img = F.affine(
@@ -107,13 +123,13 @@ class Extended_RangAugment(RandAugment):
         elif op_name == "Sharpness":
             img = F.adjust_sharpness(img, 1.0 + magnitude)
         elif op_name == "Posterize":
-            img = F.posterize(img, int(magnitude))
+            img = F.posterize(img.to(dtype=torch.uint8), int(magnitude))
         elif op_name == "Solarize":
             img = F.solarize(img, magnitude)
         elif op_name == "AutoContrast":
             img = F.autocontrast(img)
         elif op_name == "Equalize":
-            img = F.equalize(img)
+            img = F.equalize( img.to(dtype=torch.uint8) )
         elif op_name == "Invert":
             img = F.invert(img)
         elif op_name == "Identity":
@@ -123,7 +139,7 @@ class Extended_RangAugment(RandAugment):
         return img
 
 
-    def _ext_aug_space(num_bins, image_size):
+    def _ext_aug_space(self, num_bins, image_size):
         return {
             # make your new extension..
             "rand_brightness": (torch.linspace(0.0, 0.8, num_bins), False),
@@ -153,8 +169,11 @@ class Extended_RangAugment(RandAugment):
         }
     
     def forward(self, img):
+        if self.debug_flag:
+            tmp_debug_lst = []
+
         fill = self.fill
-        channels, height, width = F.get_dimensions(img)
+        channels, height, width = img.shape      #F.get_dimensions(img)
         if isinstance(img, Tensor):
             if isinstance(fill, (int, float)):
                 fill = [float(fill)] * channels
@@ -162,20 +181,60 @@ class Extended_RangAugment(RandAugment):
                 fill = [float(f) for f in fill]
 
         op_meta = self._ext_aug_space(self.num_magnitude_bins, (height, width))
-        for _ in range(self.num_ops):
+        for trfs_idx in range(self.num_ops):
             op_index = int(torch.randint(len(op_meta), (1,)).item())
             op_name = list(op_meta.keys())[op_index]
             magnitudes, signed = op_meta[op_name]
             magnitude = float(magnitudes[self.magnitude].item()) if magnitudes.ndim > 0 else 0.0
             if signed and torch.randint(2, (1,)):
                 magnitude *= -1.0
-            img = self._ext_apply_op(img, op_name, magnitude, interpolation=self.interpolation, fill=fill)
+
+            if self.debug_flag:
+                tmp_debug_lst.append({'trfs_idx':trfs_idx, 'op_name':op_name, 'magnitude':magnitude})
+
+            img = self._ext_apply_op(img, op_name, magnitude, 
+                    # this part is for customized params, such as upsampling interpolation, blurring sigma range, ..., etc.
+                        interpolation=self.interpolation, fill=fill, sigma=self.sigma)
+        
+        if self.debug_flag:
+            self.DEBUG_LIST.append(tmp_debug_lst)
+            self.im_idx+=1
 
         return img
 
 
+# Simple unittest ; 2020/04/03 16:32pm Josef-Huang.www
 if __name__ == "__main__":
-    rand = Extended_RangAugment()
-    print(rand._augmentation_space(num_bins=31, image_size=[224, 224, 3]))
+    import torch 
+    tst_cfg = {
+        'image_size':[64, 3, 224, 224]
+    }
+    if __debug__ != True : print('not debug mode in uniitest')   # active assertion error
+
+    rand_aug_params = {
+        'num_ops' : 2, 'magnitude' : 9, 'num_magnitude_bins' : 31, # so the degree range will be [0, 30]
+        'interpolation' : InterpolationMode.NEAREST, 'fill' : None, 'sigma' : (0.1, 2.0),
+        'debug_flag' : True
+    }
+    rand_aug = Extended_RangAugment( **rand_aug_params )
+
+    # printout extended augmentation space
+    aug_space = rand_aug._augmentation_space(num_bins=rand_aug_params['num_magnitude_bins'], image_size=tst_cfg['image_size'][1:])
+    print(f"Supported transformations : {aug_space.keys()} \n")
+    
+    # test output tensor shape
+    rnd_tnsrs = torch.rand(tst_cfg['image_size'])
+    for rnd_tnsr in rnd_tnsrs:
+        out_tnsr = rand_aug(rnd_tnsr)
+
+        # under testing, not sure what kind of trfs change the channel of image
+        if list(out_tnsr.shape) != tst_cfg['image_size'][1:]:
+            [op1, op2] = rand_aug.DEBUG_LIST[0]
+            print(f'op1 : {op1} \n op2 : {op2} \n')
+            if not op1['op_name'] in ['Posterize', 'Sharpness', 'rand_gray_scale'] or \
+                not op2['op_name'] in ['Posterize', 'Sharpness', 'rand_gray_scale']:
+                raise AssertionError(f"got output tensor shape : {list(out_tnsr.shape)}, but it should be {tst_cfg['image_size'][1:]}")
+
+
 
     
