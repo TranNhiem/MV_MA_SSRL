@@ -1,4 +1,5 @@
-# Copyright 2021 solo-learn development team.
+# 2022 Tran, Harry, Josef (SSL Team)
+# Dataloader Partially Inherence from 2021 solo-learn team development.
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
@@ -10,28 +11,22 @@
 # The above copyright notice and this permission notice shall be included in all copies
 # or substantial portions of the Software.
 
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
-# INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
-# PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
-# FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-# OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-# DEALINGS IN THE SOFTWARE.
+
 
 import os
 import random
 from pathlib import Path
 from typing import Any, Callable, List, Optional, Sequence, Type, Union
-
+from solo.utils.custom_augment_transforms import GaussianBlur, Solarization
 import torch
 import torchvision
-from PIL import Image, ImageFilter, ImageOps
+from PIL import Image
 from torch.utils.data import DataLoader
 from torch.utils.data.dataset import Dataset
 from torchvision import transforms
 from torchvision import transforms as T
-import PIL
 import numpy as np
-
+import pickle
 from torchvision.datasets import STL10, ImageFolder
 
 # pluggin multiple DA support
@@ -72,52 +67,6 @@ class CustomDatasetWithoutLabels(Dataset):
     def __len__(self):
         return len(self.images)
 
-
-class GaussianBlur:
-    def __init__(self, sigma: Sequence[float] = None):
-        """Gaussian blur as a callable object.
-
-        Args:
-            sigma (Sequence[float]): range to sample the radius of the gaussian blur filter.
-                Defaults to [0.1, 2.0].
-        """
-
-        if sigma is None:
-            sigma = [0.1, 2.0]
-
-        self.sigma = sigma
-
-    def __call__(self, x: torch.Tensor) -> torch.Tensor:
-        """Applies gaussian blur to an input image.
-
-        Args:
-            x (torch.Tensor): an image in the tensor format.
-
-        Returns:
-            torch.Tensor: returns a blurred image.
-        """
-
-        sigma = random.uniform(self.sigma[0], self.sigma[1])
-        x = x.filter(ImageFilter.GaussianBlur(radius=sigma))
-        return x
-
-
-class Solarization:
-    """Solarization as a callable object."""
-
-    def __call__(self, img: Image) -> Image:
-        """Applies solarization to an input image.
-
-        Args:
-            img (Image): an image in the PIL.Image format.
-
-        Returns:
-            Image: a solarized image.
-        """
-
-        return ImageOps.solarize(img)
-
-
 class NCropAugmentation:
     def __init__(self, transform: Callable, num_crops: int):
         """Creates a pipeline that apply a transformation pipeline multiple times.
@@ -145,65 +94,6 @@ class NCropAugmentation:
 
     def __repr__(self) -> str:
         return f"{self.num_crops} x [{self.transform}]"
-
-
-class NCropAugmentation_mv_ma:
-    def __init__(self, transform: Callable, num_crops: int, crop_size: int, crop_type: str, 
-                    min_scale_loc=0.1, max_scale_loc=0.34,  min_scale_glob=0.3, max_scale_glob=1.0):
-        """Creates a pipeline that apply a transformation pipeline multiple times.
-
-        Args:
-            transform (Callable): transformation pipeline.
-            num_crops (int): number of crops to create from the transformation pipeline.
-        """
-
-        self.transform = transform
-        self.num_crops = num_crops
-        self.crop_size= crop_size
-        self.crop_type= crop_type
-        self.min_scale_loc= min_scale_loc
-        self.max_scale_loc= max_scale_loc
-        self.min_scale_glob= min_scale_glob
-        self.max_scale_glob= max_scale_glob
-    
-    def __call__(self, x: Image) -> List[torch.Tensor]:
-        """Applies transforms n times to generate n crops.
-
-        Args:
-            x (Image): an image in the PIL.Image format.
-
-        Returns:
-            List[torch.Tensor]: an image in the tensor format.
-        """
-        # this case self num_crop only
-        # the same
-        if self.crop_type == "inception_crop": 
-            crop_strategy=T.Compose([T.RandomResizedCrop(size=self.crop_size,
-                interpolation=T.InterpolationMode.BICUBIC)])
-        
-        elif self.crop_type == "random_uniform":
-            if self.crop_size >150: 
-                crop_strategy=T.Compose([T.RandomResizedCrop(size=self.crop_size,
-                scale=(self.min_scale_loc, self.max_scale_loc),
-                    interpolation=T.InterpolationMode.BICUBIC)])
-            else: 
-                crop_strategy=T.Compose([T.RandomResizedCrop(size=self.crop_size,
-                scale=(self.min_scale_glob, self.max_scale_glob),
-                    interpolation=T.InterpolationMode.BICUBIC)])
-        else: 
-            raise ValueError("Croping_strategy_Invalid")
-
-        x_crops= []
-        for _ in range(self.num_crops):
-            x_view = crop_strategy(x)
-            x_crops.append(x_view)
-
-        # Transform all Croping Views 
-        return [self.transform(x_) for x_ in x_crops]
-
-    def __repr__(self) -> str:
-        return f"{self.num_crops} x [{self.transform}]"
-
 
 class FullTransformPipeline:
     def __init__(self, transforms: Callable) -> None:
@@ -236,19 +126,13 @@ class FullTransformPipeline_v1:
 
     def __call__(self, x: Image) -> List[torch.Tensor]:
         """Applies transforms n times to generate n crops.
-
         Args:
             x (Image): an image in the PIL.Image format.
 
         Returns:
             List[torch.Tensor]: an image in the tensor format.
         """
-        # Try to generate Crop for 2
-
-        # crop_inception = T.Compose([T.RandomResizedCrop(
-        #     size=224,
-        #     interpolation=T.InterpolationMode.BICUBIC
-        # )])#,T.ToTensor()
+        # Default is Inception Style Cropping 
         crop_inception=T.Compose([T.RandomResizedCrop(size=224,
              interpolation=T.InterpolationMode.BICUBIC)])
         x1 = crop_inception(x)
@@ -265,7 +149,6 @@ class FullTransformPipeline_v1:
 
     def __repr__(self) -> str:
         return "\n".join([str(transform) for transform in self.transforms])
-
 
 class FullTransformPipeline_ma_mv:
     def __init__(self, transforms: Callable, num_crops_glob: int, crop_size_glob: int,
@@ -309,6 +192,8 @@ class FullTransformPipeline_ma_mv:
                 raise ValueError("Croping_strategy_Invalid")
             crop_view = crop_strategy(x)
             x_glob_crops.append(crop_view)
+        
+        torch.save(x_glob_crops, "crops_tensor",  pickle_module=pickle)
 
         x_loc_crops=[]
         for _ in range(self.num_crop_loc): 
@@ -394,36 +279,8 @@ def prepare_n_crop_transform_v1(
     return FullTransformPipeline_v1(T)
 
 
-## dev
-def prepare_n_crop_transform_mv_ma(
-    transforms: List[Callable], num_crops_per_aug: List[int], crop_size: List[int]
-                                ,crop_type: str, min_loc: float =0.1, max_loc: float=0.34,
-                                 min_glob: float=0.3, max_glob: float=1.0
-) -> NCropAugmentation_mv_ma:
-    """Turns a single crop transformation to an N crops transformation.
-
-    Args:
-        transforms (List[Callable]): list of transformations.
-        num_crops_per_aug (List[int]): number of crops per pipeline.
-
-    Returns:
-        NCropAugmentation: an N crop transformation.
-    """
-    print("len transform", len(transforms))
-    print("len num_crops_per_aug", len(num_crops_per_aug))
-    assert len(transforms) == len(num_crops_per_aug)
-    
-
-    T = []
-    for  transform, num_crops in zip(transforms, num_crops_per_aug):
-        i=0
-        T.append(NCropAugmentation_mv_ma(transform, num_crops,crop_size[i], crop_type, min_loc, max_loc, min_glob, max_glob))
-        i+=1
-    return FullTransformPipeline(T)
-
-
 ## stable version
-def prepare_n_crop_transform_mv_ma_v1(
+def prepare_n_crop_transform_mv_ma(
     transforms: List[Callable], num_crops_per_aug: List[int],  num_crop_glob:int, crop_size_glob: int,num_crop_loc:int, crop_size_loc: int
                                 ,crop_type: str, min_loc: float =0.1, max_loc: float=0.34,
                                  min_glob: float=0.3, max_glob: float=1.0
@@ -816,6 +673,7 @@ def prepare_dataloader(
         drop_last=True,
     )
     return train_loader
+
 
 
 # Note that, the code snippet below can not be directly executed

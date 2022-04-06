@@ -1,0 +1,160 @@
+2022-04-03 13:57:39,811 INFO    MainThread:84773 [internal.py:wandb_internal():92] W&B internal server running at pid: 84773, started at: 2022-04-03 13:57:39.810851
+2022-04-03 13:57:39,851 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: check_version
+2022-04-03 13:57:39,851 DEBUG   SenderThread:84773 [sender.py:send():235] send: header
+2022-04-03 13:57:39,852 DEBUG   SenderThread:84773 [sender.py:send_request():249] send_request: check_version
+2022-04-03 13:57:39,874 INFO    WriterThread:84773 [datastore.py:open_for_write():77] open: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220403_135737-3akeyi5f/run-3akeyi5f.wandb
+2022-04-03 13:57:39,994 DEBUG   SenderThread:84773 [sender.py:send():235] send: run
+2022-04-03 13:57:39,996 INFO    SenderThread:84773 [sender.py:_maybe_setup_resume():490] checking resume status for mlbrl/solo_MASSL/3akeyi5f
+2022-04-03 13:57:40,257 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: run_start
+2022-04-03 13:57:40,275 INFO    SenderThread:84773 [dir_watcher.py:__init__():169] watching files in: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220403_135737-3akeyi5f/files
+2022-04-03 13:57:40,275 INFO    SenderThread:84773 [sender.py:_start_run_threads():812] run started: 3akeyi5f with start time 1648994257
+2022-04-03 13:57:40,275 DEBUG   SenderThread:84773 [sender.py:send():235] send: summary
+2022-04-03 13:57:40,276 INFO    SenderThread:84773 [sender.py:_save_file():944] saving file wandb-summary.json with policy end
+2022-04-03 13:57:40,416 DEBUG   HandlerThread:84773 [meta.py:__init__():36] meta init
+2022-04-03 13:57:40,416 DEBUG   HandlerThread:84773 [meta.py:__init__():50] meta init done
+2022-04-03 13:57:40,416 DEBUG   HandlerThread:84773 [meta.py:probe():210] probe
+2022-04-03 13:57:40,424 DEBUG   HandlerThread:84773 [meta.py:_setup_git():200] setup git
+2022-04-03 13:57:40,552 DEBUG   HandlerThread:84773 [meta.py:_setup_git():207] setup git done
+2022-04-03 13:57:40,553 DEBUG   HandlerThread:84773 [meta.py:_save_pip():54] save pip
+2022-04-03 13:57:40,553 DEBUG   HandlerThread:84773 [meta.py:_save_pip():68] save pip done
+2022-04-03 13:57:40,553 DEBUG   HandlerThread:84773 [meta.py:_save_conda():75] save conda
+2022-04-03 13:57:41,265 INFO    Thread-8  :84773 [dir_watcher.py:_on_file_created():217] file/dir created: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220403_135737-3akeyi5f/files/requirements.txt
+2022-04-03 13:57:41,265 INFO    Thread-8  :84773 [dir_watcher.py:_on_file_created():217] file/dir created: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220403_135737-3akeyi5f/files/conda-environment.yaml
+2022-04-03 13:57:41,265 INFO    Thread-8  :84773 [dir_watcher.py:_on_file_created():217] file/dir created: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220403_135737-3akeyi5f/files/wandb-summary.json
+2022-04-03 13:57:46,265 INFO    Thread-8  :84773 [dir_watcher.py:_on_file_created():217] file/dir created: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220403_135737-3akeyi5f/files/output.log
+2022-04-03 13:57:46,911 DEBUG   HandlerThread:84773 [meta.py:_save_conda():85] save conda done
+2022-04-03 13:57:46,912 DEBUG   HandlerThread:84773 [meta.py:probe():248] probe done
+2022-04-03 13:57:46,992 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: stop_status
+2022-04-03 13:57:46,993 DEBUG   SenderThread:84773 [sender.py:send_request():249] send_request: stop_status
+2022-04-03 13:57:47,101 DEBUG   SenderThread:84773 [sender.py:send():235] send: metric
+2022-04-03 13:57:47,101 DEBUG   SenderThread:84773 [sender.py:send():235] send: metric
+2022-04-03 13:57:47,101 WARNING SenderThread:84773 [sender.py:send_metric():902] Seen metric with glob (shouldnt happen)
+2022-04-03 13:57:47,101 DEBUG   SenderThread:84773 [sender.py:send():235] send: metric
+2022-04-03 13:57:47,101 DEBUG   SenderThread:84773 [sender.py:send():235] send: metric
+2022-04-03 13:57:47,101 WARNING SenderThread:84773 [sender.py:send_metric():902] Seen metric with glob (shouldnt happen)
+2022-04-03 13:57:47,102 DEBUG   SenderThread:84773 [sender.py:send():235] send: config
+2022-04-03 13:57:47,102 DEBUG   SenderThread:84773 [sender.py:send():235] send: files
+2022-04-03 13:57:47,102 INFO    SenderThread:84773 [sender.py:_save_file():944] saving file wandb-metadata.json with policy now
+2022-04-03 13:57:47,266 INFO    Thread-8  :84773 [dir_watcher.py:_on_file_modified():230] file/dir modified: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220403_135737-3akeyi5f/files/conda-environment.yaml
+2022-04-03 13:57:47,266 INFO    Thread-8  :84773 [dir_watcher.py:_on_file_created():217] file/dir created: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220403_135737-3akeyi5f/files/wandb-metadata.json
+2022-04-03 13:57:47,478 INFO    Thread-11 :84773 [upload_job.py:push():137] Uploaded file /tmp/tmps1b6mnbjwandb/2au5bsu8-wandb-metadata.json
+2022-04-03 13:57:48,431 INFO    Thread-8  :84773 [dir_watcher.py:_on_file_modified():230] file/dir modified: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220403_135737-3akeyi5f/files/output.log
+2022-04-03 13:58:02,104 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: stop_status
+2022-04-03 13:58:02,106 DEBUG   SenderThread:84773 [sender.py:send_request():249] send_request: stop_status
+2022-04-03 13:58:11,442 INFO    Thread-8  :84773 [dir_watcher.py:_on_file_modified():230] file/dir modified: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220403_135737-3akeyi5f/files/config.yaml
+2022-04-03 13:58:17,100 DEBUG   SenderThread:84773 [sender.py:send():235] send: stats
+2022-04-03 13:58:17,181 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: stop_status
+2022-04-03 13:58:17,181 DEBUG   SenderThread:84773 [sender.py:send_request():249] send_request: stop_status
+2022-04-03 13:58:30,447 INFO    Thread-8  :84773 [dir_watcher.py:_on_file_modified():230] file/dir modified: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220403_135737-3akeyi5f/files/output.log
+2022-04-03 13:58:32,250 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: stop_status
+2022-04-03 13:58:32,250 DEBUG   SenderThread:84773 [sender.py:send_request():249] send_request: stop_status
+2022-04-03 13:58:32,448 INFO    Thread-8  :84773 [dir_watcher.py:_on_file_modified():230] file/dir modified: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220403_135737-3akeyi5f/files/output.log
+2022-04-03 13:58:40,755 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: poll_exit
+2022-04-03 13:58:40,755 DEBUG   SenderThread:84773 [sender.py:send():235] send: telemetry
+2022-04-03 13:58:40,905 DEBUG   SenderThread:84773 [sender.py:send():235] send: exit
+2022-04-03 13:58:40,906 INFO    SenderThread:84773 [sender.py:send_exit():371] handling exit code: 0
+2022-04-03 13:58:40,906 INFO    SenderThread:84773 [sender.py:send_exit():373] handling runtime: 60
+2022-04-03 13:58:40,906 INFO    SenderThread:84773 [sender.py:_save_file():944] saving file wandb-summary.json with policy end
+2022-04-03 13:58:40,906 INFO    SenderThread:84773 [sender.py:send_exit():379] send defer
+2022-04-03 13:58:40,907 DEBUG   SenderThread:84773 [sender.py:send_request():249] send_request: poll_exit
+2022-04-03 13:58:40,907 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: defer
+2022-04-03 13:58:40,907 INFO    HandlerThread:84773 [handler.py:handle_request_defer():154] handle defer: 0
+2022-04-03 13:58:40,908 DEBUG   SenderThread:84773 [sender.py:send_request():249] send_request: defer
+2022-04-03 13:58:40,908 INFO    SenderThread:84773 [sender.py:send_request_defer():388] handle sender defer: 0
+2022-04-03 13:58:40,908 INFO    SenderThread:84773 [sender.py:transition_state():392] send defer: 1
+2022-04-03 13:58:40,908 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: defer
+2022-04-03 13:58:40,908 INFO    HandlerThread:84773 [handler.py:handle_request_defer():154] handle defer: 1
+2022-04-03 13:58:41,236 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: poll_exit
+2022-04-03 13:58:41,236 DEBUG   SenderThread:84773 [sender.py:send_request():249] send_request: defer
+2022-04-03 13:58:41,238 INFO    SenderThread:84773 [sender.py:send_request_defer():388] handle sender defer: 1
+2022-04-03 13:58:41,238 INFO    SenderThread:84773 [sender.py:transition_state():392] send defer: 2
+2022-04-03 13:58:41,238 DEBUG   SenderThread:84773 [sender.py:send_request():249] send_request: poll_exit
+2022-04-03 13:58:41,238 DEBUG   SenderThread:84773 [sender.py:send():235] send: stats
+2022-04-03 13:58:41,238 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: defer
+2022-04-03 13:58:41,238 INFO    HandlerThread:84773 [handler.py:handle_request_defer():154] handle defer: 2
+2022-04-03 13:58:41,239 DEBUG   SenderThread:84773 [sender.py:send_request():249] send_request: defer
+2022-04-03 13:58:41,239 INFO    SenderThread:84773 [sender.py:send_request_defer():388] handle sender defer: 2
+2022-04-03 13:58:41,239 INFO    SenderThread:84773 [sender.py:transition_state():392] send defer: 3
+2022-04-03 13:58:41,239 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: defer
+2022-04-03 13:58:41,239 INFO    HandlerThread:84773 [handler.py:handle_request_defer():154] handle defer: 3
+2022-04-03 13:58:41,239 DEBUG   SenderThread:84773 [sender.py:send():235] send: summary
+2022-04-03 13:58:41,239 INFO    SenderThread:84773 [sender.py:_save_file():944] saving file wandb-summary.json with policy end
+2022-04-03 13:58:41,240 DEBUG   SenderThread:84773 [sender.py:send_request():249] send_request: defer
+2022-04-03 13:58:41,240 INFO    SenderThread:84773 [sender.py:send_request_defer():388] handle sender defer: 3
+2022-04-03 13:58:41,240 INFO    SenderThread:84773 [sender.py:transition_state():392] send defer: 4
+2022-04-03 13:58:41,240 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: defer
+2022-04-03 13:58:41,240 INFO    HandlerThread:84773 [handler.py:handle_request_defer():154] handle defer: 4
+2022-04-03 13:58:41,240 DEBUG   SenderThread:84773 [sender.py:send_request():249] send_request: defer
+2022-04-03 13:58:41,240 INFO    SenderThread:84773 [sender.py:send_request_defer():388] handle sender defer: 4
+2022-04-03 13:58:41,240 INFO    SenderThread:84773 [sender.py:transition_state():392] send defer: 5
+2022-04-03 13:58:41,240 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: defer
+2022-04-03 13:58:41,240 INFO    HandlerThread:84773 [handler.py:handle_request_defer():154] handle defer: 5
+2022-04-03 13:58:41,241 DEBUG   SenderThread:84773 [sender.py:send_request():249] send_request: defer
+2022-04-03 13:58:41,241 INFO    SenderThread:84773 [sender.py:send_request_defer():388] handle sender defer: 5
+2022-04-03 13:58:41,241 INFO    SenderThread:84773 [dir_watcher.py:finish():283] shutting down directory watcher
+2022-04-03 13:58:41,339 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: poll_exit
+2022-04-03 13:58:41,451 INFO    Thread-8  :84773 [dir_watcher.py:_on_file_modified():230] file/dir modified: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220403_135737-3akeyi5f/files/output.log
+2022-04-03 13:58:41,452 INFO    SenderThread:84773 [dir_watcher.py:_on_file_modified():230] file/dir modified: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220403_135737-3akeyi5f/files/config.yaml
+2022-04-03 13:58:41,452 INFO    SenderThread:84773 [dir_watcher.py:_on_file_modified():230] file/dir modified: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220403_135737-3akeyi5f/files/wandb-summary.json
+2022-04-03 13:58:41,452 INFO    SenderThread:84773 [dir_watcher.py:finish():313] scan: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220403_135737-3akeyi5f/files
+2022-04-03 13:58:41,452 INFO    SenderThread:84773 [dir_watcher.py:finish():327] scan save: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220403_135737-3akeyi5f/files/output.log output.log
+2022-04-03 13:58:41,452 INFO    SenderThread:84773 [dir_watcher.py:finish():327] scan save: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220403_135737-3akeyi5f/files/config.yaml config.yaml
+2022-04-03 13:58:41,453 INFO    SenderThread:84773 [dir_watcher.py:finish():327] scan save: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220403_135737-3akeyi5f/files/conda-environment.yaml conda-environment.yaml
+2022-04-03 13:58:41,453 INFO    SenderThread:84773 [dir_watcher.py:finish():327] scan save: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220403_135737-3akeyi5f/files/requirements.txt requirements.txt
+2022-04-03 13:58:41,453 INFO    SenderThread:84773 [dir_watcher.py:finish():327] scan save: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220403_135737-3akeyi5f/files/wandb-metadata.json wandb-metadata.json
+2022-04-03 13:58:41,453 INFO    SenderThread:84773 [dir_watcher.py:finish():327] scan save: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220403_135737-3akeyi5f/files/wandb-summary.json wandb-summary.json
+2022-04-03 13:58:41,453 INFO    SenderThread:84773 [sender.py:transition_state():392] send defer: 6
+2022-04-03 13:58:41,454 DEBUG   SenderThread:84773 [sender.py:send_request():249] send_request: poll_exit
+2022-04-03 13:58:41,454 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: defer
+2022-04-03 13:58:41,454 INFO    HandlerThread:84773 [handler.py:handle_request_defer():154] handle defer: 6
+2022-04-03 13:58:41,455 DEBUG   SenderThread:84773 [sender.py:send_request():249] send_request: defer
+2022-04-03 13:58:41,455 INFO    SenderThread:84773 [sender.py:send_request_defer():388] handle sender defer: 6
+2022-04-03 13:58:41,455 INFO    SenderThread:84773 [file_pusher.py:finish():177] shutting down file pusher
+2022-04-03 13:58:41,568 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: poll_exit
+2022-04-03 13:58:41,571 DEBUG   SenderThread:84773 [sender.py:send_request():249] send_request: poll_exit
+2022-04-03 13:58:41,674 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: poll_exit
+2022-04-03 13:58:41,674 DEBUG   SenderThread:84773 [sender.py:send_request():249] send_request: poll_exit
+2022-04-03 13:58:41,778 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: poll_exit
+2022-04-03 13:58:41,779 DEBUG   SenderThread:84773 [sender.py:send_request():249] send_request: poll_exit
+2022-04-03 13:58:41,869 INFO    Thread-13 :84773 [upload_job.py:push():137] Uploaded file /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220403_135737-3akeyi5f/files/config.yaml
+2022-04-03 13:58:41,880 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: poll_exit
+2022-04-03 13:58:41,880 DEBUG   SenderThread:84773 [sender.py:send_request():249] send_request: poll_exit
+2022-04-03 13:58:41,888 INFO    Thread-14 :84773 [upload_job.py:push():137] Uploaded file /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220403_135737-3akeyi5f/files/conda-environment.yaml
+2022-04-03 13:58:41,913 INFO    Thread-12 :84773 [upload_job.py:push():137] Uploaded file /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220403_135737-3akeyi5f/files/output.log
+2022-04-03 13:58:41,940 INFO    Thread-15 :84773 [upload_job.py:push():137] Uploaded file /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220403_135737-3akeyi5f/files/requirements.txt
+2022-04-03 13:58:41,982 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: poll_exit
+2022-04-03 13:58:41,982 DEBUG   SenderThread:84773 [sender.py:send_request():249] send_request: poll_exit
+2022-04-03 13:58:42,020 INFO    Thread-16 :84773 [upload_job.py:push():137] Uploaded file /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220403_135737-3akeyi5f/files/wandb-summary.json
+2022-04-03 13:58:42,084 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: poll_exit
+2022-04-03 13:58:42,084 DEBUG   SenderThread:84773 [sender.py:send_request():249] send_request: poll_exit
+2022-04-03 13:58:42,186 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: poll_exit
+2022-04-03 13:58:42,186 DEBUG   SenderThread:84773 [sender.py:send_request():249] send_request: poll_exit
+2022-04-03 13:58:42,221 INFO    Thread-7  :84773 [sender.py:transition_state():392] send defer: 7
+2022-04-03 13:58:42,222 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: defer
+2022-04-03 13:58:42,222 INFO    HandlerThread:84773 [handler.py:handle_request_defer():154] handle defer: 7
+2022-04-03 13:58:42,222 DEBUG   SenderThread:84773 [sender.py:send_request():249] send_request: defer
+2022-04-03 13:58:42,222 INFO    SenderThread:84773 [sender.py:send_request_defer():388] handle sender defer: 7
+2022-04-03 13:58:42,282 INFO    SenderThread:84773 [sender.py:transition_state():392] send defer: 8
+2022-04-03 13:58:42,282 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: defer
+2022-04-03 13:58:42,282 INFO    HandlerThread:84773 [handler.py:handle_request_defer():154] handle defer: 8
+2022-04-03 13:58:42,283 DEBUG   SenderThread:84773 [sender.py:send_request():249] send_request: defer
+2022-04-03 13:58:42,283 INFO    SenderThread:84773 [sender.py:send_request_defer():388] handle sender defer: 8
+2022-04-03 13:58:42,283 INFO    SenderThread:84773 [sender.py:transition_state():392] send defer: 9
+2022-04-03 13:58:42,283 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: defer
+2022-04-03 13:58:42,284 INFO    HandlerThread:84773 [handler.py:handle_request_defer():154] handle defer: 9
+2022-04-03 13:58:42,283 DEBUG   SenderThread:84773 [sender.py:send():235] send: final
+2022-04-03 13:58:42,284 DEBUG   SenderThread:84773 [sender.py:send():235] send: footer
+2022-04-03 13:58:42,284 DEBUG   SenderThread:84773 [sender.py:send_request():249] send_request: defer
+2022-04-03 13:58:42,284 INFO    SenderThread:84773 [sender.py:send_request_defer():388] handle sender defer: 9
+2022-04-03 13:58:42,288 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: poll_exit
+2022-04-03 13:58:42,288 DEBUG   SenderThread:84773 [sender.py:send_request():249] send_request: poll_exit
+2022-04-03 13:58:42,289 INFO    SenderThread:84773 [file_pusher.py:join():182] waiting for file pusher
+2022-04-03 13:58:42,434 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: get_summary
+2022-04-03 13:58:42,434 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: sampled_history
+2022-04-03 13:58:42,435 DEBUG   HandlerThread:84773 [handler.py:handle_request():131] handle_request: shutdown
+2022-04-03 13:58:42,435 INFO    HandlerThread:84773 [handler.py:finish():739] shutting down handler
+2022-04-03 13:58:43,283 INFO    WriterThread:84773 [datastore.py:close():281] close: /code_spec/MVAR_SSL/bash_files/pretrain/imagenet/wandb/run-20220403_135737-3akeyi5f/run-3akeyi5f.wandb
+2022-04-03 13:58:43,436 INFO    SenderThread:84773 [sender.py:finish():1075] shutting down sender
+2022-04-03 13:58:43,436 INFO    SenderThread:84773 [file_pusher.py:finish():177] shutting down file pusher
+2022-04-03 13:58:43,436 INFO    SenderThread:84773 [file_pusher.py:join():182] waiting for file pusher
+2022-04-03 13:58:43,439 INFO    MainThread:84773 [internal.py:handle_exit():79] Internal process exited

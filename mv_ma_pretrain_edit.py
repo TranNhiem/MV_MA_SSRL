@@ -27,6 +27,8 @@ from pytorch_lightning.loggers import WandbLogger
 from solo.args.setup import parse_args_pretrain
 from solo.methods import METHODS
 from solo.utils.auto_resumer import AutoResumer
+import torch
+import pickle
 
 try:
     from solo.methods.dali import PretrainABC
@@ -50,7 +52,7 @@ from solo.utils.classification_dataloader import prepare_data as prepare_data_cl
 from solo.utils.pretrain_dataloader import (
     prepare_dataloader,
     prepare_datasets,
-    prepare_n_crop_transform_mv_ma_v1,
+    prepare_n_crop_transform_mv_ma,
     prepare_transform,
 )
 
@@ -210,18 +212,19 @@ def main():
     print("\n\nI'm in here \n\n")
     # it's very not good... the issue occurs in train_loader, i'm not sure which da-method cause the img have invalid size
     # while i will go deep into each trfs 'Composer'
-    # for x1, x2, x3 in train_loader:
-    #     #print(im.shape)
-    #     # unpack
-    #     #x1, x2, x3, x4 = im
-    #     print(len(x2))
-    #     print("Rick Double Check Global Views shape", x2[args.num_large_crops-2].shape )
-    #     print("Rick Double Check  Local Views shape", x2[args.num_large_crops+2].shape)
+    for x1, x2, x3 in train_loader:
+        #print(im.shape)
+        # unpack
+        #x1, x2, x3, x4 = im
+        print(len(x2))
+        torch.save(x2, "visualize_tensor_1", pickle_module=pickle)
+        print("Rick Double Check Global Views shape", x2[args.num_large_crops-2].shape )
+        print("Rick Double Check  Local Views shape", x2[args.num_large_crops+2].shape)
     #     #x1_=x2[7]
     #     print(x1.shape)
     #     #print(x1_.shape)
     #     print(x3.shape)
-    #     break
+        break
 
     # if args.dali:
     #     trainer.fit(model, val_dataloaders=val_loader, ckpt_path=ckpt_path)

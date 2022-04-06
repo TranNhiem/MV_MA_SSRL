@@ -1,0 +1,15 @@
+
+I'm in here
+[34m[1mwandb[39m[22m: logging graph, to disable use `wandb.watch(log_graph=False)`
+Using 16bit native Automatic Mixed Precision (AMP)
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+Running in fast_dev_run mode: will run a full train, val, test and prediction loop using 1 batch(es).
+16
+Traceback (most recent call last):
+  File "../../../mv_ma_pretrain_edit.py", line 235, in <module>
+    main()
+  File "../../../mv_ma_pretrain_edit.py", line 219, in main
+    torch.save(x2, visualize_tensor)
+NameError: name 'visualize_tensor' is not defined

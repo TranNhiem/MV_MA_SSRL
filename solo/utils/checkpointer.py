@@ -153,5 +153,8 @@ class Checkpointer(Callback):
         """
 
         epoch = trainer.current_epoch  # type: ignore
-        if epoch % self.frequency == 0:
+        if (epoch+1) % self.frequency == 0:
             self.save(trainer)
+
+    def on_train_end(self, trainer: pl.Trainer, _):
+        self.save(trainer)
