@@ -213,34 +213,43 @@ class Extended_RangAugment(RandAugment):
 if __name__ == "__main__":
     # testing function..
     def test_pil_format(tst_cfg, rand_aug):
-        print('Testing data type..\n')
-        print('-------------------\n')
+        print('Testing data type..')
+        print('-------------------')
 
         rnd_tnsrs = torch.rand(tst_cfg['image_size'])
         for idx, rnd_tnsr in enumerate(rnd_tnsrs):
             pil_tnsr = ToPILImage()(rnd_tnsr)
             # test input pil-format
             out_tnsr = rand_aug(pil_tnsr)
+            if idx < 1:
+                print(f'The output tensor type is {type(out_tnsr)}')
+
             if not isinstance(out_tnsr, torch.Tensor):
                 _show_debug_info(rand_aug.DEBUG_LIST, idx)
                 raise TypeError(f'The output tensor type is {type(out_tnsr)}, it should be {torch.Tensor}')
-    
+        print('\n')
+
+
     def test_output_shape(tst_cfg, rand_aug):
-        print('Testing output_shape..\n')
-        print('-------------------\n')
+        print('Testing output_shape..')
+        print('-------------------')
 
         rnd_tnsrs = torch.rand(tst_cfg['image_size'])
         GT_shp = tst_cfg['image_size'][1:]
         for idx, rnd_tnsr in enumerate(rnd_tnsrs):
             out_tnsr = rand_aug(rnd_tnsr)
+            if idx < 1:
+                print(f'The output tensor type is {out_tnsr.shape}')
+
             if list(out_tnsr.shape) != GT_shp:
                 _show_debug_info(rand_aug.DEBUG_LIST, idx)
                 raise ValueError(f"got output tensor shape : {list(out_tnsr.shape)}, but it should be {GT_shp}")
-    
+        print('\n')
+
 
     def test_subpolicy(tst_cfg, rand_aug, policy_lst):
-        print('Testing subpolicy..\n')
-        print('-------------------\n')
+        print('Testing subpolicy..')
+        print('-------------------')
 
         GT_shp = tst_cfg['image_size'][1:]
         rnd_tnsr = torch.rand( [1,] + GT_shp) # only get single image to test
@@ -251,7 +260,8 @@ if __name__ == "__main__":
             magnitude = float(magnitudes[rand_aug.magnitude].item()) if magnitudes.ndim > 0 else 0.0
             if signed and torch.randint(2, (1,)):
                 magnitude *= -1.0
-                
+            print(f"Processing {op_name} trfs.. mag : {magnitude}  raw mag (before trfs) : {rand_aug.magnitude}\n")
+
             out_tnsr = rand_aug._ext_apply_op(rnd_tnsr, op_name, magnitude, 
                     # this part is for customized params, such as upsampling interpolation, blurring sigma range, ..., etc.
                         interpolation=rand_aug.interpolation, fill=rand_aug.fill, sigma=rand_aug.sigma)
@@ -263,6 +273,7 @@ if __name__ == "__main__":
             if list(out_tnsr.shape) != [1,] + GT_shp:
                 _show_debug_info(rand_aug.DEBUG_LIST, idx)
                 raise ValueError(f"got output tensor shape : {list(out_tnsr.shape)}, but it should be {[1,] + GT_shp}")
+        print('\n')
 
     def _show_debug_info(db_lst=None, idx=None):
         [op1, op2] = db_lst[idx]
