@@ -195,8 +195,8 @@ class FullTransformPipeline_ma_mv:
                 raise ValueError("Croping_strategy_Invalid")
             crop_view = crop_strategy(x)
             x_glob_crops.append(crop_view)
-            torch.save(x,"orginal_image")
-            torch.save(x_glob_crops, "crops_tensor",  pickle_module=pickle)
+            # torch.save(x,"orginal_image")
+            # torch.save(x_glob_crops, "crops_tensor",  pickle_module=pickle)
 
         x_loc_crops=[]
 
@@ -233,7 +233,7 @@ class FullTransformPipeline_ma_mv:
             out.extend(out_loc)
         
         elif len( x_loc_crops) ==0:  
-            print("Croping with Only Global Crop")
+            #print("Croping with Only Global Crop")
             out_glob=[]
             for x_glob in x_glob_crops:
                 for idx, transform in enumerate(self.transforms):
