@@ -195,8 +195,8 @@ class FullTransformPipeline_ma_mv:
                 raise ValueError("Croping_strategy_Invalid")
             crop_view = crop_strategy(x)
             x_glob_crops.append(crop_view)
-        
-        #torch.save(x_glob_crops, "crops_tensor",  pickle_module=pickle)
+            # torch.save(x,"orginal_image")
+            # torch.save(x_glob_crops, "crops_tensor",  pickle_module=pickle)
 
         x_loc_crops=[]
 
@@ -222,7 +222,7 @@ class FullTransformPipeline_ma_mv:
             for x_glob in x_glob_crops:
                 for idx, transform in enumerate(self.transforms):
                     out_glob.extend(transform(x_glob))
-            random.shuffle(out_glob)
+            #random.shuffle(out_glob)
             out.extend(out_glob)
             
             out_loc=[]
@@ -233,12 +233,12 @@ class FullTransformPipeline_ma_mv:
             out.extend(out_loc)
         
         elif len( x_loc_crops) ==0:  
-            print("Croping with Only Global Crop")
+            #print("Croping with Only Global Crop")
             out_glob=[]
             for x_glob in x_glob_crops:
                 for idx, transform in enumerate(self.transforms):
                     out_glob.extend(transform(x_glob))
-            random.shuffle(out_glob)
+            #random.shuffle(out_glob)
             out.extend(out_glob)
 
         else: 
@@ -611,8 +611,8 @@ def prepare_transform(dataset: str, trfs_kwargs, da_kwargs=None) -> Any:
         # prepare various da
         auto_da = transforms.Compose( [ auto_aug.AutoAugment(policy=ada_policy), transforms.ToTensor(),transforms.Normalize(mean=mean, std=std)])# transforms.ToTensor(),# transforms.Normalize(mean=mean, std=std)
         
-        #rand_da = transforms.Compose( [auto_aug.RandAugment(num_ops=num_ops, magnitude=magnitude), transforms.ToTensor(),transforms.Normalize(mean=mean, std=std)])# transforms.ToTensor()] )
-        rand_da = transforms.Compose( [Extended_RangAugment(num_ops=num_ops, magnitude=magnitude),transforms.Normalize(mean=mean, std=std)] )#
+        rand_da = transforms.Compose( [auto_aug.RandAugment(num_ops=num_ops, magnitude=magnitude), transforms.ToTensor(),transforms.Normalize(mean=mean, std=std)])# transforms.ToTensor()] )
+        #rand_da = transforms.Compose( [Extended_RangAugment(num_ops=num_ops, magnitude=magnitude),transforms.Normalize(mean=mean, std=std)] )#
         
         fast_da = transforms.Compose( [Fast_AutoAugment(policy_type=fda_policy).get_trfs(), transforms.Normalize(mean=mean, std=std)] )
         
@@ -627,6 +627,7 @@ def prepare_datasets(
     transform: Callable,
     data_dir: Optional[Union[str, Path]] = None,
     train_dir: Optional[Union[str, Path]] = None,
+    subset_class_num: int =1000, 
     no_labels: Optional[Union[str, Path]] = False,
     download: bool = True,
 ) -> Dataset:

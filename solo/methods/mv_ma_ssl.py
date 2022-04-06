@@ -144,21 +144,27 @@ class MVAR(BaseMomentumMethod):
         
         # calculate std of features
         with torch.no_grad():
-            z_std_glob = F.normalize(torch.stack(Z[: self.num_small_crops]), dim=-1).std(dim=1).mean()
+            z_std_glob = F.normalize(torch.stack(Z[: self.num_large_crops]), dim=-1).std(dim=1).mean()
            
         neg_cos_sim_loc= 0
         print("Length of small crop training", self.num_small_crops)
-        for v1 in range(self.num_small_crops):
-            # Views 2 remove the prior Views
-            for v2 in np.delete(range(self.num_crops-self.num_large_crops), v1):
-                neg_cos_sim_loc += byol_loss_func(P[(v2+self.num_large_crops)-1], Z_momentum[v1], )
-
-        neg_cos_sim = (self.alpha*neg_cos_sim_glob + (1-self.alpha)*neg_cos_sim_loc)
-        # calculate std of features
-        with torch.no_grad():
-            z_std_loc = F.normalize(torch.stack(Z[self.num_large_crops : ]), dim=-1).std(dim=1).mean()
-        z_std=(self.alpha*z_std_glob + (1-self.alpha)*z_std_loc)
+        if self.num_small_crops != 0:
+            for v1 in range(self.num_small_crops):
+                # Views 2 remove the prior Views
+                for v2 in np.delete(range(self.num_crops-self.num_large_crops), v1):
+                    neg_cos_sim_loc += byol_loss_func(P[(v2+self.num_large_crops)-1], Z_momentum[v1], )
         
+            neg_cos_sim = (self.alpha*neg_cos_sim_glob + (1-self.alpha)*neg_cos_sim_loc)
+            with torch.no_grad():
+                z_std_loc = F.normalize(torch.stack(Z[self.num_large_crops : ]), dim=-1).std(dim=1).mean()
+            
+            z_std=(self.alpha*z_std_glob + (1-self.alpha)*z_std_loc)
+        
+        else: 
+            neg_cos_sim= neg_cos_sim_glob
+            z_std =z_std_glob
+        # calculate std of features
+     
         return neg_cos_sim, z_std
 
     def training_step(self, batch: Sequence[Any], batch_idx: int) -> torch.Tensor:
