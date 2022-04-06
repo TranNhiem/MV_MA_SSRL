@@ -50,7 +50,7 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --num_crops_per_aug 1 1 1 1 \
     --name MV_MASSL_ablation_augment_resnet50-imagenet-100ep \
     --entity mlbrl \
-    --project solo_MASSL \
+    --project solo_MASSL_V2 \
     --wandb \
     --save_checkpoint \
     --method mvar \
