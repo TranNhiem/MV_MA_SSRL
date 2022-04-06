@@ -150,6 +150,8 @@ def main():
             project=args.project,
             entity=args.entity,
             offline=args.offline,
+            group = args.experiment_type,
+            job_type = args.job_name,
         )
         wandb_logger.watch(model, log="gradients", log_freq=100)
         wandb_logger.log_hyperparams(args)

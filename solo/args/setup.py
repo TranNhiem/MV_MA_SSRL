@@ -78,6 +78,9 @@ def parse_args_pretrain() -> argparse.Namespace:
     parser.add_argument("--rda_magnitude",  type=int, default=10)
     parser.add_argument("--ada_policy",  type=str, default="imagenet")
     parser.add_argument("--fda_policy",  type=str, default="imagenet")
+    parser.add_argument("--experiment_type",  type=str, default="ablation")
+    parser.add_argument("--job_name",  type=str, default="multiaugment_ablation")
+
     # parser.add_argument("--num_large_crops",  type=int, default=4)
     # parser.add_argument("--num_small_crops",  type=int, default=0)
     # parser.add_argument("--num_classes",  type=int, default=1000)
