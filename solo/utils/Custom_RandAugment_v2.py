@@ -2,11 +2,12 @@
 import torch
 from torchvision.transforms import RandAugment, InterpolationMode
 from torchvision.transforms import functional as F
-from torchvision.transforms import ColorJitter, Grayscale, GaussianBlur
+from torchvision.transforms import ColorJitter, Grayscale, GaussianBlur, ToTensor, ToPILImage
 from torchvision import transforms
-# typing check
+
+# 3rd pkg
 from typing import List, Tuple, Optional, Dict
-from torch import Tensor
+from PIL import Image
 import math
 
 ## The original data augmentation of SimCLR repository 
@@ -58,7 +59,7 @@ class Extended_RangAugment(RandAugment):
             img = blur(img)
 
         elif op_name == "rand_gray_scale": 
-            gray_scale = Grayscale() # it doesn't have the params to search, only random apply
+            gray_scale = Grayscale(num_output_channels=3) # it doesn't have the params to search, only random apply
             img = gray_scale(img)    # you can consider to remove it..
 
         ## Original transformation space :
@@ -149,7 +150,7 @@ class Extended_RangAugment(RandAugment):
             # I think 11x11 filter map is enough as maximum value,
             #   and 1x1 filter map is capable to keep the orignal info of img.
             "rand_gaussian_blur": (torch.linspace(1.0, 11.0, num_bins), False), 
-            #"rand_gray_scale": (torch.tensor(0.0), False),
+            "rand_gray_scale": (torch.tensor(0.0), False),
             
             # original trfs..
             "Identity": (torch.tensor(0.0), False),
@@ -168,27 +169,18 @@ class Extended_RangAugment(RandAugment):
             "Equalize": (torch.tensor(0.0), False),
         }
     
+
     def forward(self, img):
+        if isinstance(img, Image.Image):
+            img = ToTensor()(img)
+
         if self.debug_flag:
             tmp_debug_lst = []
-        fill = self.fill
 
-        
-        if img.size:
-            print("Image Format Pillow")
-            width, height= img.size
-            channels=3
-            convert_tensor = transforms.ToTensor()
-            img=convert_tensor(img)
-            image = transforms.ToPILImage()
-            img=image(img)
-            # print(img.shape)
-            # channels, height, width = img.shape
-           
-        else:     
-            channels, height, width = img.shape      #F.get_dimensions(img)
-       
-        if isinstance(img, Tensor):
+        channels, height, width = img.shape     
+
+        fill = self.fill
+        if isinstance(img, torch.Tensor):
             if isinstance(fill, (int, float)):
                 fill = [float(fill)] * channels
             elif fill is not None:
@@ -214,16 +206,68 @@ class Extended_RangAugment(RandAugment):
             self.DEBUG_LIST.append(tmp_debug_lst)
             self.im_idx+=1
         
-        
-        convert_tensor = transforms.ToTensor()
-        img=convert_tensor(img)
-        print(img.shape)
-        return img
+        return img    
 
 
 # Simple unittest ; 2020/04/03 16:32pm Josef-Huang.www
 if __name__ == "__main__":
-     
+    # testing function..
+    def test_pil_format(tst_cfg, rand_aug):
+        print('Testing data type..\n')
+        print('-------------------\n')
+
+        rnd_tnsrs = torch.rand(tst_cfg['image_size'])
+        for idx, rnd_tnsr in enumerate(rnd_tnsrs):
+            pil_tnsr = ToPILImage()(rnd_tnsr)
+            # test input pil-format
+            out_tnsr = rand_aug(pil_tnsr)
+            if not isinstance(out_tnsr, torch.Tensor):
+                _show_debug_info(rand_aug.DEBUG_LIST, idx)
+                raise TypeError(f'The output tensor type is {type(out_tnsr)}, it should be {torch.Tensor}')
+    
+    def test_output_shape(tst_cfg, rand_aug):
+        print('Testing output_shape..\n')
+        print('-------------------\n')
+
+        rnd_tnsrs = torch.rand(tst_cfg['image_size'])
+        GT_shp = tst_cfg['image_size'][1:]
+        for idx, rnd_tnsr in enumerate(rnd_tnsrs):
+            out_tnsr = rand_aug(rnd_tnsr)
+            if list(out_tnsr.shape) != GT_shp:
+                _show_debug_info(rand_aug.DEBUG_LIST, idx)
+                raise ValueError(f"got output tensor shape : {list(out_tnsr.shape)}, but it should be {GT_shp}")
+    
+
+    def test_subpolicy(tst_cfg, rand_aug, policy_lst):
+        print('Testing subpolicy..\n')
+        print('-------------------\n')
+
+        GT_shp = tst_cfg['image_size'][1:]
+        rnd_tnsr = torch.rand( [1,] + GT_shp) # only get single image to test
+        op_meta = rand_aug._ext_aug_space(rand_aug.num_magnitude_bins, (GT_shp[1:]))
+        
+        for op_name in policy_lst:
+            magnitudes, signed = op_meta[op_name]
+            magnitude = float(magnitudes[rand_aug.magnitude].item()) if magnitudes.ndim > 0 else 0.0
+            if signed and torch.randint(2, (1,)):
+                magnitude *= -1.0
+                
+            out_tnsr = rand_aug._ext_apply_op(rnd_tnsr, op_name, magnitude, 
+                    # this part is for customized params, such as upsampling interpolation, blurring sigma range, ..., etc.
+                        interpolation=rand_aug.interpolation, fill=rand_aug.fill, sigma=rand_aug.sigma)
+            # 1. chk output tensor type
+            if not isinstance(out_tnsr, torch.Tensor):
+                _show_debug_info(rand_aug.DEBUG_LIST, idx)
+                raise TypeError(f'The output tensor type is {type(out_tnsr)}, it should be {torch.Tensor}')
+            # 2. chk output tensor shape
+            if list(out_tnsr.shape) != [1,] + GT_shp:
+                _show_debug_info(rand_aug.DEBUG_LIST, idx)
+                raise ValueError(f"got output tensor shape : {list(out_tnsr.shape)}, but it should be {[1,] + GT_shp}")
+
+    def _show_debug_info(db_lst=None, idx=None):
+        [op1, op2] = db_lst[idx]
+        print(f'op1 : {op1} \n op2 : {op2} \n')
+
     tst_cfg = {
         'image_size':[64, 3, 224, 224]
     }
@@ -235,24 +279,37 @@ if __name__ == "__main__":
         'debug_flag' : True
     }
     rand_aug = Extended_RangAugment( **rand_aug_params )
-
+    
     # printout extended augmentation space
     aug_space = rand_aug._augmentation_space(num_bins=rand_aug_params['num_magnitude_bins'], image_size=tst_cfg['image_size'][1:])
+    print("Testing begin..\n")
     print(f"Supported transformations : {aug_space.keys()} \n")
     
-    # test output tensor shape
-    rnd_tnsrs = torch.rand(tst_cfg['image_size'])
-    for rnd_tnsr in rnd_tnsrs:
-        out_tnsr = rand_aug(rnd_tnsr)
+    n_err = 0
+    try:
+        test_pil_format(tst_cfg, rand_aug)
+    except Exception as ex :
+        print(ex)
+        n_err += 1
+    
+    try:
+        test_output_shape(tst_cfg, rand_aug)
+    except Exception as ex :
+        print(ex)
+        n_err += 1
 
-        # under testing, not sure what kind of trfs change the channel of image
-        if list(out_tnsr.shape) != tst_cfg['image_size'][1:]:
-            [op1, op2] = rand_aug.DEBUG_LIST[0]
-            print(f'op1 : {op1} \n op2 : {op2} \n')
-            if not op1['op_name'] in ['Posterize', 'Sharpness', 'rand_gray_scale'] or \
-                not op2['op_name'] in ['Posterize', 'Sharpness', 'rand_gray_scale']:
-                raise AssertionError(f"got output tensor shape : {list(out_tnsr.shape)}, but it should be {tst_cfg['image_size'][1:]}")
+    try:
+        # put the trfs name (str type) you want to test
+        policy_lst = list( aug_space.keys() )  # test all sub-policy..
+        test_subpolicy(tst_cfg, rand_aug, policy_lst)
+    except Exception as ex :
+        print(ex)
+        n_err += 1
+
+    print(f'Simple unittest complete, {n_err} error occurs\n')
 
 
+    
+            
 
     
