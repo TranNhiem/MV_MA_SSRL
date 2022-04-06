@@ -102,7 +102,7 @@ def main():
         
 
 
-        transform = prepare_n_crop_transform_mv_ma_v1(transform,  num_crops_per_aug=args.num_crops_per_aug,num_crop_glob=args.num_crop_glob, crop_size_glob=args.crop_size_glob,
+        transform = prepare_n_crop_transform_mv_ma(transform,  num_crops_per_aug=args.num_crops_per_aug,num_crop_glob=args.num_crop_glob, crop_size_glob=args.crop_size_glob,
                                                num_crop_loc=args.num_crop_loc, crop_size_loc=args.crop_size_loc, crop_type=args.crop_type,
                                                min_loc=args.min_scale_loc, max_loc=args.max_scale_loc,  min_glob=args.min_scale_glob, max_glob=args.max_scale_glob
                                                )

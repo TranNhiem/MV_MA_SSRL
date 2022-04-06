@@ -32,6 +32,7 @@ from torchvision.datasets import STL10, ImageFolder
 # pluggin multiple DA support
 from torchvision.transforms import autoaugment as auto_aug
 from solo.utils.Fast_Auto_Augment.Fast_AutoAugment import Fast_AutoAugment
+from solo.utils.Custom_RandAugment_v2 import Extended_RangAugment
 
 def dataset_with_index(DatasetClass: Type[Dataset]) -> Type[Dataset]:
     """Factory for datasets that also returns the data index.
@@ -176,13 +177,15 @@ class FullTransformPipeline_ma_mv:
             List[torch.Tensor]: an image in the tensor format.
         """
         # Try to generate Crop for 2
+        mean = (0.485, 0.456, 0.406)
+        std = (0.228, 0.224, 0.225)
 
         x_glob_crops=[]
         for _ in range(self.num_crop_glob): 
             
             if self.crop_type == "inception_crop": 
                 crop_strategy=T.Compose([T.RandomResizedCrop(size=self.crop_size_glob,
-                    interpolation=T.InterpolationMode.BICUBIC)])
+                    interpolation=T.InterpolationMode.BICUBIC),])# transforms.Normalize(mean=mean, std=std)
             
             elif self.crop_type == "random_uniform":
                     crop_strategy=T.Compose([T.RandomResizedCrop(size=self.crop_size_glob,
@@ -193,41 +196,51 @@ class FullTransformPipeline_ma_mv:
             crop_view = crop_strategy(x)
             x_glob_crops.append(crop_view)
         
-        torch.save(x_glob_crops, "crops_tensor",  pickle_module=pickle)
+        #torch.save(x_glob_crops, "crops_tensor",  pickle_module=pickle)
 
         x_loc_crops=[]
+
         for _ in range(self.num_crop_loc): 
             
             if self.crop_type == "inception_crop": 
                 crop_strategy=T.Compose([T.RandomResizedCrop(size=self.crop_size_loc,
-                    interpolation=T.InterpolationMode.BICUBIC)])
+                    interpolation=T.InterpolationMode.BICUBIC), ])
             
             elif self.crop_type == "random_uniform":
                     crop_strategy=T.Compose([T.RandomResizedCrop(size=self.crop_size_loc,
                     scale=(self.min_scale_loc, self.max_scale_loc),
-                        interpolation=T.InterpolationMode.BICUBIC)])
+                        interpolation=T.InterpolationMode.BICUBIC), ])
             else: 
                 raise ValueError("Croping_strategy_Invalid")
             crop_view = crop_strategy(x)
             x_loc_crops.append(crop_view)
 
         out = []
-        if len(x_loc_crops) & len(x_glob_crops) >= 1: 
-            #print("Transform Global AND Local Crops")
+        if len(x_glob_crops) & len( x_loc_crops) >= 1: 
+            print("Gloabl ^&^ Local Crops Apply Transform")
             out_glob=[]
             for x_glob in x_glob_crops:
                 for idx, transform in enumerate(self.transforms):
                     out_glob.extend(transform(x_glob))
             random.shuffle(out_glob)
+            out.extend(out_glob)
             
             out_loc=[]
             for x_loc in x_loc_crops:
                 for idx, transform in enumerate(self.transforms):
                     out_loc.extend(transform(x_loc))
             random.shuffle(out_loc)
-        
-            out.extend(out_glob)
             out.extend(out_loc)
+        
+        elif len( x_loc_crops) ==0:  
+            print("Croping with Only Global Crop")
+            out_glob=[]
+            for x_glob in x_glob_crops:
+                for idx, transform in enumerate(self.transforms):
+                    out_glob.extend(transform(x_glob))
+            random.shuffle(out_glob)
+            out.extend(out_glob)
+
         else: 
             raise ValueError("Croping should have num_glob_crop & num_loc_crop")
         
@@ -536,13 +549,16 @@ def prepare_transform(dataset: str, trfs_kwargs, da_kwargs=None) -> Any:
             scale=(trfs_kwargs['min_scale'], trfs_kwargs['max_scale']),
             interpolation=transforms.InterpolationMode.BICUBIC
         )
-        mean = (0.485, 0.456, 0.406)
-        std = (0.228, 0.224, 0.225)
+    
         # prepare various da
-        auto_da = transforms.Compose( [rnd_crp, auto_aug.AutoAugment(policy=ada_policy), transforms.ToTensor(), transforms.Normalize(mean=mean, std=std)] )
+        auto_da = transforms.Compose( [rnd_crp, auto_aug.AutoAugment(policy=ada_policy), transforms.ToTensor(), transforms.Normalize(mean=mean, std=std) ] )
         
         rand_da = transforms.Compose( [rnd_crp, auto_aug.RandAugment(num_ops=num_ops, magnitude=magnitude), transforms.ToTensor(), transforms.Normalize(mean=mean, std=std)] )
-        fast_da = Fast_AutoAugment(policy_type=fda_policy).get_trfs(rnd_crp)
+        #rand_da = transforms.Compose( [rnd_crp, Extended_RangAugment(num_ops=num_ops, magnitude=magnitude), transforms.ToTensor(), transforms.Normalize(mean=mean, std=std)] )
+        
+        #fast_da = Fast_AutoAugment(policy_type=fda_policy).get_trfs(rnd_crp)
+        fast_da = transforms.Compose( [rnd_crp, Fast_AutoAugment(policy_type=fda_policy).get_trfs(), transforms.Normalize(mean=mean, std=std)] )
+
         
         #  ret [simclr_da, rand_da, auto_da, fast_da]  4 views trfs
         return [CustomTransform(**trfs_kwargs), rand_da, auto_da, fast_da ]#fast_da
@@ -557,16 +573,21 @@ def prepare_transform(dataset: str, trfs_kwargs, da_kwargs=None) -> Any:
 
         policy_dict = {'imagenet':auto_aug.AutoAugmentPolicy.IMAGENET}
         ## DA args def :
+        mean = (0.485, 0.456, 0.406)
+        std = (0.228, 0.224, 0.225)
         num_ops, magnitude = da_kwargs['rda_num_ops'], da_kwargs['rda_magnitude']
         ada_policy = policy_dict[ da_kwargs['ada_policy'] ]
         fda_policy = da_kwargs['fda_policy']
         # common crop settings : 
 
         # prepare various da
-        auto_da = transforms.Compose( [ auto_aug.AutoAugment(policy=ada_policy), transforms.ToTensor()] )
+        auto_da = transforms.Compose( [ auto_aug.AutoAugment(policy=ada_policy), transforms.ToTensor(), transforms.Normalize(mean=mean, std=std)] )
         
-        rand_da = transforms.Compose( [auto_aug.RandAugment(num_ops=num_ops, magnitude=magnitude), transforms.ToTensor()] )
-        fast_da = Fast_AutoAugment(policy_type=fda_policy).get_trfs()
+        rand_da = transforms.Compose( [auto_aug.RandAugment(num_ops=num_ops, magnitude=magnitude), transforms.ToTensor(), transforms.Normalize(mean=mean, std=std)] )
+        #ssrand_da = transforms.Compose( [ Extended_RangAugment(num_ops=num_ops, magnitude=magnitude), transforms.ToTensor(), transforms.Normalize(mean=mean, std=std)] )
+        
+        #fast_da = Fast_AutoAugment(policy_type=fda_policy).get_trfs()
+        fast_da = transforms.Compose( [Fast_AutoAugment(policy_type=fda_policy).get_trfs(), transforms.Normalize(mean=mean, std=std)] )
         
         #  ret [simclr_da, rand_da, auto_da, fast_da]  4 views trfs
         return [ CustomTransform_no_crop(**trfs_kwargs), rand_da, auto_da, fast_da ]#fast_da
@@ -578,7 +599,8 @@ def prepare_transform(dataset: str, trfs_kwargs, da_kwargs=None) -> Any:
         x--> X1, X2, Xn as NCropAugmentation_mv_ma function (args: num_crops, crop_size, crop_type, scale_of_crops)
         --> Current Implementation X--> X1, X2 --> Then Apply augmentation
         """
-
+        mean = (0.485, 0.456, 0.406)
+        std = (0.228, 0.224, 0.225)
         policy_dict = {'imagenet':auto_aug.AutoAugmentPolicy.IMAGENET}
         ## DA args def :
         num_ops, magnitude = da_kwargs['rda_num_ops'], da_kwargs['rda_magnitude']
@@ -587,13 +609,15 @@ def prepare_transform(dataset: str, trfs_kwargs, da_kwargs=None) -> Any:
         # common crop settings : 
 
         # prepare various da
-        auto_da = transforms.Compose( [ auto_aug.AutoAugment(policy=ada_policy), transforms.ToTensor()] )
+        auto_da = transforms.Compose( [ auto_aug.AutoAugment(policy=ada_policy), transforms.ToTensor(),transforms.Normalize(mean=mean, std=std)])# transforms.ToTensor(),# transforms.Normalize(mean=mean, std=std)
         
-        rand_da = transforms.Compose( [auto_aug.RandAugment(num_ops=num_ops, magnitude=magnitude), transforms.ToTensor()] )
-        fast_da = Fast_AutoAugment(policy_type=fda_policy).get_trfs()
+        #rand_da = transforms.Compose( [auto_aug.RandAugment(num_ops=num_ops, magnitude=magnitude), transforms.ToTensor(),transforms.Normalize(mean=mean, std=std)])# transforms.ToTensor()] )
+        rand_da = transforms.Compose( [Extended_RangAugment(num_ops=num_ops, magnitude=magnitude),transforms.Normalize(mean=mean, std=std)] )#
+        
+        fast_da = transforms.Compose( [Fast_AutoAugment(policy_type=fda_policy).get_trfs(), transforms.Normalize(mean=mean, std=std)] )
         
         #  ret [simclr_da, rand_da, auto_da, fast_da]  4 views trfs
-        return [ CustomTransform_no_crop(**trfs_kwargs), rand_da, auto_da, fast_da,  ]#fast_da
+        return [ CustomTransform_no_crop(**trfs_kwargs), rand_da, auto_da, fast_da,]#fast_da
         
     else:
         raise ValueError(f"{dataset} is not currently supported.")

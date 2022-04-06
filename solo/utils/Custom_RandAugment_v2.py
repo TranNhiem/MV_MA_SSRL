@@ -3,7 +3,7 @@ import torch
 from torchvision.transforms import RandAugment, InterpolationMode
 from torchvision.transforms import functional as F
 from torchvision.transforms import ColorJitter, Grayscale, GaussianBlur
-
+from torchvision import transforms
 # typing check
 from typing import List, Tuple, Optional, Dict
 from torch import Tensor
@@ -149,7 +149,7 @@ class Extended_RangAugment(RandAugment):
             # I think 11x11 filter map is enough as maximum value,
             #   and 1x1 filter map is capable to keep the orignal info of img.
             "rand_gaussian_blur": (torch.linspace(1.0, 11.0, num_bins), False), 
-            "rand_gray_scale": (torch.tensor(0.0), False),
+            #"rand_gray_scale": (torch.tensor(0.0), False),
             
             # original trfs..
             "Identity": (torch.tensor(0.0), False),
@@ -171,9 +171,23 @@ class Extended_RangAugment(RandAugment):
     def forward(self, img):
         if self.debug_flag:
             tmp_debug_lst = []
-
         fill = self.fill
-        channels, height, width = img.shape      #F.get_dimensions(img)
+
+        
+        if img.size:
+            print("Image Format Pillow")
+            width, height= img.size
+            channels=3
+            convert_tensor = transforms.ToTensor()
+            img=convert_tensor(img)
+            image = transforms.ToPILImage()
+            img=image(img)
+            # print(img.shape)
+            # channels, height, width = img.shape
+           
+        else:     
+            channels, height, width = img.shape      #F.get_dimensions(img)
+       
         if isinstance(img, Tensor):
             if isinstance(fill, (int, float)):
                 fill = [float(fill)] * channels
@@ -199,13 +213,17 @@ class Extended_RangAugment(RandAugment):
         if self.debug_flag:
             self.DEBUG_LIST.append(tmp_debug_lst)
             self.im_idx+=1
-
+        
+        
+        convert_tensor = transforms.ToTensor()
+        img=convert_tensor(img)
+        print(img.shape)
         return img
 
 
 # Simple unittest ; 2020/04/03 16:32pm Josef-Huang.www
 if __name__ == "__main__":
-    import torch 
+     
     tst_cfg = {
         'image_size':[64, 3, 224, 224]
     }
