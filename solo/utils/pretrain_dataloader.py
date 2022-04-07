@@ -32,7 +32,8 @@ from torchvision.datasets import STL10, ImageFolder
 # pluggin multiple DA support
 from torchvision.transforms import autoaugment as auto_aug
 from solo.utils.Fast_Auto_Augment.Fast_AutoAugment import Fast_AutoAugment
-from solo.utils.Custom_RandAugment_v2 import Extended_RangAugment
+from solo.utils.Custom_RandAugment_v3 import RandAugment 
+
 
 def dataset_with_index(DatasetClass: Type[Dataset]) -> Type[Dataset]:
     """Factory for datasets that also returns the data index.
@@ -221,6 +222,7 @@ class FullTransformPipeline_ma_mv:
             out_glob=[]
             for x_glob in x_glob_crops:
                 for idx, transform in enumerate(self.transforms):
+                    print(transform)
                     out_glob.extend(transform(x_glob))
             #random.shuffle(out_glob)
             out.extend(out_glob)
@@ -235,8 +237,10 @@ class FullTransformPipeline_ma_mv:
         elif len( x_loc_crops) ==0:  
             #print("Croping with Only Global Crop")
             out_glob=[]
+            #print("length of global crop", len(x_glob_crops))
             for x_glob in x_glob_crops:
-                for idx, transform in enumerate(self.transforms):
+                #print(len(self.transforms))
+                for transform in self.transforms:
                     out_glob.extend(transform(x_glob))
             #random.shuffle(out_glob)
             out.extend(out_glob)
@@ -611,11 +615,12 @@ def prepare_transform(dataset: str, trfs_kwargs, da_kwargs=None) -> Any:
         # prepare various da
         auto_da = transforms.Compose( [ auto_aug.AutoAugment(policy=ada_policy), transforms.ToTensor(),transforms.Normalize(mean=mean, std=std)])# transforms.ToTensor(),# transforms.Normalize(mean=mean, std=std)
         
-        rand_da = transforms.Compose( [auto_aug.RandAugment(num_ops=num_ops, magnitude=magnitude), transforms.ToTensor(),transforms.Normalize(mean=mean, std=std)])# transforms.ToTensor()] )
-        #rand_da = transforms.Compose( [Extended_RangAugment(num_ops=num_ops, magnitude=magnitude),transforms.Normalize(mean=mean, std=std)] )#
+        #rand_da = transforms.Compose( [auto_aug.RandAugment(num_ops=num_ops, magnitude=magnitude), transforms.ToTensor(),transforms.Normalize(mean=mean, std=std)])# transforms.ToTensor()] )
+        #rand_da = transforms.Compose( [Extended_RangAugment(num_ops=num_ops, magnitude=magnitude), transforms.Normalize(mean=mean, std=std)])# transforms.ToTensor(),transforms.Normalize(mean=mean, std=std)] )#
+        rand_da = transforms.Compose( [RA(num_ops=num_ops, magnitude=magnitude), transforms.ToTensor(),transforms.Normalize(mean=mean, std=std)])# transforms.ToTensor(),transforms.Normalize(mean=mean, std=std)] )#
         
-        fast_da = transforms.Compose( [Fast_AutoAugment(policy_type=fda_policy).get_trfs(), transforms.Normalize(mean=mean, std=std)] )
-        
+        fast_da = transforms.Compose( [Fast_AutoAugment(policy_type=fda_policy).get_trfs(), transforms.ToTensor(), transforms.Normalize(mean=mean, std=std)] )
+        #fast_da = Fast_AutoAugment(policy_type=fda_policy).get_trfs()
         #  ret [simclr_da, rand_da, auto_da, fast_da]  4 views trfs
         return [ CustomTransform_no_crop(**trfs_kwargs), rand_da, auto_da, fast_da,]#fast_da
         

@@ -30,11 +30,11 @@ class Fast_AutoAugment(object):
 
     def __init__(self, policy_type="imagenet"):
         # preprocess..
-        # mean = (0.485, 0.456, 0.406)
-        # std = (0.228, 0.224, 0.225)
+        mean = (0.485, 0.456, 0.406)
+        std = (0.228, 0.224, 0.225)
         self.trfs_cntr = transforms.Compose([
-            transforms.ToTensor(),
-            #transforms.Normalize(mean=mean, std=std)
+            # transforms.ToTensor(),
+            # transforms.Normalize(mean=mean, std=std)
         ])
 
         if policy_type == "imagenet":

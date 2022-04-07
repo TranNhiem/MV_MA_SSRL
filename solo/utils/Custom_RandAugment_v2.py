@@ -143,14 +143,14 @@ class Extended_RangAugment(RandAugment):
     def _ext_aug_space(self, num_bins, image_size):
         return {
             # make your new extension..
-            "rand_brightness": (torch.linspace(0.0, 0.8, num_bins), False),
-            "rand_contrast": (torch.linspace(0.0, 0.8, num_bins), False),
-            "rand_saturation": (torch.linspace(0.0, 0.8, num_bins), False),
-            "rand_hue": (torch.linspace(0.0, 0.5, num_bins), False),
-            # I think 11x11 filter map is enough as maximum value,
-            #   and 1x1 filter map is capable to keep the orignal info of img.
-            "rand_gaussian_blur": (torch.linspace(1.0, 11.0, num_bins), False), 
-            "rand_gray_scale": (torch.tensor(0.0), False),
+            #"rand_brightness": (torch.linspace(0.0, 0.8, num_bins), False),
+            # "rand_contrast": (torch.linspace(0.0, 0.8, num_bins), False),
+            # "rand_saturation": (torch.linspace(0.0, 0.8, num_bins), False),
+            # "rand_hue": (torch.linspace(0.0, 0.5, num_bins), False),
+            # # I think 11x11 filter map is enough as maximum value,
+            # #   and 1x1 filter map is capable to keep the orignal info of img.
+            # "rand_gaussian_blur": (torch.linspace(1.0, 11.0, num_bins), False), 
+            # "rand_gray_scale": (torch.tensor(0.0), False),
             
             # original trfs..
             "Identity": (torch.tensor(0.0), False),
@@ -186,7 +186,7 @@ class Extended_RangAugment(RandAugment):
             elif fill is not None:
                 fill = [float(f) for f in fill]
 
-        op_meta = self._ext_aug_space(self.num_magnitude_bins, (height, width))
+        op_meta = self._ext_aug_space(self.num_magnitude_bins, [height, width])
         for trfs_idx in range(self.num_ops):
             op_index = int(torch.randint(len(op_meta), (1,)).item())
             op_name = list(op_meta.keys())[op_index]
@@ -206,8 +206,23 @@ class Extended_RangAugment(RandAugment):
             self.DEBUG_LIST.append(tmp_debug_lst)
             self.im_idx+=1
         
+        # image = transforms.ToTensor()
+        # img=image(img)
+        # print(img.shape)
+
         return img    
 
+    def __repr__(self) -> str:
+        s = (
+            f"{self.__class__.__name__}("
+            f"num_ops={self.num_ops}"
+            f", magnitude={self.magnitude}"
+            f", num_magnitude_bins={self.num_magnitude_bins}"
+            f", interpolation={self.interpolation}"
+            f", fill={self.fill}"
+            f")"
+        )
+        return s
 
 # Simple unittest ; 2020/04/03 16:32pm Josef-Huang.www
 if __name__ == "__main__":
@@ -219,6 +234,7 @@ if __name__ == "__main__":
         rnd_tnsrs = torch.rand(tst_cfg['image_size'])
         for idx, rnd_tnsr in enumerate(rnd_tnsrs):
             pil_tnsr = ToPILImage()(rnd_tnsr)
+
             # test input pil-format
             out_tnsr = rand_aug(pil_tnsr)
             if idx < 1:
