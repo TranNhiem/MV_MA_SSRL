@@ -221,15 +221,15 @@ class FullTransformPipeline_ma_mv:
             print("Gloabl ^&^ Local Crops Apply Transform")
             out_glob=[]
             for x_glob in x_glob_crops:
-                for idx, transform in enumerate(self.transforms):
-                    print(transform)
+                for  transform in self.transforms:
+                    #print(transform)
                     out_glob.extend(transform(x_glob))
             #random.shuffle(out_glob)
             out.extend(out_glob)
             
             out_loc=[]
             for x_loc in x_loc_crops:
-                for idx, transform in enumerate(self.transforms):
+                for transform in self.transforms:
                     out_loc.extend(transform(x_loc))
             random.shuffle(out_loc)
             out.extend(out_loc)
@@ -617,7 +617,7 @@ def prepare_transform(dataset: str, trfs_kwargs, da_kwargs=None) -> Any:
         
         #rand_da = transforms.Compose( [auto_aug.RandAugment(num_ops=num_ops, magnitude=magnitude), transforms.ToTensor(),transforms.Normalize(mean=mean, std=std)])# transforms.ToTensor()] )
         #rand_da = transforms.Compose( [Extended_RangAugment(num_ops=num_ops, magnitude=magnitude), transforms.Normalize(mean=mean, std=std)])# transforms.ToTensor(),transforms.Normalize(mean=mean, std=std)] )#
-        rand_da = transforms.Compose( [RA(num_ops=num_ops, magnitude=magnitude), transforms.ToTensor(),transforms.Normalize(mean=mean, std=std)])# transforms.ToTensor(),transforms.Normalize(mean=mean, std=std)] )#
+        rand_da = transforms.Compose( [RandAugment(num_ops=num_ops, magnitude=magnitude), transforms.ToTensor(),transforms.Normalize(mean=mean, std=std)])# transforms.ToTensor(),transforms.Normalize(mean=mean, std=std)] )#
         
         fast_da = transforms.Compose( [Fast_AutoAugment(policy_type=fda_policy).get_trfs(), transforms.ToTensor(), transforms.Normalize(mean=mean, std=std)] )
         #fast_da = Fast_AutoAugment(policy_type=fda_policy).get_trfs()
