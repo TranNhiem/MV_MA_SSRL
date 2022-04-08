@@ -4,6 +4,7 @@ python3 ../../../main_pretrain.py \
     --data_dir /data/ \
     --train_dir train \
     --val_dir val \
+    --subset_class_num 100 \
     --max_epochs 300 \
     --gpus 0,1,2,3,4,5,6,7 \
     --accelerator gpu \

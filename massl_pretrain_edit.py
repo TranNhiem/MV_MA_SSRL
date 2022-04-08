@@ -106,6 +106,7 @@ def main():
             data_dir=args.data_dir,
             train_dir=args.train_dir,
             no_labels=args.no_labels,
+            subset_class_num = args.subset_class_num,
         )
         train_loader = prepare_dataloader(
             train_dataset, batch_size=args.batch_size, num_workers=args.num_workers
@@ -127,6 +128,7 @@ def main():
             val_dir=args.val_dir,
             batch_size=args.batch_size,
             num_workers=args.num_workers,
+            subset_class_num=args.subset_class_num,
         )
 
     callbacks = []

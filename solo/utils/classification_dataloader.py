@@ -27,6 +27,15 @@ from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
 from torchvision.datasets import STL10, ImageFolder
 
+class ImageNet_With_subset(ImageFolder):
+    def __init__(self, img_root, subset_class_num, transform=None):
+        super().__init__(img_root, transform=transform)
+        samples_subset=[]
+        if subset_class_num != None:
+            for file_path, numeric_cls in self.samples:
+                if numeric_cls < subset_class_num:
+                    samples_subset.append((file_path,numeric_cls))
+            self.samples = samples_subset
 
 def build_custom_pipeline():
     """Builds augmentation pipelines for custom data.
@@ -149,6 +158,7 @@ def prepare_datasets(
     data_dir: Optional[Union[str, Path]] = None,
     train_dir: Optional[Union[str, Path]] = None,
     val_dir: Optional[Union[str, Path]] = None,
+    subset_class_num: int = None,
     download: bool = True,
 ) -> Tuple[Dataset, Dataset]:
     """Prepares train and val datasets.
@@ -217,8 +227,8 @@ def prepare_datasets(
         train_dir = data_dir / train_dir
         val_dir = data_dir / val_dir
 
-        train_dataset = ImageFolder(train_dir, T_train)
-        val_dataset = ImageFolder(val_dir, T_val)
+        train_dataset = ImageNet_With_subset(train_dir, subset_class_num, T_train)
+        val_dataset = ImageNet_With_subset(val_dir, subset_class_num, T_val)
 
     return train_dataset, val_dataset
 
@@ -263,6 +273,7 @@ def prepare_data(
     batch_size: int = 64,
     num_workers: int = 4,
     download: bool = True,
+    subset_class_num: int = None,
 ) -> Tuple[DataLoader, DataLoader]:
     """Prepares transformations, creates dataset objects and wraps them in dataloaders.
 
@@ -290,6 +301,7 @@ def prepare_data(
         train_dir=train_dir,
         val_dir=val_dir,
         download=download,
+        subset_class_num=subset_class_num,
     )
     train_loader, val_loader = prepare_dataloaders(
         train_dataset,

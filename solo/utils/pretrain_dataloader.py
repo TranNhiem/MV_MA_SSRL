@@ -52,6 +52,19 @@ def dataset_with_index(DatasetClass: Type[Dataset]) -> Type[Dataset]:
 
     return DatasetWithIndex
 
+class ImageNet_With_subset(ImageFolder):
+    def __init__(self, img_root, subset_class_num, transform=None):
+        super().__init__(img_root, transform=transform)
+        self.root = Path(img_root)
+        self.transform = transform
+        samples_subset=[]
+        print("class num:",subset_class_num)
+        if subset_class_num != None:
+            for file_path, numeric_cls in self.samples:
+                if numeric_cls < subset_class_num:
+                    samples_subset.append((file_path,numeric_cls))
+            self.samples = samples_subset
+        print("train dataset size:",len(self.samples))
 
 class CustomDatasetWithoutLabels(Dataset):
     def __init__(self, root, transform=None):
@@ -678,12 +691,12 @@ def prepare_datasets(
     #  only support imagenet/imagenet100 ds
     elif dataset == "mulda" or "mulda_v1" or "mv_ma":
         train_dir = data_dir / train_dir
-        train_dataset = dataset_with_index(ImageFolder)(train_dir, transform)
+        train_dataset = dataset_with_index(ImageNet_With_subset)(train_dir, subset_class_num, transform)
 
     return train_dataset
 
 def prepare_dataloader(
-    train_dataset: Dataset, batch_size: int = 64, num_workers: int = 4
+    train_dataset: Dataset, batch_size: int = 64, num_workers: int = 4,
 ) -> DataLoader:
     """Prepares the training dataloader for pretraining.
     Args:
