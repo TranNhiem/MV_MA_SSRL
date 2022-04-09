@@ -125,8 +125,8 @@ class MVAR(BaseMomentumMethod):
        
         Z = [self.projector(f) for f in feats]
         P = [self.predictor(z) for z in Z]
-        print("length from Targe encod",len(Z))
-        print("length of Online encod", len(P))
+        # print("length from Targe encod",len(Z))
+        # print("length of Online encod", len(P))
        
         # forward momentum backbone
         with torch.no_grad():
@@ -136,7 +136,7 @@ class MVAR(BaseMomentumMethod):
         
         neg_cos_sim_glob = 0
         ## If the Multi View the Loop Iteratively Corresponding
-        print("length of Large Crops training",self.num_large_crops ) 
+        #print("length of Large Crops training",self.num_large_crops ) 
         for v1 in range(self.num_large_crops):
             # Views 2 remove the prior Views
             for v2 in np.delete(range(self.num_crops-self.num_small_crops), v1):
@@ -147,7 +147,7 @@ class MVAR(BaseMomentumMethod):
             z_std_glob = F.normalize(torch.stack(Z[: self.num_large_crops]), dim=-1).std(dim=1).mean()
            
         neg_cos_sim_loc= 0
-        print("Length of small crop training", self.num_small_crops)
+        #print("Length of small crop training", self.num_small_crops)
         if self.num_small_crops != 0:
             for v1 in range(self.num_small_crops):
                 # Views 2 remove the prior Views

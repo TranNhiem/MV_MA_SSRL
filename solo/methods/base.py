@@ -469,8 +469,8 @@ class BaseMethod(pl.LightningModule):
         X = [X] if isinstance(X, torch.Tensor) else X
 
         # check that we received the desired number of crops
-        print("len data input",len(X))
-        print("number of crops", self.num_crops)
+        # print("len data input",len(X))
+        # print("number of crops", self.num_crops)
         assert len(X) == self.num_crops
 
 
