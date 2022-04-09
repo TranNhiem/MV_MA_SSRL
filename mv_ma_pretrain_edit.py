@@ -152,7 +152,7 @@ def main():
             name=args.name,
             project=args.project,
             entity=args.entity,
-            offline= True, #args.offline,
+            offline= False, #args.offline,
             group = args.experiment_type,
             job_type = args.job_name,
         )
