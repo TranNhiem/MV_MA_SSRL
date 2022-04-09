@@ -191,16 +191,12 @@ class FullTransformPipeline_ma_mv:
             List[torch.Tensor]: an image in the tensor format.
         """
         # Try to generate Crop for 2
-        mean = (0.485, 0.456, 0.406)
-        std = (0.228, 0.224, 0.225)
-
         x_glob_crops=[]
         for _ in range(self.num_crop_glob): 
-            
             if self.crop_type == "inception_crop": 
                 crop_strategy=T.Compose([T.RandomResizedCrop(size=self.crop_size_glob,
-                    interpolation=T.InterpolationMode.BICUBIC),])# transforms.Normalize(mean=mean, std=std)
-            
+                    interpolation=T.InterpolationMode.BICUBIC),])
+
             elif self.crop_type == "random_uniform":
                     crop_strategy=T.Compose([T.RandomResizedCrop(size=self.crop_size_glob,
                     scale=(self.min_scale_glob, self.max_scale_glob),
@@ -209,13 +205,10 @@ class FullTransformPipeline_ma_mv:
                 raise ValueError("Croping_strategy_Invalid")
             crop_view = crop_strategy(x)
             x_glob_crops.append(crop_view)
-            # torch.save(x,"orginal_image")
-            # torch.save(x_glob_crops, "crops_tensor",  pickle_module=pickle)
+    
 
         x_loc_crops=[]
-
         for _ in range(self.num_crop_loc): 
-            
             if self.crop_type == "inception_crop": 
                 crop_strategy=T.Compose([T.RandomResizedCrop(size=self.crop_size_loc,
                     interpolation=T.InterpolationMode.BICUBIC), ])
@@ -226,16 +219,17 @@ class FullTransformPipeline_ma_mv:
                         interpolation=T.InterpolationMode.BICUBIC), ])
             else: 
                 raise ValueError("Croping_strategy_Invalid")
+            
             crop_view = crop_strategy(x)
             x_loc_crops.append(crop_view)
 
         out = []
-        if len(x_glob_crops) & len( x_loc_crops) >= 1: 
-            print("Gloabl ^&^ Local Crops Apply Transform")
+        if len(x_glob_crops) >= 1 & len( x_loc_crops) >= 1: 
+            #print("Gloabl ^&^ Local Crops Apply Transform")
             out_glob=[]
             for x_glob in x_glob_crops:
                 for  transform in self.transforms:
-                    #print(transform)
+           
                     out_glob.extend(transform(x_glob))
             #random.shuffle(out_glob)
             out.extend(out_glob)
@@ -247,12 +241,10 @@ class FullTransformPipeline_ma_mv:
             random.shuffle(out_loc)
             out.extend(out_loc)
         
-        elif len( x_loc_crops) ==0:  
+        elif len(x_loc_crops)==0:  
             #print("Croping with Only Global Crop")
             out_glob=[]
-            #print("length of global crop", len(x_glob_crops))
             for x_glob in x_glob_crops:
-                #print(len(self.transforms))
                 for transform in self.transforms:
                     out_glob.extend(transform(x_glob))
             #random.shuffle(out_glob)
