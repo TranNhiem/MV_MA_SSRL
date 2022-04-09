@@ -168,7 +168,7 @@ class FullTransformPipeline_v1:
 class FullTransformPipeline_ma_mv:
     def __init__(self, transforms: Callable, num_crops_glob: int, crop_size_glob: int,
                     num_crops_loc: int, crop_size_loc: int, crop_type: str, 
-                    min_scale_loc=0.1, max_scale_loc=0.34,  min_scale_glob=0.3, max_scale_glob=1.0) -> None:
+                    min_scale_loc=0.1, max_scale_loc=0.34,  min_scale_glob=0.3, max_scale_glob=1.0,shuffle_crop_transform=False) -> None:
         
         self.transforms = transforms
         self.num_crop_glob = num_crops_glob
@@ -231,14 +231,17 @@ class FullTransformPipeline_ma_mv:
                 for  transform in self.transforms:
            
                     out_glob.extend(transform(x_glob))
-            #random.shuffle(out_glob)
+            if shuffle_crop_transform: 
+                random.shuffle(out_glob)
+
             out.extend(out_glob)
             
             out_loc=[]
             for x_loc in x_loc_crops:
                 for transform in self.transforms:
                     out_loc.extend(transform(x_loc))
-            random.shuffle(out_loc)
+            if shuffle_crop_transform: 
+                random.shuffle(out_loc)
             out.extend(out_loc)
         
         elif len(x_loc_crops)==0:  
@@ -247,7 +250,8 @@ class FullTransformPipeline_ma_mv:
             for x_glob in x_glob_crops:
                 for transform in self.transforms:
                     out_glob.extend(transform(x_glob))
-            #random.shuffle(out_glob)
+            if shuffle_crop_transform: 
+                random.shuffle(out_glob)
             out.extend(out_glob)
 
         else: 
@@ -300,12 +304,11 @@ def prepare_n_crop_transform_v1(
         T.append(NCropAugmentation(transform, num_crops))
     return FullTransformPipeline_v1(T)
 
-
 ## stable version
 def prepare_n_crop_transform_mv_ma(
     transforms: List[Callable], num_crops_per_aug: List[int],  num_crop_glob:int, crop_size_glob: int,num_crop_loc:int, crop_size_loc: int
                                 ,crop_type: str, min_loc: float =0.1, max_loc: float=0.34,
-                                 min_glob: float=0.3, max_glob: float=1.0
+                                 min_glob: float=0.3, max_glob: float=1.0,  shuffle_crop_transform: bool = False
 ) -> NCropAugmentation:
     """Turns a single crop transformation to an N crops transformation.
 
@@ -328,7 +331,7 @@ def prepare_n_crop_transform_mv_ma(
 
     return FullTransformPipeline_ma_mv(T, num_crop_glob, crop_size_glob,num_crop_loc, crop_size_loc
                                 ,crop_type,min_scale_loc=min_loc, max_scale_loc=max_loc,
-                                 min_scale_glob=min_glob, max_scale_glob=max_glob )
+                                 min_scale_glob=min_glob, max_scale_glob=max_glob, shuffle_crop_transform=shuffle_crop_transform )
 
 class BaseTransform:
     """Adds callable base class to implement different transformation pipelines."""
@@ -525,7 +528,7 @@ class CustomTransform_no_crop(BaseTransform):
             ]
         )
 
-def prepare_transform(dataset: str, trfs_kwargs, da_kwargs=None) -> Any:
+def prepare_transform(dataset: str, num_augment_trategy: str, trfs_kwargs, da_kwargs=None) -> Any:
     """Prepares transforms for a specific dataset. Optionally uses multi crop.
 
     Args:
@@ -627,8 +630,33 @@ def prepare_transform(dataset: str, trfs_kwargs, da_kwargs=None) -> Any:
         fast_da = transforms.Compose( [Fast_AutoAugment(policy_type=fda_policy).get_trfs(), transforms.ToTensor(), transforms.Normalize(mean=mean, std=std)] )
         #fast_da = Fast_AutoAugment(policy_type=fda_policy).get_trfs()
         #  ret [simclr_da, rand_da, auto_da, fast_da]  4 views trfs
-        return [ CustomTransform_no_crop(**trfs_kwargs), rand_da, auto_da, fast_da,]#fast_da
+        if num_augment_trategy =="SimCLR_RA_AA_FA": 
+            return [ CustomTransform_no_crop(**trfs_kwargs), rand_da, auto_da, fast_da,]
+        ### ---------3 Augmentations Strategies -------------
+        elif num_augment_trategy =="SimCLR_RA_AA": 
+            return [ CustomTransform_no_crop(**trfs_kwargs), rand_da, auto_da]
+        elif num_augment_trategy =="SimCLR_RA_FA": 
+            return [ CustomTransform_no_crop(**trfs_kwargs), rand_da, fast_da,]
+        elif num_augment_trategy =="SimCLR_AA_FA": 
+            return [ CustomTransform_no_crop(**trfs_kwargs), auto_da, fast_da,]
+        elif num_augment_trategy =="RA_AA_FA": 
+            return [ rand_da, auto_da, fast_da,]
         
+        
+        ### ---------2 Augmentations Strategies -------------
+        elif num_augment_trategy =="SimCLR_RA": 
+            return [ CustomTransform_no_crop(**trfs_kwargs), rand_da]
+        elif num_augment_trategy =="SimCLR_FA": 
+            return [ CustomTransform_no_crop(**trfs_kwargs), fast_da,]
+        elif num_augment_trategy =="SimCLR_AA": 
+            return [ CustomTransform_no_crop(**trfs_kwargs), auto_da]
+        elif num_augment_trategy =="RA_AA": 
+            return [ rand_da, auto_da,]
+        elif num_augment_trategy =="RA_FA": 
+            return [rand_da, fast_da,]
+        else: 
+            raise ValueError(f"{num_augment_trategy} is not currently supported.")
+
     else:
         raise ValueError(f"{dataset} is not currently supported.")
 

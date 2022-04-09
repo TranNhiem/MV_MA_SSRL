@@ -91,7 +91,7 @@ def main():
         if args.unique_augs > 1:  # note : --brightness 0.4 0.4 0.4 0.4 \  # 4 params to bypass inner chk mechnaism in sh file
             # pluggin proposed multiple-DA
             if args.dataset == "mulda" or "mulda_v1" or "mv_ma":
-                transform = prepare_transform(args.dataset, args.transform_kwargs, args.mulda_kwargs) 
+                transform = prepare_transform(args.dataset, args.num_augment_trategy,args.transform_kwargs, args.mulda_kwargs) 
             else: # normal case, this way plz ~ ~
                 transform = [
                     prepare_transform(args.dataset, kwargs) for kwargs in args.transform_kwargs
@@ -104,21 +104,23 @@ def main():
 
         transform = prepare_n_crop_transform_mv_ma(transform,  num_crops_per_aug=args.num_crops_per_aug,num_crop_glob=args.num_crop_glob, crop_size_glob=args.crop_size_glob,
                                                num_crop_loc=args.num_crop_loc, crop_size_loc=args.crop_size_loc, crop_type=args.crop_type,
-                                               min_loc=args.min_scale_loc, max_loc=args.max_scale_loc,  min_glob=args.min_scale_glob, max_glob=args.max_scale_glob
+                                               min_loc=args.min_scale_loc, max_loc=args.max_scale_loc,  min_glob=args.min_scale_glob, max_glob=args.max_scale_glob, shuffle_crop_transform=args.shuffle_transforms_crops
                                                )
         
         if args.debug_augmentations:
             print("Transforms:")
             pprint(transform)
 
+        if args.subset_classes: 
+            print(f"Using Subset Dataset with {args.subset_classes} Classes")
 
         train_dataset = prepare_datasets(
             args.dataset,
             transform,
             data_dir=args.data_dir,
-            subset_class_num=args.subset_classes
             train_dir=args.train_dir,
             no_labels=args.no_labels,
+            subset_class_num=args.subset_classes, 
         )
         train_loader = prepare_dataloader(
             train_dataset, batch_size=args.batch_size, num_workers=args.num_workers

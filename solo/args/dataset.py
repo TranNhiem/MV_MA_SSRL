@@ -87,6 +87,7 @@ def augmentations_args(parser: ArgumentParser):
     parser.add_argument("--crop_size_loc", type=int, default=96)
     parser.add_argument("--min_scale", type=float, default=[0.08], nargs="+")
     parser.add_argument("--max_scale", type=float, default=[1.0], nargs="+")
+    parser.add_argument("--shuffle_transforms_crops", type= bool, default=False, help='Shuffle the crops augmented transform or Not')
     
     parser.add_argument("--crop_type", type=str, default=["random_uniform"], choices=["random_uniform", "inception_crop"])
     parser.add_argument("--min_scale_loc", type=float, default=0.1,)

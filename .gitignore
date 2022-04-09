@@ -16,6 +16,8 @@ datasets/
 *.ckpt
 *.tar
 *.pkl
+*.pyc
+*.log
 
 bash_files/*.png
 bash_files/*.jpg
