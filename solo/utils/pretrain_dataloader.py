@@ -180,6 +180,7 @@ class FullTransformPipeline_ma_mv:
         self.max_scale_loc= max_scale_loc
         self.min_scale_glob= min_scale_glob
         self.max_scale_glob= max_scale_glob
+        self.shuffle_crop_transform=shuffle_crop_transform
 
     def __call__(self, x: Image) -> List[torch.Tensor]:
         """Applies transforms n times to generate n crops.
@@ -231,7 +232,7 @@ class FullTransformPipeline_ma_mv:
                 for  transform in self.transforms:
            
                     out_glob.extend(transform(x_glob))
-            if shuffle_crop_transform: 
+            if self.shuffle_crop_transform: 
                 random.shuffle(out_glob)
 
             out.extend(out_glob)
@@ -240,7 +241,7 @@ class FullTransformPipeline_ma_mv:
             for x_loc in x_loc_crops:
                 for transform in self.transforms:
                     out_loc.extend(transform(x_loc))
-            if shuffle_crop_transform: 
+            if self.shuffle_crop_transform: 
                 random.shuffle(out_loc)
             out.extend(out_loc)
         
@@ -250,7 +251,7 @@ class FullTransformPipeline_ma_mv:
             for x_glob in x_glob_crops:
                 for transform in self.transforms:
                     out_glob.extend(transform(x_glob))
-            if shuffle_crop_transform: 
+            if self.shuffle_crop_transform: 
                 random.shuffle(out_glob)
             out.extend(out_glob)
 

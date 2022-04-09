@@ -22,10 +22,11 @@ datasets/
 bash_files/*.png
 bash_files/*.jpg
 bash_files/*.jpeg
-
+bash_files/*.pyc
 downstream/*.png
 downstream/*.jpg
 downstream/*.jpeg
+solo /.*pyc
 
 solo/*.png
 solo/*.jpg
