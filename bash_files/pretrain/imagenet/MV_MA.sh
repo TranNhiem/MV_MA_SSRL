@@ -50,6 +50,7 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --ada_policy imagenet \
     --fda_policy imagenet \
     --num_crops_per_aug 1 1 1 1 \
+    --shuffle_transforms_crops False\
     --name MV_MASSL_ablation_4_SimCLR_RA_AA_FA_augment_res50-Subset_300_imagenet-300ep \
     --entity mlbrl \
     --project solo_MASSL_V2 \
@@ -117,6 +118,7 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --ada_policy imagenet \
     --fda_policy imagenet \
     --num_crops_per_aug 1 1 1 \
+    --shuffle_transforms_crops False\
     --name MV_MASSL_ablation_3_augment_SimCLR_RA_AA_res50-Subset_300_imagenet-300ep \
     --entity mlbrl \
     --project solo_MASSL_V2 \
@@ -184,6 +186,7 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --ada_policy imagenet \
     --fda_policy imagenet \
     --num_crops_per_aug 1 1 1 \
+    --shuffle_transforms_crops False\
     --name MV_MASSL_ablation_3_SimCLR_RA_FA_augment_res50-Subset_300_imagenet-300ep \
     --entity mlbrl \
     --project solo_MASSL_V2 \
