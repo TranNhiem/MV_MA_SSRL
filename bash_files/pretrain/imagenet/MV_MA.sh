@@ -7,6 +7,7 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --data_dir /data1/1K_New/ \
     --train_dir train \
     --val_dir val \
+    --subset_classes 300 \
     --max_epochs 100 \
     --gpus 0,1,2,3,4,5,6,7 \
     --accelerator gpu \
@@ -22,7 +23,7 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --accumulate_grad_batches 2 \
     --classifier_lr 0.2 \
     --weight_decay 1e-6 \
-    --batch_size 128 \
+    --batch_size 200 \
     --num_workers 4 \
     --brightness 0.4 0.4 0.4 0.4\
     --contrast 0.4 \

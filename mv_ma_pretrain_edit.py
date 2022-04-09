@@ -116,6 +116,7 @@ def main():
             args.dataset,
             transform,
             data_dir=args.data_dir,
+            subset_class_num=args.subset_classes
             train_dir=args.train_dir,
             no_labels=args.no_labels,
         )
