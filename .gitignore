@@ -56,6 +56,18 @@ lightning_logs/
 __pycache__/
 *.py[cod]
 *$py.class
+.hg/
+.svn/
+.idea/
+tags
+TAGS
+.vs/
+.vscode/
+gmon.out
+.coverage
+.mypy_cache/
+.pytest_cache/
+.DS_Store
 
 # C extensions
 *.so
