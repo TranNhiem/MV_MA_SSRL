@@ -2,13 +2,13 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --dataset mv_ma \
     --mvar_training True \
     --experiment_type ablation \
-    --job_name multiaugment_ablation \
+    --job_name multiaugment_ablation_subset \
     --backbone resnet50 \
     --data_dir /data1/1K_New/ \
     --train_dir train \
     --val_dir val \
     --subset_classes 300 \
-    --max_epochs 300 \
+    --max_epochs 100 \
     --gpus 0,1,2,3,4,5,6,7 \
     --accelerator gpu \
     --strategy ddp \
@@ -51,7 +51,7 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --fda_policy imagenet \
     --num_crops_per_aug 1 1 1 1 \
     --shuffle_transforms_crops False\
-    --name MV_MASSL_ablation_4_SimCLR_RA_AA_FA_augment_res50-Subset_300_imagenet-300ep \
+    --name MV_MASSL_ablation_4_SimCLR_RA_AA_FA_augment_res50-Subset_300_imagenet-100ep \
     --entity mlbrl \
     --project solo_MASSL_V2 \
     --wandb \
@@ -70,13 +70,13 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --dataset mv_ma \
     --mvar_training True \
     --experiment_type ablation \
-    --job_name multiaugment_ablation \
+    --job_name multiaugment_ablation_subset \
     --backbone resnet50 \
     --data_dir /data1/1K_New/ \
     --train_dir train \
     --val_dir val \
     --subset_classes 300 \
-    --max_epochs 300 \
+    --max_epochs 100 \
     --gpus 0,1,2,3,4,5,6,7 \
     --accelerator gpu \
     --strategy ddp \
@@ -119,7 +119,7 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --fda_policy imagenet \
     --num_crops_per_aug 1 1 1 \
     --shuffle_transforms_crops False\
-    --name MV_MASSL_ablation_3_augment_SimCLR_RA_AA_res50-Subset_300_imagenet-300ep \
+    --name MV_MASSL_ablation_3_augment_SimCLR_RA_AA_res50-Subset_300_imagenet-100ep \
     --entity mlbrl \
     --project solo_MASSL_V2 \
     --wandb \
@@ -138,13 +138,13 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --dataset mv_ma \
     --mvar_training True \
     --experiment_type ablation \
-    --job_name multiaugment_ablation \
+    --job_name multiaugment_ablation_subset \
     --backbone resnet50 \
     --data_dir /data1/1K_New/ \
     --train_dir train \
     --val_dir val \
     --subset_classes 300 \
-    --max_epochs 300 \
+    --max_epochs 100 \
     --gpus 0,1,2,3,4,5,6,7 \
     --accelerator gpu \
     --strategy ddp \
@@ -187,7 +187,7 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --fda_policy imagenet \
     --num_crops_per_aug 1 1 1 \
     --shuffle_transforms_crops False\
-    --name MV_MASSL_ablation_3_SimCLR_RA_FA_augment_res50-Subset_300_imagenet-300ep \
+    --name MV_MASSL_ablation_3_SimCLR_RA_FA_augment_res50-Subset_300_imagenet-100ep \
     --entity mlbrl \
     --project solo_MASSL_V2 \
     --wandb \
