@@ -199,8 +199,20 @@ def additional_setup_pretrain(args: Namespace):
             else:
                 num_small_crops += n_crops
         if args.mvar_training: 
-            num_small_crops=args.num_crop_loc * 4
-            num_large_crops=args.num_crop_glob * 4
+            if args.num_augment_strategies ==4:
+                num_small_crops=args.num_crop_loc * 4
+                num_large_crops=args.num_crop_glob * 4
+            elif args.num_augment_strategies ==3:
+                num_small_crops=args.num_crop_loc * 3
+                num_large_crops=args.num_crop_glob * 3
+            elif args.num_augment_strategies ==2:
+                num_small_crops=args.num_crop_loc * 2
+                num_large_crops=args.num_crop_glob * 2
+            elif args.num_augment_strategies ==1:
+                num_small_crops=args.num_crop_loc * 1
+                num_large_crops=args.num_crop_glob * 1
+            else: 
+                raise ValueError(f"The argument input {args.num_augment_strategies} is incompatible with augmentation strategies Check again")
         if args.massl_training: 
             num_large_crops=num_large_crops * 2
             num_small_crops=num_small_crops * 2
