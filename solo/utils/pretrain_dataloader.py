@@ -226,8 +226,9 @@ class FullTransformPipeline_ma_mv:
             x_loc_crops.append(crop_view)
 
         out = []
-        if len(x_glob_crops) >= 1 & len( x_loc_crops) >= 1: 
-            #print("Gloabl ^&^ Local Crops Apply Transform")
+       
+        if len( x_loc_crops) >0 & len(x_glob_crops) >0: 
+            print("Gloabl ^&^ Local Crops Apply Transform")
             out_glob=[]
             for x_glob in x_glob_crops:
                 for  transform in self.transforms:
@@ -246,6 +247,15 @@ class FullTransformPipeline_ma_mv:
                 random.shuffle(out_loc)
             out.extend(out_loc)
         
+        elif len( x_glob_crops)==0: 
+            out_loc=[]
+            for x_loc in x_loc_crops:
+                for transform in self.transforms:
+                    out_loc.extend(transform(x_loc))
+            if self.shuffle_crop_transform: 
+                random.shuffle(out_loc)
+            out.extend(out_loc)
+
         elif len(x_loc_crops)==0:  
             #print("Croping with Only Global Crop")
             out_glob=[]
