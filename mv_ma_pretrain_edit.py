@@ -140,6 +140,7 @@ def main():
             data_dir=args.data_dir,
             train_dir=args.train_dir,
             val_dir=args.val_dir,
+            subset_class_num=args.subset_classes, 
             batch_size=args.batch_size,
             num_workers=args.num_workers,
         )
@@ -185,6 +186,7 @@ def main():
 
     # 1.7 will deprecate resume_from_checkpoint, but for the moment
     # the argument is the same, but we need to pass it as ckpt_path to trainer.fit
+    
     ckpt_path = None
     if args.auto_resume and args.resume_from_checkpoint is None:
         auto_resumer = AutoResumer(

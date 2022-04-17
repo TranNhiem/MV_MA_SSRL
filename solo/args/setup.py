@@ -75,6 +75,7 @@ def parse_args_pretrain() -> argparse.Namespace:
     parser.add_argument("--auto_resume", action="store_true")
 
     parser.add_argument("--num_augment_trategy",  type=str, default="SimCLR_RA_AA_FA", help="Augmentation Strategies")
+    parser.add_argument("--num_augment_strategies",  type=int, default=4, help="The total number of Augmentation Strategies")
     parser.add_argument("--rda_num_ops",  type=int, default=2)
     parser.add_argument("--rda_magnitude",  type=int, default=10)
     parser.add_argument("--ada_policy",  type=str, default="imagenet")
