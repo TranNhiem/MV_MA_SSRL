@@ -227,8 +227,8 @@ class FullTransformPipeline_ma_mv:
 
         out = []
        
-        if len( x_loc_crops) >0 & len(x_glob_crops) >0: 
-            print("Gloabl ^&^ Local Crops Apply Transform")
+        if ((len( x_loc_crops) >0) and (len(x_glob_crops) >0)): 
+            #print("Gloabl ^&^ Local Crops Apply Transform")
             out_glob=[]
             for x_glob in x_glob_crops:
                 for  transform in self.transforms:
