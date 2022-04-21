@@ -200,7 +200,6 @@ class BaseMethod(pl.LightningModule):
         self.grad_clip_lars = grad_clip_lars
         self.knn_eval = knn_eval
         self.knn_k = knn_k
-
         # multicrop
         self.num_crops = self.num_large_crops + self.num_small_crops
 
@@ -564,6 +563,7 @@ class BaseMomentumMethod(BaseMethod):
         base_tau_momentum: float,
         final_tau_momentum: float,
         momentum_classifier: bool,
+        local_contrast_global: str, 
         **kwargs,
     ):
         """Base momentum model that implements all basic operations for all self-supervised methods
@@ -583,6 +583,7 @@ class BaseMomentumMethod(BaseMethod):
 
         super().__init__(**kwargs)
 
+        self.local_contrast_global=local_contrast_global
         # momentum backbone
         kwargs = self.backbone_args.copy()
         cifar = kwargs.pop("cifar", False)
@@ -663,6 +664,7 @@ class BaseMomentumMethod(BaseMethod):
         parser = parent_parser.add_argument_group("base")
 
         # momentum settings
+        parser.add_argument("--local_contrast_global", type=str, default= "glob_glob")
         parser.add_argument("--base_tau_momentum", default=0.99, type=float)
         parser.add_argument("--final_tau_momentum", default=1.0, type=float)
         parser.add_argument("--momentum_classifier", action="store_true")
@@ -728,10 +730,16 @@ class BaseMomentumMethod(BaseMethod):
         outs = super().training_step(batch, batch_idx)
 
         _, X, targets = batch
+        #print(f"this is target length {len(targets)}")
         X = [X] if isinstance(X, torch.Tensor) else X
 
-        # remove small crops
-        X = X[: self.num_large_crops]
+        if self.local_contrast_global =="local_glob": 
+            #print("The number Crop of Global and Local Must Be the Same")
+            if self.num_large_crops != self.num_small_crops: 
+                raise ValueError("Number of Local and Global Crops Must be The Same")
+            # remove small crops
+            X = X[: self.num_large_crops]
+
 
         momentum_outs = [self._shared_step_momentum(x, targets) for x in X]
         momentum_outs = {

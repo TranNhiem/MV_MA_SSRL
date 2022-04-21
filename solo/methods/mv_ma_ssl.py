@@ -19,6 +19,7 @@ class MVAR(BaseMomentumMethod):
         proj_output_dim: int,
         proj_hidden_dim: int,
         pred_hidden_dim: int,
+       # local_contrast_global: bool, 
         **kwargs,
     ):
         """
@@ -31,6 +32,7 @@ class MVAR(BaseMomentumMethod):
         super().__init__(**kwargs)
 
         # projector
+        
         self.projector = nn.Sequential(
             nn.Linear(self.features_dim, proj_hidden_dim),
             nn.BatchNorm1d(proj_hidden_dim),
@@ -61,6 +63,7 @@ class MVAR(BaseMomentumMethod):
         parser = parent_parser.add_argument_group("byol")
 
         # projector
+        #parser.add_argument("--local_contrast_global", type=bool, default= False)
         parser.add_argument("--proj_output_dim", type=int, default=256)
         parser.add_argument("--proj_hidden_dim", type=int, default=2048)
 
@@ -109,8 +112,9 @@ class MVAR(BaseMomentumMethod):
         """
         
         ## Consider Editing Part for Extra 2 more Views
-        print("Rick Double Check Global Views shape", X[self.num_large_crops-2].shape )
-        print("Rick Double Check  Local Views shape", X[self.num_large_crops+2].shape)
+        # print("Rick Double Check Global Views shape", X[self.num_large_crops-2].shape )
+        # print("Rick Double Check  Local Views shape", X[self.num_large_crops+2].shape)
+        
         out = super().forward(X, *args, **kwargs)
         
         
@@ -131,6 +135,7 @@ class MVAR(BaseMomentumMethod):
         # forward momentum backbone
         with torch.no_grad():
             Z_momentum = [self.momentum_projector(f) for f in momentum_feats]
+            #print(len(momentum_feats))
 
         # ------- negative consine similarity loss -------
         
@@ -150,9 +155,21 @@ class MVAR(BaseMomentumMethod):
         #print("Length of small crop training", self.num_small_crops)
         if self.num_small_crops != 0:
             for v1 in range(self.num_small_crops):
+                ## There will Need the u
+                
                 # Views 2 remove the prior Views
                 for v2 in np.delete(range(self.num_crops-self.num_large_crops), v1):
-                    neg_cos_sim_loc += byol_loss_func(P[(v2+self.num_large_crops)-1], Z_momentum[v1], )
+                    # print("this is v2 current value" , v2)
+                    # print(f"this is length of feature embedding: {len(P)}")
+                    # print(f"this is length of momentum embedding: {len(Z_momentum)}")
+                    # print("Sum value of V2 and Large crop", (self.num_large_crops+v2-1))
+                    
+                    if self.local_contrast_global=="local_glob": 
+                        #print("Implement the Local contrast Global")
+                        neg_cos_sim_loc += byol_loss_func(P[(self.num_large_crops+v2)-1], Z_momentum[v1], )
+                    else: 
+                        #print("Implement the Local Constrast with Local")
+                        neg_cos_sim_loc += byol_loss_func(P[(self.num_large_crops+v2)-1], Z_momentum[(self.num_large_crops+v1)-1], )
         
             neg_cos_sim = (self.alpha*neg_cos_sim_glob + (1-self.alpha)*neg_cos_sim_loc)
             with torch.no_grad():
