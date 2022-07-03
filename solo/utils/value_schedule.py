@@ -123,9 +123,11 @@ class Alpha_schedule(Callback):
         elif "cosine_schedule" in self.alpha:
             # print("You implement Alpha schedule")
             max_steps = len(trainer.train_dataloader) * trainer.max_epochs
-            self.current_alpha = 1 - \
-                (1 - self.init_alpha) * (math.cos(math.pi *
-                                                  pl_module.global_step / max_steps) + 1) / 2
+            # self.current_alpha = 1 - \
+            #     (1 - self.init_alpha) * (math.cos(math.pi *pl_module.global_step / max_steps) + 1) / 2
+            self.current_alpha = self.init_alpha * (math.cos(math.pi * module.global_step / max_steps) + 1) / 2
+            #if self.current_alpha =0.5: 
+
             pl_module.alpha = self.current_alpha
         else:
             pl_module.alpha = float(self.alpha)

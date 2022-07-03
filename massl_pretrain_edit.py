@@ -173,7 +173,7 @@ def main():
     ckpt_path = None
     if args.auto_resume and args.resume_from_checkpoint is None:
         auto_resumer = AutoResumer(
-            checkpoint_dir=os.path.join(args.checkpoint_dir, args.method),
+            checkpoint_dir= args.resume_from_checkpoint,#os.path.join(args.checkpoint_dir, args.method),
             max_hours=args.auto_resumer_max_hours,
         )
         resume_from_checkpoint = auto_resumer.find_checkpoint(args)

@@ -275,8 +275,13 @@ def additional_setup_pretrain(args: Namespace):
 
     # create backbone-specific arguments
     args.backbone_args = {"cifar": args.dataset in ["cifar10", "cifar100"]}
+    
     if "resnet" in args.backbone:
         args.backbone_args["zero_init_residual"] = args.zero_init_residual
+        if "wider" in args.backbone:
+            print("Using ResNet Wider model")
+            args.backbone_args["encoder_width"] = args.encoder_width
+
     elif "convnext" not in args.backbone:
         # dataset related for all transformers
         crop_size = args.crop_size[0]
@@ -303,6 +308,7 @@ def additional_setup_pretrain(args: Namespace):
         args.gpus = [int(gpu) for gpu in args.gpus.split(",") if gpu]
 
     # adjust lr according to batch size
+    #args.lr = args.lr * args.batch_size * len(args.gpus) / 256
     args.lr = args.lr * args.batch_size * len(args.gpus) / 256
 
 

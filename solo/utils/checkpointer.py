@@ -105,7 +105,9 @@ class Checkpointer(Callback):
 
         # create logging dirs
         if trainer.is_global_zero:
-            os.makedirs(self.path, exist_ok=True)
+            os.umask(0)
+            os.makedirs(self.path, mode=0o777, exist_ok=True)
+            #os.makedirs(self.path, exist_ok=True)
 
     def save_args(self, trainer: pl.Trainer):
         """Stores arguments into a json file.

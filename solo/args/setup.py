@@ -80,6 +80,7 @@ def parse_args_pretrain() -> argparse.Namespace:
     parser.add_argument("--rda_magnitude",  type=int, default=10)
     parser.add_argument("--ada_policy",  type=str, default="imagenet")
     parser.add_argument("--fda_policy",  type=str, default="imagenet")
+    parser.add_argument("--encoder_width", type=int, default=1, help="scaling the width of ResNet encoder")
     parser.add_argument("--experiment_type",  type=str, default="ablation")
     parser.add_argument("--job_name",  type=str, default="multiaugment_ablation")
     parser.add_argument("--subset_classes",  type=int, default=1000, help="Subset ImageNet Class or Others Dataset")

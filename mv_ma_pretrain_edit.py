@@ -213,6 +213,7 @@ def main():
         logger=wandb_logger if args.wandb else None,
         callbacks=callbacks,
         enable_checkpointing=False,
+        
     )
 
 

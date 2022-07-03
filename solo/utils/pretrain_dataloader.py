@@ -676,26 +676,26 @@ def prepare_transform(dataset: str, num_augment_trategy: str, trfs_kwargs, da_kw
         if num_augment_trategy =="SimCLR_RA_AA_FA": 
             return [ CustomTransform_no_crop(**trfs_kwargs), rand_da, auto_da, fast_da,]
         ### ---------3 Augmentations Strategies -------------
-        elif num_augment_trategy =="SimCLR_RA_AA": 
+        elif num_augment_trategy =="SimCLR_RA_AA": #
             return [ CustomTransform_no_crop(**trfs_kwargs), rand_da, auto_da]
-        elif num_augment_trategy =="SimCLR_RA_FA": 
+        elif num_augment_trategy =="SimCLR_RA_FA": #
             return [ CustomTransform_no_crop(**trfs_kwargs), rand_da, fast_da,]
-        elif num_augment_trategy =="SimCLR_AA_FA": 
+        elif num_augment_trategy =="SimCLR_AA_FA": #
             return [ CustomTransform_no_crop(**trfs_kwargs), auto_da, fast_da,]
-        elif num_augment_trategy =="RA_AA_FA": 
+        elif num_augment_trategy =="RA_AA_FA": #
             return [ rand_da, auto_da, fast_da,]
         
         
         ### ---------2 Augmentations Strategies -------------
-        elif num_augment_trategy =="SimCLR_RA": 
+        elif num_augment_trategy =="SimCLR_RA": #
             return [ CustomTransform_no_crop(**trfs_kwargs), rand_da]
-        elif num_augment_trategy =="SimCLR_FA": 
+        elif num_augment_trategy =="SimCLR_FA": #
             return [ CustomTransform_no_crop(**trfs_kwargs), fast_da,]
-        elif num_augment_trategy =="SimCLR_AA": 
+        elif num_augment_trategy =="SimCLR_AA": #
             return [ CustomTransform_no_crop(**trfs_kwargs), auto_da]
-        elif num_augment_trategy =="RA_AA": 
+        elif num_augment_trategy =="RA_AA": #
             return [ rand_da, auto_da,]
-        elif num_augment_trategy =="RA_FA": 
+        elif num_augment_trategy =="RA_FA": #
             return [rand_da, fast_da,]
         else: 
             raise ValueError(f"{num_augment_trategy} is not currently supported.")
@@ -711,6 +711,7 @@ def prepare_datasets(
     subset_class_num: int =1000, 
     no_labels: Optional[Union[str, Path]] = False,
     download: bool = True,
+   
 ) -> Dataset:
     """Prepares the desired dataset.
 
@@ -777,6 +778,7 @@ def prepare_dataloader(
         num_workers=num_workers,
         pin_memory=True,
         drop_last=True,
+        prefetch_factor=4,
     )
     return train_loader
 

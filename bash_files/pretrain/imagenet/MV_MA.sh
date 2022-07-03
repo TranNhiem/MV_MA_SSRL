@@ -1,16 +1,16 @@
 python3 ../../../mv_ma_pretrain_edit.py \
     --dataset mv_ma \
     --mvar_training True \
-    --local_contrast_global local_local \
+    --local_contrast_global local_global \
     --experiment_type ablation \
-    --job_name NumberView_ablation_subset \
+    --job_name projection_dimension \
     --backbone resnet50 \
     --data_dir /data1/1K_New/ \
     --train_dir train \
     --val_dir val \
     --subset_classes 300 \
     --max_epochs 100 \
-    --gpus 0,1,2,3,4,5,6,7 \
+    --gpus 0,1,2,3,4,5,6 \
     --accelerator gpu \
     --strategy ddp \
     --sync_batchnorm \
@@ -26,9 +26,9 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --weight_decay 1e-6 \
     --batch_size 200 \
     --num_workers 4 \
-    --num_augment_trategy SimCLR_FA \
-    --num_augment_strategies 2\
-    --brightness 0.4 0.4\
+    --num_augment_trategy SimCLR_AA_FA \
+    --num_augment_strategies 3\
+    --brightness 0.4 0.4 0.4\
     --contrast 0.4 \
     --saturation 0.2 \
     --hue 0.1 \
@@ -40,180 +40,40 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --crop_size 224  \
     --crop_size_glob 224 \
     --crop_size_loc 94 \
-    --num_crop_glob 2 \
-    --num_crop_loc 2 \
-    --crop_type random_uniform \
-    --min_scale_loc 0.13 \
-    --max_scale_loc 0.34 \
-    --min_scale_glob 0.2 \
-    --max_scale_glob 1.0 \
-    --rda_num_ops 2 \
-    --rda_magnitude 9 \
-    --ada_policy imagenet \
-    --fda_policy imagenet \
-    --num_crops_per_aug 1 1  \
-    --shuffle_transforms_crops False\
-    --name MV_MASSL_ablation_2_SimCLR_FA_224_94_2views_1_res50-Subset_300_imagenet-100ep \
-    --entity mlbrl \
-    --project solo_MASSL_V2 \
-    --wandb \
-    --save_checkpoint \
-    --method mvar \
-    --proj_output_dim 512 \
-    --proj_hidden_dim 4096 \
-    --pred_hidden_dim 4096 \
-    --base_tau_momentum 0.99 \
-    --final_tau_momentum 1.0 \
-    --momentum_classifier \
-    --alpha 0.5\
-    --checkpoint_dir /data1/solo_MASSL_ckpt \
-    --checkpoint_frequency 20 &&
-python3 ../../../mv_ma_pretrain_edit.py \
-    --dataset mv_ma \
-    --mvar_training True \
-    --local_contrast_global local_local \
-    --experiment_type ablation \
-    --job_name NumberView_ablation_subset \
-    --backbone resnet50 \
-    --data_dir /data1/1K_New/ \
-    --train_dir train \
-    --val_dir val \
-    --subset_classes 300 \
-    --max_epochs 100 \
-    --gpus 0,1,2,3,4,5,6,7 \
-    --accelerator gpu \
-    --strategy ddp \
-    --sync_batchnorm \
-    --precision 16 \
-    --optimizer sgd \
-    --lars \
-    --eta_lars 0.001 \
-    --exclude_bias_n_norm \
-    --scheduler warmup_cosine \
-    --lr 0.4 \
-    --accumulate_grad_batches 2 \
-    --classifier_lr 0.2 \
-    --weight_decay 1e-6 \
-    --batch_size 200 \
-    --num_workers 4 \
-    --num_augment_trategy SimCLR_FA \
-    --num_augment_strategies 2\
-    --brightness 0.4 0.4\
-    --contrast 0.4 \
-    --saturation 0.2 \
-    --hue 0.1 \
-    --color_jitter_prob 0.8 \
-    --gray_scale_prob 0.2 \
-    --horizontal_flip_prob 0.5 \
-    --gaussian_prob 1.0  \
-    --solarization_prob 0.2  \
-    --crop_size 224  \
-    --crop_size_glob 224 \
-    --crop_size_loc 94 \
-    --num_crop_glob 2 \
-    --num_crop_loc 3 \
-    --crop_type random_uniform \
-    --min_scale_loc 0.13 \
-    --max_scale_loc 0.34 \
-    --min_scale_glob 0.2 \
-    --max_scale_glob 1.0 \
-    --rda_num_ops 2 \
-    --rda_magnitude 9 \
-    --ada_policy imagenet \
-    --fda_policy imagenet \
-    --num_crops_per_aug 1 1  \
-    --shuffle_transforms_crops False\
-    --name MV_MASSL_ablation_2_SimCLR_FA_224_94_3views_res50-Subset_300_imagenet-100ep \
-    --entity mlbrl \
-    --project solo_MASSL_V2 \
-    --wandb \
-    --save_checkpoint \
-    --method mvar \
-    --proj_output_dim 512 \
-    --proj_hidden_dim 4096 \
-    --pred_hidden_dim 4096 \
-    --base_tau_momentum 0.99 \
-    --final_tau_momentum 1.0 \
-    --momentum_classifier \
-    --alpha 0.5\
-    --checkpoint_dir /data1/solo_MASSL_ckpt \
-    --checkpoint_frequency 20 &&
-python3 ../../../mv_ma_pretrain_edit.py \
-    --dataset mv_ma \
-    --mvar_training True \
-    --local_contrast_global local_local \
-    --experiment_type ablation \
-    --job_name NumberView_ablation_subset \
-    --backbone resnet50 \
-    --data_dir /data1/1K_New/ \
-    --train_dir train \
-    --val_dir val \
-    --subset_classes 300 \
-    --max_epochs 100 \
-    --gpus 0,1,2,3,4,5,6,7 \
-    --accelerator gpu \
-    --strategy ddp \
-    --sync_batchnorm \
-    --precision 16 \
-    --optimizer sgd \
-    --lars \
-    --eta_lars 0.001 \
-    --exclude_bias_n_norm \
-    --scheduler warmup_cosine \
-    --lr 0.4 \
-    --accumulate_grad_batches 2 \
-    --classifier_lr 0.2 \
-    --weight_decay 1e-6 \
-    --batch_size 200 \
-    --num_workers 4 \
-    --num_augment_trategy SimCLR_FA \
-    --num_augment_strategies 2\
-    --brightness 0.4 0.4\
-    --contrast 0.4 \
-    --saturation 0.2 \
-    --hue 0.1 \
-    --color_jitter_prob 0.8 \
-    --gray_scale_prob 0.2 \
-    --horizontal_flip_prob 0.5 \
-    --gaussian_prob 1.0  \
-    --solarization_prob 0.2  \
-    --crop_size 224  \
-    --crop_size_glob 224 \
-    --crop_size_loc 154 \
     --num_crop_glob 2 \
     --num_crop_loc 4 \
     --crop_type random_uniform \
-    --min_scale_loc 0.13 \
-    --max_scale_loc 0.34 \
-    --min_scale_glob 0.2 \
+    --min_scale_loc 0.1 \
+    --max_scale_loc 0.3 \
+    --min_scale_glob 0.3 \
     --max_scale_glob 1.0 \
     --rda_num_ops 2 \
     --rda_magnitude 9 \
     --ada_policy imagenet \
     --fda_policy imagenet \
-    --num_crops_per_aug 1 1  \
+    --num_crops_per_aug 1 1 1\
     --shuffle_transforms_crops False\
-    --name MV_MASSL_ablation_2_SimCLR_FA_224_94_4views_res50-Subset_300_imagenet-100ep \
+    --name MV_MASSL_SimCLR_AA_FA_224_2_94_4_CropRatio_0.3_1.0_0.1_0.3_Lossobj_2_Dim_256_res50_imagenet-300ep \
     --entity mlbrl \
     --project solo_MASSL_V2 \
     --wandb \
     --save_checkpoint \
     --method mvar \
-    --proj_output_dim 512 \
+    --proj_output_dim 256 \
     --proj_hidden_dim 4096 \
     --pred_hidden_dim 4096 \
     --base_tau_momentum 0.99 \
     --final_tau_momentum 1.0 \
     --momentum_classifier \
-    --alpha 0.5\
+    --alpha 0.3\
     --checkpoint_dir /data1/solo_MASSL_ckpt \
     --checkpoint_frequency 20 &&
 python3 ../../../mv_ma_pretrain_edit.py \
     --dataset mv_ma \
     --mvar_training True \
-    --local_contrast_global local_local \
+    --local_contrast_global local_global \
     --experiment_type ablation \
-    --job_name NumberView_ablation_subset \
+    --job_name projection_dimension \
     --backbone resnet50 \
     --data_dir /data1/1K_New/ \
     --train_dir train \
@@ -236,9 +96,9 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --weight_decay 1e-6 \
     --batch_size 200 \
     --num_workers 4 \
-    --num_augment_trategy SimCLR_FA \
-    --num_augment_strategies 2\
-    --brightness 0.4 0.4\
+    --num_augment_trategy SimCLR_AA_FA \
+    --num_augment_strategies 3\
+    --brightness 0.4 0.4 0.4\
     --contrast 0.4 \
     --saturation 0.2 \
     --hue 0.1 \
@@ -249,41 +109,41 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --solarization_prob 0.2  \
     --crop_size 224  \
     --crop_size_glob 224 \
-    --crop_size_loc 154 \
+    --crop_size_loc 94 \
     --num_crop_glob 2 \
-    --num_crop_loc 5 \
+    --num_crop_loc 4 \
     --crop_type random_uniform \
-    --min_scale_loc 0.13 \
-    --max_scale_loc 0.34 \
-    --min_scale_glob 0.2 \
+    --min_scale_loc 0.1 \
+    --max_scale_loc 0.3 \
+    --min_scale_glob 0.3 \
     --max_scale_glob 1.0 \
     --rda_num_ops 2 \
     --rda_magnitude 9 \
     --ada_policy imagenet \
     --fda_policy imagenet \
-    --num_crops_per_aug 1 1  \
+    --num_crops_per_aug 1 1 1\
     --shuffle_transforms_crops False\
-    --name MV_MASSL_ablation_2_SimCLR_FA_224_94_5views_res50-Subset_300_imagenet-100ep \
+    --name MV_MASSL_SimCLR_FA_224_2_94_4_CropRatio_0.3_1.0_0.1_0.3_Lossobj_2_res50_Dim_128_imagenet-300ep \
     --entity mlbrl \
     --project solo_MASSL_V2 \
     --wandb \
     --save_checkpoint \
     --method mvar \
-    --proj_output_dim 512 \
+    --proj_output_dim 128 \
     --proj_hidden_dim 4096 \
     --pred_hidden_dim 4096 \
     --base_tau_momentum 0.99 \
     --final_tau_momentum 1.0 \
     --momentum_classifier \
-    --alpha 0.5\
+    --alpha 0.3\
     --checkpoint_dir /data1/solo_MASSL_ckpt \
-    --checkpoint_frequency 20 &&
+    --checkpoint_frequency 20
 python3 ../../../mv_ma_pretrain_edit.py \
     --dataset mv_ma \
     --mvar_training True \
-    --local_contrast_global local_local \
+    --local_contrast_global local_global \
     --experiment_type ablation \
-    --job_name NumberView_ablation_subset \
+    --job_name projection_dimension \
     --backbone resnet50 \
     --data_dir /data1/1K_New/ \
     --train_dir train \
@@ -306,9 +166,9 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --weight_decay 1e-6 \
     --batch_size 200 \
     --num_workers 4 \
-    --num_augment_trategy SimCLR_FA \
-    --num_augment_strategies 2\
-    --brightness 0.4 0.4 \
+    --num_augment_trategy SimCLR_AA_FA \
+    --num_augment_strategies 3\
+    --brightness 0.4 0.4 0.4\
     --contrast 0.4 \
     --saturation 0.2 \
     --hue 0.1 \
@@ -319,32 +179,172 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --solarization_prob 0.2  \
     --crop_size 224  \
     --crop_size_glob 224 \
-    --crop_size_loc 154 \
+    --crop_size_loc 94 \
     --num_crop_glob 2 \
-    --num_crop_loc 6 \
+    --num_crop_loc 4 \
     --crop_type random_uniform \
-    --min_scale_loc 0.13 \
-    --max_scale_loc 0.34 \
-    --min_scale_glob 0.2 \
+    --min_scale_loc 0.1 \
+    --max_scale_loc 0.3 \
+    --min_scale_glob 0.3 \
     --max_scale_glob 1.0 \
     --rda_num_ops 2 \
     --rda_magnitude 9 \
     --ada_policy imagenet \
     --fda_policy imagenet \
-    --num_crops_per_aug 1 1 \
+    --num_crops_per_aug 1 1 1\
     --shuffle_transforms_crops False\
-    --name MV_MASSL_ablation_2_SimCLR_FA_224_94_6Views_res50-Subset_300_imagenet-100ep \
+    --name MV_MASSL_SimCLR_AA_FA_224_2_94_4_CropRatio_0.3_1.0_0.1_0.3_Lossobj_2_res50_Dim_64_imagenet-300ep \
     --entity mlbrl \
     --project solo_MASSL_V2 \
     --wandb \
     --save_checkpoint \
     --method mvar \
-    --proj_output_dim 512 \
+    --proj_output_dim 64 \
     --proj_hidden_dim 4096 \
     --pred_hidden_dim 4096 \
     --base_tau_momentum 0.99 \
     --final_tau_momentum 1.0 \
     --momentum_classifier \
-    --alpha 0.5\
+    --alpha 0.3\
     --checkpoint_dir /data1/solo_MASSL_ckpt \
-    --checkpoint_frequency 20 
+    --checkpoint_frequency 20 &&
+python3 ../../../mv_ma_pretrain_edit.py \
+    --dataset mv_ma \
+    --mvar_training True \
+    --local_contrast_global local_global \
+    --experiment_type ablation \
+    --job_name projection_dimension \
+    --backbone resnet50 \
+    --data_dir /data1/1K_New/ \
+    --train_dir train \
+    --val_dir val \
+    --subset_classes 300 \
+    --max_epochs 100 \
+    --gpus 0,1,2,3,4,5,6,7 \
+    --accelerator gpu \
+    --strategy ddp \
+    --sync_batchnorm \
+    --precision 16 \
+    --optimizer sgd \
+    --lars \
+    --eta_lars 0.001 \
+    --exclude_bias_n_norm \
+    --scheduler warmup_cosine \
+    --lr 0.4 \
+    --accumulate_grad_batches 2 \
+    --classifier_lr 0.2 \
+    --weight_decay 1e-6 \
+    --batch_size 200 \
+    --num_workers 4 \
+    --num_augment_trategy SimCLR_AA_FA \
+    --num_augment_strategies 3\
+    --brightness 0.4 0.4 0.4\
+    --contrast 0.4 \
+    --saturation 0.2 \
+    --hue 0.1 \
+    --color_jitter_prob 0.8 \
+    --gray_scale_prob 0.2 \
+    --horizontal_flip_prob 0.5 \
+    --gaussian_prob 1.0  \
+    --solarization_prob 0.2  \
+    --crop_size 224  \
+    --crop_size_glob 224 \
+    --crop_size_loc 94 \
+    --num_crop_glob 2 \
+    --num_crop_loc 4 \
+    --crop_type random_uniform \
+    --min_scale_loc 0.1 \
+    --max_scale_loc 0.3 \
+    --min_scale_glob 0.3 \
+    --max_scale_glob 1.0 \
+    --rda_num_ops 2 \
+    --rda_magnitude 9 \
+    --ada_policy imagenet \
+    --fda_policy imagenet \
+    --num_crops_per_aug 1 1 1\
+    --shuffle_transforms_crops False\
+    --name MV_MASSL_SimCLR_AA_FA_224_2_94_4_CropRatio_0.3_1.0_0.1_0.3_Lossobj_2_res50_Dim_32_imagenet-300ep \
+    --entity mlbrl \
+    --project solo_MASSL_V2 \
+    --wandb \
+    --save_checkpoint \
+    --method mvar \
+    --proj_output_dim 32 \
+    --proj_hidden_dim 4096 \
+    --pred_hidden_dim 4096 \
+    --base_tau_momentum 0.99 \
+    --final_tau_momentum 1.0 \
+    --momentum_classifier \
+    --alpha 0.3\
+    --checkpoint_dir /data1/solo_MASSL_ckpt \
+    --checkpoint_frequency 20 &&
+python3 ../../../mv_ma_pretrain_edit.py \
+    --dataset mv_ma \
+    --mvar_training True \
+    --local_contrast_global local_global \
+    --experiment_type ablation \
+    --job_name projection_dimension \
+    --backbone resnet50 \
+    --data_dir /data1/1K_New/ \
+    --train_dir train \
+    --val_dir val \
+    --subset_classes 300 \
+    --max_epochs 100 \
+    --gpus 0,1,2,3,4,5,6,7 \
+    --accelerator gpu \
+    --strategy ddp \
+    --sync_batchnorm \
+    --precision 16 \
+    --optimizer sgd \
+    --lars \
+    --eta_lars 0.001 \
+    --exclude_bias_n_norm \
+    --scheduler warmup_cosine \
+    --lr 0.4 \
+    --accumulate_grad_batches 2 \
+    --classifier_lr 0.2 \
+    --weight_decay 1e-6 \
+    --batch_size 200 \
+    --num_workers 4 \
+    --num_augment_trategy SimCLR_AA_FA \
+    --num_augment_strategies 3\
+    --brightness 0.4 0.4 0.4\
+    --contrast 0.4 \
+    --saturation 0.2 \
+    --hue 0.1 \
+    --color_jitter_prob 0.8 \
+    --gray_scale_prob 0.2 \
+    --horizontal_flip_prob 0.5 \
+    --gaussian_prob 1.0  \
+    --solarization_prob 0.2  \
+    --crop_size 224  \
+    --crop_size_glob 224 \
+    --crop_size_loc 94 \
+    --num_crop_glob 2 \
+    --num_crop_loc 4 \
+    --crop_type random_uniform \
+    --min_scale_loc 0.1 \
+    --max_scale_loc 0.3 \
+    --min_scale_glob 0.3 \
+    --max_scale_glob 1.0 \
+    --rda_num_ops 2 \
+    --rda_magnitude 9 \
+    --ada_policy imagenet \
+    --fda_policy imagenet \
+    --num_crops_per_aug 1 1 1\
+    --shuffle_transforms_crops False\
+    --name MV_MASSL_SimCLR_AA_FA_224_2_94_4_CropRatio_0.3_1.0_0.1_0.3_Lossobj_2_res50_Dim_16_imagenet-300ep \
+    --entity mlbrl \
+    --project solo_MASSL_V2 \
+    --wandb \
+    --save_checkpoint \
+    --method mvar \
+    --proj_output_dim 16 \
+    --proj_hidden_dim 4096 \
+    --pred_hidden_dim 4096 \
+    --base_tau_momentum 0.99 \
+    --final_tau_momentum 1.0 \
+    --momentum_classifier \
+    --alpha 0.3\
+    --checkpoint_dir /data1/solo_MASSL_ckpt \
+    --checkpoint_frequency 20

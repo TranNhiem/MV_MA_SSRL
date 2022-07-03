@@ -44,6 +44,8 @@ from solo.utils.backbones import (
     vit_large,
     vit_small,
     vit_tiny,
+    resnet18_wider, 
+    resnet50_wider,
 )
 from solo.utils.knn import WeightedKNNClassifier
 from solo.utils.lars import LARSWrapper
@@ -51,7 +53,6 @@ from solo.utils.metrics import accuracy_at_k, weighted_mean
 from solo.utils.momentum import MomentumUpdater, initialize_momentum_params
 from torch.optim.lr_scheduler import CosineAnnealingLR, MultiStepLR
 from torchvision.models import resnet18, resnet50
-
 
 def static_lr(
     get_lr: Callable, param_group_indexes: Sequence[int], lrs_to_replace: Sequence[float]
@@ -66,7 +67,9 @@ class BaseMethod(pl.LightningModule):
 
     _SUPPORTED_BACKBONES = {
         "resnet18": resnet18,
+        "resnet18_wider": resnet18_wider, 
         "resnet50": resnet50,
+        "resnet50_wider": resnet50_wider, 
         "vit_tiny": vit_tiny,
         "vit_small": vit_small,
         "vit_base": vit_base,
@@ -91,6 +94,7 @@ class BaseMethod(pl.LightningModule):
         backbone: str,
         num_classes: int,
         backbone_args: dict,
+        encoder_width: Union[int, None], 
         max_epochs: int,
         batch_size: int,
         optimizer: str,
@@ -174,7 +178,7 @@ class BaseMethod(pl.LightningModule):
 
         # resnet backbone related
         self.backbone_args = backbone_args
-
+        self.encoder_width=encoder_width
         # training related
         self.num_classes = num_classes
         self.max_epochs = max_epochs
@@ -229,15 +233,25 @@ class BaseMethod(pl.LightningModule):
             kwargs["window_size"] = 4
 
         self.backbone = self.base_model(**kwargs)
+
+
         if "resnet" in self.backbone_name:
+            if "wider" in self.backbone_name: 
+                print("Using ResNet wider model")
+                self.backbone = self.base_model(encoder_width=self.encoder_width, **kwargs)
+
+        
             self.features_dim = self.backbone.inplanes
             # remove fc layer
             self.backbone.fc = nn.Identity()
+
             if cifar:
                 self.backbone.conv1 = nn.Conv2d(
                     3, 64, kernel_size=3, stride=1, padding=2, bias=False
                 )
                 self.backbone.maxpool = nn.Identity()
+        
+        
         else:
             self.features_dim = self.backbone.num_features
 
@@ -264,6 +278,8 @@ class BaseMethod(pl.LightningModule):
         SUPPORTED_BACKBONES = BaseMethod._SUPPORTED_BACKBONES
 
         parser.add_argument("--backbone", choices=SUPPORTED_BACKBONES, type=str)
+        #parser.add_argument("--encoder_width",type=int, default=1)
+
         # extra args for resnet
         parser.add_argument("--zero_init_residual", action="store_true")
         # extra args for ViT
@@ -363,6 +379,7 @@ class BaseMethod(pl.LightningModule):
         # create optimizer
         optimizer = optimizer(
             self.learnable_params,
+            #lr=self.lr,
             lr=self.lr,
             weight_decay=self.weight_decay,
             **self.extra_optimizer_args,
@@ -592,7 +609,15 @@ class BaseMomentumMethod(BaseMethod):
             kwargs["window_size"] = 4
 
         self.momentum_backbone = self.base_model(**kwargs)
+       
+           
+        
         if "resnet" in self.backbone_name:
+             
+            if "wider"  in self.backbone_name: 
+                print("using Wider resnet architecture")
+                self.momentum_backbone = self.base_model(encoder_width=self.encoder_width, **kwargs)
+
             self.features_dim = self.momentum_backbone.inplanes
             # remove fc layer
             self.momentum_backbone.fc = nn.Identity()
@@ -733,10 +758,10 @@ class BaseMomentumMethod(BaseMethod):
         #print(f"this is target length {len(targets)}")
         X = [X] if isinstance(X, torch.Tensor) else X
 
-        if self.local_contrast_global =="local_glob": 
+        if self.local_contrast_global =="local_global": 
             #print("The number Crop of Global and Local Must Be the Same")
-            if self.num_large_crops != self.num_small_crops: 
-                raise ValueError("Number of Local and Global Crops Must be The Same")
+            # if self.num_large_crops != self.num_small_crops: 
+            #     raise ValueError("Number of Local and Global Crops Must be The Same")
             # remove small crops
             X = X[: self.num_large_crops]
 

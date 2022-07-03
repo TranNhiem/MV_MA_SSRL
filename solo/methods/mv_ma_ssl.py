@@ -154,28 +154,44 @@ class MVAR(BaseMomentumMethod):
         neg_cos_sim_loc= 0
         #print("Length of small crop training", self.num_small_crops)
         if self.num_small_crops != 0:
-            for v1 in range(self.num_small_crops):
-                ## There will Need the u
-                
-                # Views 2 remove the prior Views
-                for v2 in np.delete(range(self.num_crops-self.num_large_crops), v1):
-                    # print("this is v2 current value" , v2)
-                    # print(f"this is length of feature embedding: {len(P)}")
-                    # print(f"this is length of momentum embedding: {len(Z_momentum)}")
-                    # print("Sum value of V2 and Large crop", (self.num_large_crops+v2-1))
+            if self.local_contrast_global=="local_global":    
+                for v1 in range(self.num_large_crops):
+                    ## There will Need the u
                     
-                    if self.local_contrast_global=="local_glob": 
-                        #print("Implement the Local contrast Global")
+                    # Views 2 remove the prior Views
+                    for v2 in np.delete(range(self.num_crops-self.num_large_crops), v1):
+                        # print("this is v2 current value" , v2)
+                        # print(f"this is length of feature embedding: {len(P)}")
+                        # print(f"this is length of momentum embedding: {len(Z_momentum)}")
+                        # print("Sum value of V2 and Large crop", (self.num_large_crops+v2-1))
                         neg_cos_sim_loc += byol_loss_func(P[(self.num_large_crops+v2)-1], Z_momentum[v1], )
-                    else: 
+            
+            elif self.local_contrast_global=="local_local": 
+                
+                for v1 in range(self.num_small_crops):
+                    ## There will Need the u
+                    
+                    # Views 2 remove the prior Views
+                    for v2 in np.delete(range(self.num_crops-self.num_large_crops), v1):
+                        # print("this is v2 current value" , v2)
+                        # print(f"this is length of feature embedding: {len(P)}")
+                        # print(f"this is length of momentum embedding: {len(Z_momentum)}")
+                        # print("Sum value of V2 and Large crop", (self.num_large_crops+v2-1))
                         #print("Implement the Local Constrast with Local")
                         neg_cos_sim_loc += byol_loss_func(P[(self.num_large_crops+v2)-1], Z_momentum[(self.num_large_crops+v1)-1], )
+            else: 
+                raise ValueError('The Similarity Objective should define as [local_local] or [local_global]')
         
             neg_cos_sim = (self.alpha*neg_cos_sim_glob + (1-self.alpha)*neg_cos_sim_loc)
+            #neg_cos_sim = (neg_cos_sim_glob + (1-self.alpha)*neg_cos_sim_loc)
+
             with torch.no_grad():
                 z_std_loc = F.normalize(torch.stack(Z[self.num_large_crops : ]), dim=-1).std(dim=1).mean()
             
-            z_std=(self.alpha*z_std_glob + (1-self.alpha)*z_std_loc)
+            #z_std=(self.alpha*z_std_glob + (1-self.alpha)*z_std_loc)
+            z_std=(z_std_glob + z_std_loc)/2
+
+            #z_std= z_std_glob
         
         else: 
             neg_cos_sim= neg_cos_sim_glob
