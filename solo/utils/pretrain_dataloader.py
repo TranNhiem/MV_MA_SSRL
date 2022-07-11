@@ -298,7 +298,79 @@ class FullTransformPipeline_ma_mv:
     #         print(crop_.shape)
     #         #crop_.permute([0, 2, 1])
     #         out.append(crop_)
+               
+    #   x_glob_crops=[]
+    #     for _ in range(self.num_crop_glob): 
+            
+    #         if self.crop_type == "inception_crop": 
+    #             crop_strategy=T.Compose([T.RandomResizedCrop(size=self.crop_size_glob,
+    #                 interpolation=T.InterpolationMode.BICUBIC),])# transforms.Normalize(mean=mean, std=std)   
+    #         elif self.crop_type == "random_uniform":
+    #                 crop_strategy=T.Compose([T.RandomResizedCrop(size=self.crop_size_glob,
+    #                 scale=(self.min_scale_glob, self.max_scale_glob),
+    #                     interpolation=T.InterpolationMode.BICUBIC)])
+    #         else: 
+    #             raise ValueError("Croping_strategy_Invalid")
+    #         crop_view = crop_strategy(x)
+    #         x_glob_crops.append(crop_view)
+    #         crop_t=T.Compose([transforms.ToTensor()])
+    #         crop_=crop_t(crop_view)
+    #         #print("Global View", crop_.shape)
+    #         out.append(crop_)
        
+    #     ## For Saving the Local Views 4 Views As Example 
+    #     x_loc_crops=[]
+    #     for _ in range(self.num_crop_loc): 
+    #         if self.crop_type == "inception_crop": 
+    #             crop_strategy=T.Compose([T.RandomResizedCrop(size=self.crop_size_loc,
+    #                 interpolation=T.InterpolationMode.BICUBIC), ])
+            
+    #         elif self.crop_type == "random_uniform":
+    #                 crop_strategy=T.Compose([T.RandomResizedCrop(size=self.crop_size_loc,
+    #                 scale=(self.min_scale_loc, self.max_scale_loc),
+    #                     interpolation=T.InterpolationMode.BICUBIC), ])
+    #         else: 
+    #             raise ValueError("Croping_strategy_Invalid")
+
+    #         crop_view = crop_strategy(x)
+    #         x_loc_crops.append(crop_view)
+    #         crop_t=T.Compose([transforms.ToTensor()])
+    #         crop_=crop_t(crop_view)
+    #         #print("local view", crop_.shape)
+    #         #crop_.permute([0, 2, 1])
+    #         out.append(crop_)
+        
+    #     if ((len( x_loc_crops) >0) and (len(x_glob_crops) >0)): 
+    #         #print("Gloabl ^&^ Local Crops Apply Transform")
+    #         out_glob=[]
+    #         for x_glob in x_glob_crops:
+    #             for  transform in self.transforms:
+           
+    #                 out_glob.extend(transform(x_glob))
+    #         if self.shuffle_crop_transform: 
+    #             random.shuffle(out_glob)
+
+    #         out.extend(out_glob)
+            
+    #         out_loc=[]
+    #         for x_loc in x_loc_crops:
+    #             for transform in self.transforms:
+    #                 out_loc.extend(transform(x_loc))
+    #         if self.shuffle_crop_transform: 
+    #             random.shuffle(out_loc)
+    #         out.extend(out_loc)
+    #             ## --------------- This Section for Debug Transformation and Output Visualization ------------
+    #     out = []
+       
+    #     #transform = transforms.Compose([transforms.ToTensor()])
+    #     ## This saving the Original Image Before Croping
+    #     x_=transforms.ToTensor()(x).squeeze_(0)
+    #     resize_img=T.Compose([transforms.Resize((224,224) ,interpolation=T.InterpolationMode.BICUBIC )])
+    #     x_=resize_img(x_)
+    #     out.append(x_)
+        
+    #     ## For Saving the Global 2 Views Croping View as Example
+  
 
         return out
 
