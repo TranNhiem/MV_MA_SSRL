@@ -234,6 +234,19 @@ def main():
     # #     print(x3.shape)
     #     break
 
+
+    # for x1, x2, x3 in train_loader:
+    #     ## X1, X3 will be the Index of image , X2 is Batch Tensors feeding duiring training.
+    #     ## Saving the Tensor Image + Image Transform Tensors 
+
+    #     ## Noted You must Uncomment the Visualization and Debug section in pretrain_dataloader
+    #     ##--> Class [FullTransformPipeline_ma_mv]
+    #     print("len of Batch tensor", len(x2))
+    #     torch.save(x2, "visualize_tensor_image_Global_local_transform", pickle_module=pickle)
+    #     print("Rick Double Check Global Views shape", x2[args.num_large_crops-2].shape )
+    #     print("Rick Double Check  Local Views shape", x2[args.num_large_crops+3].shape)
+
+
     if args.dali:
         trainer.fit(model, val_dataloaders=val_loader, ckpt_path=ckpt_path)
     else:
