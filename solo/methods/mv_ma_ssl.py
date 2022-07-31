@@ -114,7 +114,6 @@ class MVAR(BaseMomentumMethod):
         ## Consider Editing Part for Extra 2 more Views
         # print("Rick Double Check Global Views shape", X[self.num_large_crops-2].shape )
         # print("Rick Double Check  Local Views shape", X[self.num_large_crops+2].shape)
-        
         out = super().forward(X, *args, **kwargs)
         
         

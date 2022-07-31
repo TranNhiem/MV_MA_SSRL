@@ -286,6 +286,7 @@ def additional_setup_pretrain(args: Namespace):
         # dataset related for all transformers
         crop_size = args.crop_size[0]
         args.backbone_args["img_size"] = crop_size
+
         if "vit" in args.backbone:
             args.backbone_args["patch_size"] = args.patch_size
 

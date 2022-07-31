@@ -4,7 +4,7 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --local_contrast_global local_global \
     --experiment_type ablation \
     --job_name official_experiment \
-    --backbone resnet50_wider \
+    --backbone resnet50 \
     --data_dir /data1/1K_New/ \
     --train_dir train \
     --val_dir val \
@@ -27,8 +27,8 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --batch_size 200 \
     --num_workers 15 \
     --num_augment_trategy SimCLR_RA_FA \
-    --num_augment_strategies 3\
-    --brightness 0.4 0.4 0.4\
+    --num_augment_strategies 3 \
+    --brightness 0.4 0.4 0.4 \
     --contrast 0.4 \
     --saturation 0.2 \
     --hue 0.1 \
@@ -66,6 +66,5 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --final_tau_momentum 1.0 \
     --momentum_classifier \
     --alpha 0.4 \
-    --encoder_width 1 \
     --checkpoint_dir /data1/solo_MASSL_ckpt \
     --checkpoint_frequency 20 \

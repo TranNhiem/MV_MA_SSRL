@@ -19,6 +19,7 @@
 
 from solo.methods.barlow_twins import BarlowTwins
 from solo.methods.base import BaseMethod
+from solo.methods.base_v1 import BaseMethod as BaseMethod_v1
 from solo.methods.byol import BYOL
 from solo.methods.massl import MASSL
 from solo.methods.mv_ma_ssl import MVAR
@@ -42,6 +43,7 @@ from solo.methods.wmse import WMSE
 METHODS = {
     # base classes
     "base": BaseMethod,
+    "base_v1": BaseMethod_v1, 
     "linear": LinearModel,
     # methods
     "barlow_twins": BarlowTwins,

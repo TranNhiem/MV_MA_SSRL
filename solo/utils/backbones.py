@@ -36,7 +36,9 @@ from timm.models.vision_transformer import _create_vision_transformer
 
 from torchvision.models.resnet import ResNet, BasicBlock, Bottleneck
 from typing import Type, Any, Callable, Union, List, Optional
- 
+
+from MVAR_Dino.ViTs import vision_transformer as vits 
+
 @register_model
 def swin_tiny(window_size=7, **kwargs):
     model_kwargs = dict(
@@ -134,6 +136,51 @@ def vit_large(patch_size=16, **kwargs):
     )
     model = _create_vision_transformer("vit_large_patch16_224", pretrained=False, **model_kwargs)
     return model
+
+@register_model
+def swin_large(window_size=7, **kwargs):
+    model_kwargs = dict(
+        patch_size=4,
+        window_size=window_size,
+        embed_dim=192,
+        depths=(2, 2, 18, 2),
+        num_heads=(6, 12, 24, 48),
+        num_classes=0,
+        **kwargs,
+    )
+    return _create_swin_transformer(
+        "swin_large_patch4_window7_224", pretrained=False, **model_kwargs
+    )
+
+
+@register_model
+def vit_tiny_v1( **kwargs):
+    """ViT-Tiny (Vit-Ti/16)"""
+    model= vits.__dict__['vit_tiny'](
+        **kwargs
+    )
+
+    return model
+
+
+@register_model
+def vit_small_v1( **kwargs):
+    model= vits.__dict__['vit_small'](
+        **kwargs
+    )
+    
+    return model
+
+
+@register_model
+def vit_base_v1( **kwargs):
+    model= vits.__dict__['vit_base'](
+       **kwargs
+    )
+   
+    return model
+
+
 
 
 # Copyright 2021 Garena Online Private Limited

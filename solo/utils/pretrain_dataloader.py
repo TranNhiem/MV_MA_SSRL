@@ -264,6 +264,8 @@ class FullTransformPipeline_ma_mv:
                     out_glob.extend(transform(x_glob))
             if self.shuffle_crop_transform: 
                 random.shuffle(out_glob)
+            #out.extend(out_glob)
+            #print("Using Append instead of extend")
             out.extend(out_glob)
 
         else: 
@@ -377,6 +379,96 @@ class FullTransformPipeline_ma_mv:
     def __repr__(self) -> str:
         return "\n".join([str(transform) for transform in self.transforms])
 
+
+class FullTransformPipeline_mvar_dino:
+    def __init__(self, transforms: Callable, num_crops_glob: int, crop_size_glob: int,
+                    num_crops_loc: int, crop_size_loc: int, 
+                    loc_scale: tuple =(0.1, 0.3), glob_scale: tuple=(0.3, 1.0)) -> None:
+        
+        self.transforms = transforms
+        self.num_crop_glob = num_crops_glob
+        self.num_crop_loc = num_crops_loc
+        self.crop_size_glob= crop_size_glob
+        self.crop_size_loc= crop_size_loc
+        self.local_crop_scale=loc_scale
+        self.global_crop_scale=glob_scale
+
+    def __call__(self, x: Image) -> List[torch.Tensor]:
+        """Applies transforms n times to generate n crops.
+
+        Args:
+            x (Image): an image in the PIL.Image format.
+
+        Returns:
+            List[torch.Tensor]: an image in the tensor format.
+        """
+
+        # Try to generate Crop for 2
+        x_glob_crops=[]
+        for _ in range(self.num_crop_glob): 
+  
+            crop_strategy=T.Compose([T.RandomResizedCrop(size=self.crop_size_glob,
+            scale=self.global_crop_scale,
+                interpolation=T.InterpolationMode.BICUBIC)])
+            crop_view = crop_strategy(x)
+            x_glob_crops.append(crop_view)
+
+        x_loc_crops=[]
+        for _ in range(self.num_crop_loc): 
+  
+            crop_strategy=T.Compose([T.RandomResizedCrop(size=self.crop_size_loc,
+            scale=self.local_crop_scale,
+                interpolation=T.InterpolationMode.BICUBIC), ])
+            crop_view = crop_strategy(x)
+            x_loc_crops.append(crop_view)
+
+        out = []
+       
+        if ((len( x_loc_crops) >0) and (len(x_glob_crops) >0)): 
+            #print("Gloabl ^&^ Local Crops Apply Transform")
+            out_glob=[]
+            for x_glob in x_glob_crops:
+                for  transform in self.transforms:
+                    out_glob.extend(transform(x_glob))
+            if self.shuffle_crop_transform: 
+                random.shuffle(out_glob)
+
+            out.extend(out_glob)
+            
+            out_loc=[]
+            for x_loc in x_loc_crops:
+                for transform in self.transforms:
+                    out_loc.extend(transform(x_loc))
+            if self.shuffle_crop_transform: 
+                random.shuffle(out_loc)
+            out.extend(out_loc)
+        
+        elif len( x_glob_crops)==0: 
+            out_loc=[]
+            for x_loc in x_loc_crops:
+                for transform in self.transforms:
+                    out_loc.extend(transform(x_loc))
+            if self.shuffle_crop_transform: 
+                random.shuffle(out_loc)
+            out.extend(out_loc)
+
+        elif len(x_loc_crops)==0:  
+            #print("Croping with Only Global Crop")
+            out_glob=[]
+            for x_glob in x_glob_crops:
+                for transform in self.transforms:
+                    out_glob.extend(transform(x_glob))
+            if self.shuffle_crop_transform: 
+                random.shuffle(out_glob)
+            out.extend(out_glob)
+
+        else: 
+            raise ValueError("Croping should have num_glob_crop & num_loc_crop")
+        
+        return out
+
+    def __repr__(self) -> str:
+        return "\n".join([str(transform) for transform in self.transforms])
 
 def prepare_n_crop_transform(
     transforms: List[Callable], num_crops_per_aug: List[int]
@@ -642,6 +734,23 @@ class CustomTransform_no_crop(BaseTransform):
                 transforms.Normalize(mean=mean, std=std),
             ]
         )
+class SimclrTransform(BaseTransform): 
+    def __init__(
+        self,
+        mean: Sequence[float] = (0.485, 0.456, 0.406),
+        std: Sequence[float] = (0.228, 0.224, 0.225),
+    ):
+        super().__init__()
+        self.transform = transforms.Compose([
+            transforms.RandomHorizontalFlip(p=0.5),
+            transforms.RandomApply([transforms.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.2, hue=0.1)], p=0.8),
+            transforms.RandomGrayscale(p=0.2),
+            transforms.RandomApply([GaussianBlur()], p=0.5),
+            transforms.RandomApply([Solarization()], p=0.2),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=mean, std=std),
+        ])
+
 
 def prepare_transform(dataset: str, num_augment_trategy: str, trfs_kwargs, da_kwargs=None) -> Any:
     """Prepares transforms for a specific dataset. Optionally uses multi crop.
@@ -765,6 +874,53 @@ def prepare_transform(dataset: str, num_augment_trategy: str, trfs_kwargs, da_kw
             return [ CustomTransform_no_crop(**trfs_kwargs), fast_da,]
         elif num_augment_trategy =="SimCLR_AA": #
             return [ CustomTransform_no_crop(**trfs_kwargs), auto_da]
+        elif num_augment_trategy =="RA_AA": #
+            return [ rand_da, auto_da,]
+        elif num_augment_trategy =="RA_FA": #
+            return [rand_da, fast_da,]
+        else: 
+            raise ValueError(f"{num_augment_trategy} is not currently supported.")
+
+    elif dataset=="mvar_dino": 
+        mean = (0.485, 0.456, 0.406)
+        std = (0.228, 0.224, 0.225)
+        policy_dict = {'imagenet':auto_aug.AutoAugmentPolicy.IMAGENET}
+        ## DA args def :
+        num_ops, magnitude = da_kwargs['rda_num_ops'], da_kwargs['rda_magnitude']
+        ada_policy = policy_dict[ da_kwargs['ada_policy'] ]
+        fda_policy = da_kwargs['fda_policy']
+        # common crop settings : 
+
+        # prepare various da
+        auto_da = transforms.Compose( [ auto_aug.AutoAugment(policy=ada_policy), transforms.ToTensor(),transforms.Normalize(mean=mean, std=std)])# transforms.ToTensor(),# transforms.Normalize(mean=mean, std=std)
+        
+        #rand_da = transforms.Compose( [auto_aug.RandAugment(num_ops=num_ops, magnitude=magnitude), transforms.ToTensor(),transforms.Normalize(mean=mean, std=std)])# transforms.ToTensor()] )
+        #rand_da = transforms.Compose( [Extended_RangAugment(num_ops=num_ops, magnitude=magnitude), transforms.Normalize(mean=mean, std=std)])# transforms.ToTensor(),transforms.Normalize(mean=mean, std=std)] )#
+        rand_da = transforms.Compose( [RandAugment(num_ops=num_ops, magnitude=magnitude), transforms.ToTensor(),transforms.Normalize(mean=mean, std=std)])# transforms.ToTensor(),transforms.Normalize(mean=mean, std=std)] )#
+        
+        fast_da = transforms.Compose( [Fast_AutoAugment(policy_type=fda_policy).get_trfs(), transforms.ToTensor(), transforms.Normalize(mean=mean, std=std)] )
+        #fast_da = Fast_AutoAugment(policy_type=fda_policy).get_trfs()
+        #  ret [simclr_da, rand_da, auto_da, fast_da]  4 views trfs
+        if num_augment_trategy =="SimCLR_RA_AA_FA": 
+            return [ SimclrTransform(), rand_da, auto_da, fast_da,]
+        ### ---------3 Augmentations Strategies -------------
+        elif num_augment_trategy =="SimCLR_RA_AA": #
+            return [ SimclrTransform(), rand_da, auto_da]
+        elif num_augment_trategy =="SimCLR_RA_FA": #
+            return [ SimclrTransform(), rand_da, fast_da,]
+        elif num_augment_trategy =="SimCLR_AA_FA": #
+            return [ SimclrTransform(), auto_da, fast_da,]
+        elif num_augment_trategy =="RA_AA_FA": #
+            return [ rand_da, auto_da, fast_da,]
+        
+        
+        ### ---------2 Augmentations Strategies -------------
+        elif num_augment_trategy =="SimCLR_RA": #
+            return [ SimclrTransform(), rand_da]
+        elif num_augment_trategy =="SimCLR_FA": #
+            return [ SimclrTransform(), fast_da,]
+        elif num_augment_trategy =="SimCLR_AA": #
+            return [ SimclrTransform(), auto_da]
         elif num_augment_trategy =="RA_AA": #
             return [ rand_da, auto_da,]
         elif num_augment_trategy =="RA_FA": #

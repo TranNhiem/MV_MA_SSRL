@@ -29,6 +29,7 @@ from solo.methods import METHODS
 from solo.utils.auto_resumer import AutoResumer
 import torch
 import pickle
+from torchvision import datasets
 
 try:
     from solo.methods.dali import PretrainABC
@@ -46,7 +47,7 @@ else:
     _umap_available = True
 
 import types
-
+from MVAR_Dino.main_mvar_dino import DataAugmentationMVAR_DINO
 from solo.utils.checkpointer import Checkpointer
 from solo.utils.classification_dataloader import prepare_data as prepare_data_classification
 from solo.utils.pretrain_dataloader import (
@@ -125,7 +126,8 @@ def main():
         train_loader = prepare_dataloader(
             train_dataset, batch_size=args.batch_size, num_workers=args.num_workers
         )
-    
+
+
     # normal dataloader for when it is available
     if args.dataset == "custom" and (args.no_labels or args.val_dir is None):
         val_loader = None
@@ -180,8 +182,8 @@ def main():
         auto_umap = AutoUMAP(
             args,
             logdir=os.path.join(args.auto_umap_dir, args.method),
-            frequency=args.auto_umap_frequency,
-        )
+            frequency=args.auto_umap_frequency,)
+        
         callbacks.append(auto_umap)
 
     # 1.7 will deprecate resume_from_checkpoint, but for the moment
@@ -191,15 +193,15 @@ def main():
     if args.auto_resume and args.resume_from_checkpoint is None:
         auto_resumer = AutoResumer(
             checkpoint_dir=os.path.join(args.checkpoint_dir, args.method),
-            max_hours=args.auto_resumer_max_hours,
-        )
+            max_hours=args.auto_resumer_max_hours,)
+        
         resume_from_checkpoint = auto_resumer.find_checkpoint(args)
         if resume_from_checkpoint is not None:
             print(
                 "Resuming from previous checkpoint that matches specifications:",
-                f"'{resume_from_checkpoint}'",
-            )
+                f"'{resume_from_checkpoint}'",)
             ckpt_path = resume_from_checkpoint
+    
     elif args.resume_from_checkpoint is not None:
         ckpt_path = args.resume_from_checkpoint
         del args.resume_from_checkpoint
@@ -212,10 +214,7 @@ def main():
         #fast_dev_run= True,
         logger=wandb_logger if args.wandb else None,
         callbacks=callbacks,
-        enable_checkpointing=False,
-        
-    )
-
+        enable_checkpointing=False,)
 
     print("\n\nI'm in here \n\n")
     # it's very not good... the issue occurs in train_loader, i'm not sure which da-method cause the img have invalid size

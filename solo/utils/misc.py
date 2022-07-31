@@ -19,11 +19,16 @@
 
 import math
 import warnings
-from typing import List, Tuple
 
+from typing import Any, Callable, List, Optional, Sequence, Type, Union, Tuple
+import os 
 import torch
 import torch.distributed as dist
 import torch.nn as nn
+from solo.utils.h5_dataset import H5Dataset
+from torch.utils.data.dataset import Dataset
+from pathlib import Path
+from torchvision.datasets import  ImageFolder
 
 
 def _1d_filter(tensor: torch.Tensor) -> torch.Tensor:
@@ -198,3 +203,89 @@ def get_rank():
     if dist.is_available() and dist.is_initialized():
         return dist.get_rank()
     return 0
+
+def dataset_with_index(DatasetClass: Type[Dataset]) -> Type[Dataset]:
+    """Factory for datasets that also returns the data index.
+
+    Args:
+        DatasetClass (Type[Dataset]): Dataset class to be wrapped.
+
+    Returns:
+        Type[Dataset]: dataset with index.
+    """
+
+    class DatasetWithIndex(DatasetClass):
+        def __getitem__(self, index):
+            data = super().__getitem__(index)
+            return (index, *data)
+
+    return DatasetWithIndex
+
+class ImageNet_With_subset(ImageFolder):
+    def __init__(self, img_root, subset_class_num, transform=None):
+        super().__init__(img_root, transform=transform)
+        self.root = Path(img_root)
+        self.transform = transform
+        samples_subset=[]
+        if subset_class_num != None:
+            for file_path, numeric_cls in self.samples:
+                if numeric_cls < subset_class_num:
+                    samples_subset.append((file_path,numeric_cls))
+            self.samples = samples_subset
+        print("train dataset size:",len(self.samples))
+ 
+
+def compute_datasize(img_root, subset_class_num, transform=None):
+    size= dataset_with_index(ImageNet_With_subset)(img_root, subset_class_num, transform)
+    size=int(len(size))
+    return size
+
+def compute_dataset_size(
+    dataset: Optional[str] = None,
+    train: Optional[bool] = True,
+    data_path: Optional[str] = None,
+    data_format: Optional[str] = "image_folder",
+    no_labels: Optional[bool] = False,
+    data_fraction: Optional[float] = -1,
+):
+    """Utility function to get the dataset size. If using cifar or stl,
+    provide dataset and the train flag.
+    E.g., compute_dataset_size(dataset='cifar10', train=True/False).
+    When using an ImageFolder dataset, just provide the path to the folder and
+    specify if it has labels or not with the no_labels flag.
+    Args:
+        dataset (Optional[str]): dataset size for predefined datasets
+            [cifar10, cifar100, stl10]. Defaults to None.
+        train (Optional[bool]): train dataset flag. Defaults to True.
+        data_path (Optional[str]): path to the folder. Defaults to None.
+        data_format (Optional[str]): format of the data, either "image_folder" or "h5".
+            Defaults to "image_folder".
+        no_labels (Optional[bool]): if the dataset has no labels. Defaults to False.
+        data_fraction (Optional[float]): amount of data to use. Defaults to -1.
+    Returns:
+        int: size of the dataset
+    """
+
+    DATASET_SIZES = {
+        "cifar10": {"train": 50_000, "val": 10_000},
+        "cifar100": {"train": 50_000, "val": 10_000},
+        "stl10": {"train": 105_000, "val": 8_000},
+    }
+    size = None
+
+    if dataset is not None:
+        size = DATASET_SIZES.get(dataset.lower(), {}).get("train" if train else "val", None)
+
+    if data_format == "h5":
+        size = len(H5Dataset(dataset, data_path))
+
+    if size is None:
+        if no_labels:
+            size = len(os.listdir(data_path))
+        else:
+            size = sum(len(os.listdir(os.path.join(data_path, class_))) for class_ in os.listdir(data_path))
+        
+    if data_fraction != -1:
+        size = int(size * data_fraction)
+    
+    return size

@@ -31,9 +31,11 @@ class DINOLoss(nn.Module):
         warmup_teacher_temp: float,
         teacher_temp: float,
         warmup_teacher_temp_epochs: float,
+        
         num_epochs: int,
         student_temp: float = 0.1,
         num_large_crops: int = 2,
+        num_small_crops: int = 0,
         center_momentum: float = 0.9,
     ):
         """Auxiliary module to compute DINO's loss.
@@ -56,6 +58,8 @@ class DINOLoss(nn.Module):
         self.student_temp = student_temp
         self.center_momentum = center_momentum
         self.num_large_crops = num_large_crops
+        self.ncrops= num_large_crops + num_small_crops
+        #print("this is total crops", self.ncrops)
         self.register_buffer("center", torch.zeros(1, num_prototypes))
         # we apply a warm up for the teacher temperature because
         # a too high temperature makes the training instable at the beginning
@@ -65,6 +69,7 @@ class DINOLoss(nn.Module):
                 np.ones(num_epochs - warmup_teacher_temp_epochs) * teacher_temp,
             )
         )
+        
 
     def forward(self, student_output: torch.Tensor, teacher_output: torch.Tensor) -> torch.Tensor:
         """Computes DINO's loss given a batch of logits of the student and a batch of logits of the
@@ -78,22 +83,38 @@ class DINOLoss(nn.Module):
             torch.Tensor: DINO loss.
         """
 
-        student_out = student_output / self.student_temp
-        student_out = student_out.chunk(self.num_large_crops)
+        #student_out = student_output / self.student_temp
+        student_out = [ student_out / self.student_temp for student_out in student_output]
 
+        # print(f"This is length of student output: {len(student_out)}")
+        # print(f"this is student output length: {student_out[0].shape}")
+        #This Correct incase Only Two Global Crops are used without extra Local Crops
+        #student_out = student_out.chunk(self.num_large_crops)
+        # MVAR Student Network digest (Augmented Global + Local Views )
+        # For Original Design
+        #student_out= student_out.chunk(self.ncrops)
+        # print(f"Global views from student network: { student_out[1].shape}")
+        # print(f"Local View from student Network: {student_out[3].shape}")
         # teacher centering and sharpening
         temp = self.teacher_temp_schedule[self.epoch]
-        teacher_out = F.softmax((teacher_output - self.center) / temp, dim=-1)
-        teacher_out = teacher_out.detach().chunk(2)
-
+        #teacher_out =  F.softmax((teacher_output - self.center) / temp, dim=-1) 
+        teacher_out = [ F.softmax((teacher_out - self.center) / temp, dim=-1) for teacher_out in teacher_output]
+        #teacher_out=teacher_out.detach()
+        #teacher_out = teacher_out.detach().chunk(self.num_large_crops) #2 is number of baseline Global Views
+        # print(f"This is Global view Teacher Network {teacher_out[0].shape}")
+        # print(f"The last Global view Teacher Network {teacher_out[1].shape}")
         total_loss = 0
         n_loss_terms = 0
         for iq, q in enumerate(teacher_out):
-            for iv, v in enumerate(student_out):
-                if iv == iq:
+            #print(f"This is global View shape: {q.shape}")
+            for v in range(len(student_out)):
+                if v == iq:
+                #if iv == iq:
                     # we skip cases where student and teacher operate on the same view
                     continue
-                loss = torch.sum(-q * F.log_softmax(v, dim=-1), dim=-1)
+                #print(f"This is Local shape: {student_out[v].shape}")
+                #loss = torch.sum(-q * F.log_softmax(v, dim=-1), dim=-1)
+                loss= torch.sum(-q*F.log_softmax(student_out[v], dim=-1), dim=-1)
                 total_loss += loss.mean()
                 n_loss_terms += 1
         total_loss /= n_loss_terms
@@ -108,7 +129,10 @@ class DINOLoss(nn.Module):
             teacher_output (torch.Tensor): NxP Tensor containing teacher logits of all views.
         """
 
-        batch_center = torch.sum(teacher_output, dim=0, keepdim=True)
+        batch_center = torch.sum(torch.stack(teacher_output), dim=0, keepdim=True)
+        #batch_center= torch.stack(teacher_output, dim=0).sum(dim=0)
+        #batch_center = torch.sum(teacher_output, dim=0, keepdim=True)
+        
         if dist.is_available() and dist.is_initialized():
             dist.all_reduce(batch_center)
             batch_center = batch_center / dist.get_world_size()

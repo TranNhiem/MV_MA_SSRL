@@ -1,4 +1,4 @@
-# Copyright 2021 solo-learn development team.
+# Copyright 2022 solo-learn development team.
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
@@ -25,10 +25,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from solo.losses.dino import DINOLoss
-from solo.methods.base import BaseMomentumMethod
+from solo.methods.base_v1 import BaseMomentumMethod
 from solo.utils.momentum import initialize_momentum_params
 from solo.utils.misc import trunc_normal_
-
+from MVAR_Dino.utils import utils 
 
 class DINOHead(nn.Module):
     mlp: Any
@@ -46,7 +46,6 @@ class DINOHead(nn.Module):
     ):
         """DINO head that takes as input the features of the backbone, projects them in a lower
         dimensional space and multiplies with the prototypes.
-
         Args:
             in_dim (int): number of dimensions of the input (aka backbone features).
             num_prototypes (int): number of prototypes.
@@ -86,7 +85,6 @@ class DINOHead(nn.Module):
 
     def _init_weights(self, m: nn.Module):
         """Initializes weights with truncated normal and biases with zeros.
-
         Args:
             m (nn.Module): a layer of the DINO head.
         """
@@ -98,10 +96,8 @@ class DINOHead(nn.Module):
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Computes the forward pass of the backbone, the projector and the last layer (prototypes).
-
         Args:
             x (torch.Tensor): a batch of features.
-
         Returns:
             torch.Tensor: a batch of logits.
         """
@@ -129,7 +125,6 @@ class DINO(BaseMomentumMethod):
         **kwargs,
     ):
         """Adds DINO head to the student and momentum DINO head to the teacher.
-
         Args:
             proj_hidden_dim (int): number of neurons in the hidden layers of the projector.
             proj_output_dim (int): number of output neurons in the projector.
@@ -173,6 +168,8 @@ class DINO(BaseMomentumMethod):
 
         # dino loss
         self.dino_loss_func = DINOLoss(
+            num_large_crops= self.num_large_crops, 
+            num_small_crops= self.num_small_crops,
             num_prototypes=num_prototypes,
             student_temp=student_temperature,
             warmup_teacher_temp=warmup_teacher_temperature,
@@ -196,19 +193,19 @@ class DINO(BaseMomentumMethod):
         parser.add_argument("--num_prototypes", type=int, default=4096)
         parser.add_argument("--norm_last_layer", type=distutils.util.strtobool, default=True)
         parser.add_argument("--use_bn_in_head", type=distutils.util.strtobool, default=False)
+        # parameters
+        parser.add_argument("--alpha", type=str, default="0.5")
 
         # temperature settings
         parser.add_argument("--student_temperature", type=float, default=0.1)
         parser.add_argument("--teacher_temperature", default=0.07, type=float)
         parser.add_argument("--warmup_teacher_temperature", default=0.04, type=float)
         parser.add_argument("--warmup_teacher_temperature_epochs", default=50, type=int)
-
         return parent_parser
 
     @property
     def learnable_params(self) -> List[dict]:
         """Adds DINO head parameters to the parent's learnable parameters.
-
         Returns:
             List[dict]: list of learnable parameters.
         """
@@ -219,7 +216,6 @@ class DINO(BaseMomentumMethod):
     @property
     def momentum_pairs(self) -> List[Tuple[Any, Any]]:
         """Adds (head, momentum_head) to the parent's momentum pairs.
-
         Returns:
             List[dict]: list of momentum pairs.
         """
@@ -229,11 +225,9 @@ class DINO(BaseMomentumMethod):
 
     def dino_clip_gradients(self, clip: float):
         """Clips gradients after backward pass.
-
         Args:
             clip (float): threshold for gradient clipping.
         """
-
         for p in self.backbone.parameters():
             if p.grad is not None:
                 param_norm = p.grad.data.norm(2)
@@ -245,52 +239,104 @@ class DINO(BaseMomentumMethod):
         """Updates the current epoch in DINO's loss object."""
         self.dino_loss_func.epoch = self.current_epoch
 
-    def forward(self, X: torch.Tensor, *args, **kwargs) -> Dict[str, Any]:
-        """Performs forward pass of the student (backbone and head).
 
+
+    # def base_forward(self, X: torch.Tensor) -> Dict:
+    #     """Basic forward that allows children classes to override forward().
+
+    #     Args:
+    #         X (torch.Tensor): batch of images in tensor format.
+
+    #     Returns:
+    #         Dict: dict of logits and features.
+    #     """
+        
+    #     feats = self.backbone(X)
+    #     logits = self.classifier(feats.detach())
+    #     return {
+    #         "logits": logits,
+    #         "feats": feats,
+    #     }
+
+    def forward(self, X: torch.Tensor) -> Dict[str, Any]:
+        """Performs forward pass of the student (backbone and head).
         Args:
             X (torch.Tensor): batch of images in tensor format.
-
         Returns:
             Dict[str, Any]: a dict containing the outputs of the parent and the logits of the head.
         """
+        # # multi-crop wrapper handles forward with inputs of different resolutions
+        # student = utils.MultiCropWrapper(self.backbone, DINOHead(
+        #     embed_dim,
+        #     args.out_dim,
+        #     use_bn=args.use_bn_in_head,
+        #     norm_last_layer=args.norm_last_layer,
+        # ))
+        # teacher = utils.MultiCropWrapper(
+        #     teacher,
+        #     DINOHead(embed_dim, args.out_dim, args.use_bn_in_head),
+        # )
 
-        out = super().forward(X, *args, **kwargs)
+        out = super().forward(X)
         z = self.head(out["feats"])
+        #print(f"This is forward path of student architecture {z[0].shape}")
+
+        #out.update({"z": z})
         return {**out, "z": z}
 
-    def training_step(self, batch: Sequence[Any], batch_idx: int) -> torch.Tensor:
-        """Training step for DINO reusing BaseMomentumMethod training step.
+    # @torch.no_grad()
+    # def momentum_forward(self, X: torch.Tensor) -> Dict:
+    #     """Performs the forward pass of the momentum backbone and projector.
+    #     Args:
+    #         X (torch.Tensor): batch of images in tensor format.
+    #     Returns:
+    #         Dict[str, Any]: a dict containing the outputs of the parent and the key.
+    #     """
+    #     # if self.num_small_crops !=0: 
+    #     #     print("Execute Momentum Forward")
+    #     #     out = super().momentum_forward(X[:self.num_large_crops])
+    #     #     z = self.momentum_head(out["feats"])
+    #     #     #out.update({"p": p})
+    #     #     return {**out, "z": z}
+    #     # else: 
+    #     out = super().momentum_forward(X)
+    #     z = self.momentum_head(out["feats"])
+    #     print(f"This is forward path of Teacher architecture {z[0].shape}")
+    #     #out.update({"p": p})
+    #     return {**out, "teacher_out": z}
 
+    def _sharded_step(self, feats: List[torch.Tensor], momentum_feats: List[torch.Tensor]) -> torch.Tensor:
+        student_out= [self.head(f) for f in feats]
+
+        #Forward with momentum backbone 
+        with torch.no_grad(): 
+            teacher_out=[self.momentum_head(f) for f in momentum_feats]
+        # ------- contrastive loss -------
+        dino_loss = self.dino_loss_func(student_out, teacher_out)
+        return dino_loss
+    
+    def training_step(self, batch: Sequence[Any], batch_idx: int) -> torch.Tensor:
+        """
         Args:
             batch (Sequence[Any]): a batch of data in the format of [img_indexes, [X], Y], where [X]
                 is a list of size num_crops containing batches of images.
             batch_idx (int): index of the batch.
-
         Returns:
             torch.Tensor: total loss composed of DINO loss and classification loss.
         """
-
+        # # Logit, supervised_cls_loss, top-1, top-5
         out = super().training_step(batch, batch_idx)
         class_loss = out["loss"]
-        feats1, feats2 = out["feats"]
-        momentum_feats1, momentum_feats2 = out["momentum_feats"]
+        # p = torch.cat(out["z"])
+        # momentum_p = torch.cat(out["momentum_z"])
 
-        # forward online backbone
-        p1 = self.head(feats1)
-        p2 = self.head(feats2)
-        p = torch.cat((p1, p2))
-
-        # forward momentum backbone
-        p1_momentum = self.momentum_head(momentum_feats1)
-        p2_momentum = self.momentum_head(momentum_feats2)
-        p_momentum = torch.cat((p1_momentum, p2_momentum))
+       
 
         # ------- contrastive loss -------
-        dino_loss = self.dino_loss_func(p, p_momentum)
-
+        # dino_loss = self.dino_loss_func(p, momentun_p)
+        dino_loss= self._sharded_step(out['feats'], out["momentum_feats"])
         self.log("dino_loss", dino_loss, on_epoch=True, sync_dist=True)
-
+    
         return dino_loss + class_loss
 
     def on_after_backward(self):

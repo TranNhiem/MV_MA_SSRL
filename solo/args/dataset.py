@@ -42,8 +42,12 @@ def dataset_args(parser: ArgumentParser):
     ]
 
     parser.add_argument("--dataset", choices=SUPPORTED_DATASETS, type=str, required=True)
-
+    # parser.add_argument("--dataset_type", type=str, required=True)
+    # parser.add_argument("--data_fraction", type=float, required=True,)
+    parser.add_argument("--data_format", type=str, required=False, default="image_folder")
+    
     # dataset path
+    #parser.add_argument("--val_data_path", type=Path, default=None)
     parser.add_argument("--data_dir", type=Path, required=True)
     parser.add_argument("--train_dir", type=Path, default=None)
     parser.add_argument("--val_dir", type=Path, default=None)
