@@ -85,7 +85,7 @@ class DINOLoss(nn.Module):
 
         #student_out = student_output / self.student_temp
         student_out = [ student_out / self.student_temp for student_out in student_output]
-
+        #print(f"Rick double Check outputs of Student arch: {len(student_out)}")
         # print(f"This is length of student output: {len(student_out)}")
         # print(f"this is student output length: {student_out[0].shape}")
         #This Correct incase Only Two Global Crops are used without extra Local Crops
@@ -99,6 +99,7 @@ class DINOLoss(nn.Module):
         temp = self.teacher_temp_schedule[self.epoch]
         #teacher_out =  F.softmax((teacher_output - self.center) / temp, dim=-1) 
         teacher_out = [ F.softmax((teacher_out - self.center) / temp, dim=-1) for teacher_out in teacher_output]
+        #print(f" Rick double check output of Teacher arch: {len(teacher_out)}")
         #teacher_out=teacher_out.detach()
         #teacher_out = teacher_out.detach().chunk(self.num_large_crops) #2 is number of baseline Global Views
         # print(f"This is Global view Teacher Network {teacher_out[0].shape}")
@@ -130,6 +131,7 @@ class DINOLoss(nn.Module):
         """
 
         batch_center = torch.sum(torch.stack(teacher_output), dim=0, keepdim=True)
+        #print(f"This is batch center value: {batch_center}")
         #batch_center= torch.stack(teacher_output, dim=0).sum(dim=0)
         #batch_center = torch.sum(teacher_output, dim=0, keepdim=True)
         

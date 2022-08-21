@@ -16,7 +16,7 @@ import datetime
 import time
 import math 
 import json 
-import wandb
+#import wandb
 from pathlib import Path
 from tqdm import tqdm
 from time import sleep
@@ -41,6 +41,7 @@ from MVAR_Dino.ViTs.vision_transformer import DINOHead
 #     prepare_n_crop_transform_mvar_dino,
 #     prepare_transform,
 # )
+
 ### Pluging module MVAR Arguments 
 from solo.args.setup import parse_args_pretrain
 
@@ -50,13 +51,11 @@ from torchvision.transforms import autoaugment as auto_aug
 from solo.utils.Fast_Auto_Augment.Fast_AutoAugment import Fast_AutoAugment
 from solo.utils.Custom_RandAugment_v3 import RandAugment 
 
-
-wandb.init(
-
-    name= f"Testing MVAR_DINO", 
-    project= "solo_MASSL_V2", 
-    entity='mlbrl', 
-) 
+# wandb.init(
+#     name= f"Testing MVAR_DINO", 
+#     project= "solo_MASSL_V2", 
+#     entity='mlbrl', 
+# ) 
 
 torchvision_archs = sorted(name for name in torchvision_models.__dict__
     if name.islower() and not name.startswith("__")
@@ -394,7 +393,7 @@ def train_one_epoch(student, teacher, teacher_without_ddp, mvar_dino_loss, data_
             #teacher_output= teacher(images[:2*number of augment]) # only the 2 global views pass through the teacher 
             student_output= student(images)
             loss = mvar_dino_loss (student_output, teacher_output, epoch,)
-            wandb.log({"loss each_step": loss})
+            #wandb.log({"loss each_step": loss})
 
         if not math.isfinite(loss.item()): 
             print("Loss is {}, stopping training".format(loss.item()), force=True)

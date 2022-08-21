@@ -154,9 +154,9 @@ def swin_large(window_size=7, **kwargs):
 
 
 @register_model
-def vit_tiny_v1( **kwargs):
+def vit_tiny_v1(drop_path_rate=0., **kwargs):
     """ViT-Tiny (Vit-Ti/16)"""
-    model= vits.__dict__['vit_tiny'](
+    model= vits.__dict__['vit_tiny'](drop_path_rate=drop_path_rate,
         **kwargs
     )
 
@@ -164,8 +164,8 @@ def vit_tiny_v1( **kwargs):
 
 
 @register_model
-def vit_small_v1( **kwargs):
-    model= vits.__dict__['vit_small'](
+def vit_small_v1(drop_path_rate=0., **kwargs):
+    model= vits.__dict__['vit_small'](drop_path_rate=drop_path_rate,
         **kwargs
     )
     
@@ -173,8 +173,8 @@ def vit_small_v1( **kwargs):
 
 
 @register_model
-def vit_base_v1( **kwargs):
-    model= vits.__dict__['vit_base'](
+def vit_base_v1(drop_path_rate=0., **kwargs):
+    model= vits.__dict__['vit_base'](drop_path_rate=drop_path_rate, 
        **kwargs
     )
    

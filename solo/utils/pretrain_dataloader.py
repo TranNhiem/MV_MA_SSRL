@@ -878,6 +878,8 @@ def prepare_transform(dataset: str, num_augment_trategy: str, trfs_kwargs, da_kw
             return [ rand_da, auto_da,]
         elif num_augment_trategy =="RA_FA": #
             return [rand_da, fast_da,]
+        elif num_augment_trategy =="SimCLR": #
+            return [ CustomTransform_no_crop(**trfs_kwargs)]
         else: 
             raise ValueError(f"{num_augment_trategy} is not currently supported.")
 

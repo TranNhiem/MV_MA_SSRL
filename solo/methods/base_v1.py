@@ -141,6 +141,7 @@ class BaseMethod(pl.LightningModule):
         no_channel_last: bool = False,
         num_gpus: int =7, 
         dataset_size: int= 129000, 
+        drop_path_rate: float = 0., 
         **kwargs,
     ):
         """Base model that implements all basic operations for all self-supervised methods.
@@ -197,7 +198,7 @@ class BaseMethod(pl.LightningModule):
 
         # resnet backbone related
         self.backbone_args = backbone_args
-
+        self.drop_path_rate= drop_path_rate
         # training related
         self.num_classes = num_classes
         self.max_epochs = max_epochs
@@ -250,7 +251,11 @@ class BaseMethod(pl.LightningModule):
             kwargs["window_size"] = 4
 
         method = self.extra_args.get("method", None)
-        self.backbone = self.base_model( **kwargs)
+        if "vit" in self.backbone_name: 
+            print(f"Using {self.backbone_name} architecture with drop_path_rate: {self.drop_path_rate}")
+            self.backbone = self.base_model(drop_path_rate=self.drop_path_rate, **kwargs)
+
+        self.backbone = self.base_model(**kwargs)
         if self.backbone_name.startswith("resnet"):
             self.features_dim = self.backbone.inplanes
             # remove fc layer
@@ -276,6 +281,7 @@ class BaseMethod(pl.LightningModule):
 
         # can provide up to ~20% speed up
         if not no_channel_last:
+            print()
             self = self.to(memory_format=torch.channels_last)
 
     @staticmethod
@@ -294,6 +300,8 @@ class BaseMethod(pl.LightningModule):
         BACKBONES = BaseMethod._BACKBONES
 
         parser.add_argument("--backbone", choices=BACKBONES, type=str)
+        parser.add_argument("--drop_path_rate", type=float, default=0.)
+
         # extra args for resnet
         parser.add_argument("--zero_init_residual", action="store_true")
         # extra args for ViT

@@ -89,7 +89,7 @@ def main():
     # note that, to support plugin, i modify the prepare_transform func (i didn't unpack the dict!!)
     if not args.dali:
         # asymmetric augmentations
-        if args.unique_augs > 1:  # note : --brightness 0.4 0.4 0.4 0.4 \  # 4 params to bypass inner chk mechnaism in sh file
+        if args.unique_augs >= 1:  # note : --brightness 0.4 0.4 0.4 0.4 \  # 4 params to bypass inner chk mechnaism in sh file
             # pluggin proposed multiple-DA
             if args.dataset == "mulda" or "mulda_v1" or "mv_ma":
                 transform = prepare_transform(args.dataset, args.num_augment_trategy,args.transform_kwargs, args.mulda_kwargs) 

@@ -144,8 +144,8 @@ def additional_setup_pretrain(args: Namespace):
     args.unique_augs = unique_augs
 
     
-
-    if unique_augs > 1:
+    # if unique_augs> 1 ??
+    if unique_augs >= 1:
         args.transform_kwargs = [
             dict(
                 brightness=brightness,

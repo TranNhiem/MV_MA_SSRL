@@ -30,6 +30,15 @@ from PIL import ImageFilter, ImageOps
 
 
 def load_pretrained_weights(model, pretrained_weights, checkpoint_key, model_name, patch_size): 
+        
+    '''
+    model: ViT architecutre design with random itit Weight  
+    pretrained_weights: The path of pretrained weights from your local machine 
+    checkpoint_key:  If specific layer neeed loading check point ?? 
+    model_name: provide name to loading checkpoint from MetaAI hub checkpoint if pretrained_weights is not provided
+    patch_size: this argument provide the patch_size of pretrained model need to load
+
+    '''
     if os.path.isfile(pretrained_weights): 
         state_dict= torch.load(pretrained_weights, map_location="cpu")
         if checkpoint_key is not None and checkpoint_key in state_dict: 
@@ -481,7 +490,6 @@ class LARS(torch.optim.Optimizer):
                 mu.mul_(g['momentum']).add_(dp)
 
                 p.add_(mu, alpha=-g['lr'])
-
 
 class MultiCropWrapper(nn.Module):
     """
