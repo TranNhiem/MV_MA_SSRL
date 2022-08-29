@@ -140,6 +140,7 @@ def prepare_transforms(dataset: str) -> Tuple[nn.Module, nn.Module]:
         "mulda":  imagenet_pipeline,
         "mulda_v1":  imagenet_pipeline,
         "mv_ma":  imagenet_pipeline,
+        "mvar_dino": imagenet_pipeline,
     }
 
     assert dataset in pipelines
@@ -191,7 +192,7 @@ def prepare_datasets(
     else:
         val_dir = Path(val_dir)
 
-    assert dataset in ["cifar10", "cifar100", "stl10", "imagenet", "imagenet100", "custom", "mulda", "mulda_v1", "mv_ma"]
+    assert dataset in ["cifar10", "cifar100", "stl10", "imagenet", "imagenet100", "custom", "mulda", "mulda_v1", "mv_ma" , "mvar_dino"]
 
     if dataset in ["cifar10", "cifar100"]:
         DatasetClass = vars(torchvision.datasets)[dataset.upper()]
@@ -223,7 +224,7 @@ def prepare_datasets(
             transform=T_val,
         )
 
-    elif dataset in ["imagenet", "imagenet100", "custom", "mulda", "mulda_v1", "mv_ma"]:
+    elif dataset in ["imagenet", "imagenet100", "custom", "mulda", "mulda_v1", "mv_ma", "mvar_dino"]:
         train_dir = data_dir / train_dir
         val_dir = data_dir / val_dir
 
