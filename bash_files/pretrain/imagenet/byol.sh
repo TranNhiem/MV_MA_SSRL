@@ -1,9 +1,10 @@
-python3 ../../../main_pretrain.py \
+python3 ../../../baseline_pretrain.py \
     --dataset imagenet \
     --backbone resnet50 \
     --data_dir /data1/1K_New \
     --train_dir train \
     --val_dir val \
+    --subset_classes 10 \
     --max_epochs 300 \
     --gpus 0,1,2,3,4,5,6,7 \
     --accelerator gpu \

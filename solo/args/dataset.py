@@ -39,6 +39,7 @@ def dataset_args(parser: ArgumentParser):
         "mulda",
         "mulda_v1",
         "mv_ma",
+        "mvar_dino"
     ]
 
     parser.add_argument("--dataset", choices=SUPPORTED_DATASETS, type=str, required=True)
