@@ -1,0 +1,230 @@
+python3 ../../../mv_ma_pretrain_edit.py \
+    --dataset mv_ma \
+    --mvar_training True \
+    --experiment_type ablation \
+    --job_name mv_num_augmentation_vit \
+    --backbone vit_small_v1 \
+    --drop_path_rate 0.1 \
+    --patch_size 16  \
+    --data_dir /data1/1K_New/ \
+    --train_dir train \
+    --val_dir val \
+    --subset_classes 300 \
+    --dataset_size 383690 \
+    --num_gpus 7 \
+    --max_epochs 100 \
+    --gpus 0,1,2,3,4,5,6,7 \
+    --accelerator gpu \
+    --strategy ddp \
+    --sync_batchnorm \
+    --precision 16 \
+    --optimizer adamw \
+    --warmup_teacher_temperature_epochs 10 \
+    --warmup_teacher_temperature 0.04 \
+    --teacher_temperature 0.07 \
+    --eta_lars 0.001 \
+    --exclude_bias_n_norm \
+    --scheduler warmup_cosine \
+    --lr 0.0005 \
+    --min_lr 1e-5  \
+    --accumulate_grad_batches 1 \
+    --classifier_lr 0.1 \
+    --weight_decay 1e-6 \
+    --batch_size 64 \
+    --num_workers 20 \
+    --num_augment_trategy SimCLR_RA_AA \
+    --num_augment_strategies 3\
+    --brightness 0.4 0.4 0.4 \
+    --contrast 0.4 \
+    --saturation 0.2 \
+    --hue 0.1 \
+    --color_jitter_prob 0.8 \
+    --gray_scale_prob 0.2 \
+    --horizontal_flip_prob 0.5 \
+    --gaussian_prob 1.0  \
+    --solarization_prob 0.2  \
+    --crop_size 224  \
+    --crop_size_glob 224 \
+    --crop_size_loc 96 \
+    --num_crop_glob 2 \
+    --num_crop_loc 0 \
+    --crop_type random_uniform \
+    --min_scale_loc 0.005 \
+    --max_scale_loc 0.25 \
+    --min_scale_glob 0.3 \
+    --max_scale_glob 1.0 \
+    --rda_num_ops 2 \
+    --rda_magnitude 9 \
+    --ada_policy imagenet \
+    --fda_policy imagenet \
+    --num_crops_per_aug 1 1 1 \
+    --shuffle_transforms_crops False\
+    --name MVAR_DINO_2Glob_4Views_SimCLR_RA_AA_repo_300_cls \
+    --entity tranrick \
+    --project MVAR_SSRL \
+    --wandb \
+    --save_checkpoint \
+    --method dino \
+    --proj_output_dim 256 \
+    --proj_hidden_dim 2048 \
+    --num_prototypes 8192 \
+    --base_tau_momentum 0.996 \
+    --final_tau_momentum 1.0 \
+    --momentum_classifier \
+    --alpha 0.4  \
+    --checkpoint_dir /data1/solo_MASSL_ckpt \
+    --checkpoint_frequency 20 \
+
+python3 ../../../mv_ma_pretrain_edit.py \
+    --dataset mv_ma \
+    --mvar_training True \
+    --experiment_type ablation \
+    --job_name mv_num_augmentation_vit \
+    --backbone vit_small_v1 \
+    --drop_path_rate 0.1 \
+    --patch_size 16  \
+    --data_dir /data1/1K_New/ \
+    --train_dir train \
+    --val_dir val \
+    --subset_classes 300 \
+    --dataset_size 383690 \
+    --num_gpus 7 \
+    --max_epochs 100 \
+    --gpus 0,1,2,3,4,5,6, \
+    --accelerator gpu \
+    --strategy ddp \
+    --sync_batchnorm \
+    --precision 16 \
+    --optimizer adamw \
+    --warmup_teacher_temperature_epochs 10 \
+    --warmup_teacher_temperature 0.04 \
+    --teacher_temperature 0.07 \
+    --eta_lars 0.001 \
+    --exclude_bias_n_norm \
+    --scheduler warmup_cosine \
+    --lr 0.0005 \
+    --min_lr 1e-5  \
+    --accumulate_grad_batches 1 \
+    --classifier_lr 0.1 \
+    --weight_decay 1e-6 \
+    --batch_size 64 \
+    --num_workers 20 \
+    --num_augment_trategy SimCLR_RA \
+    --num_augment_strategies 2\
+    --brightness 0.4 0.4  \
+    --contrast 0.4 \
+    --saturation 0.2 \
+    --hue 0.1 \
+    --color_jitter_prob 0.8 \
+    --gray_scale_prob 0.2 \
+    --horizontal_flip_prob 0.5 \
+    --gaussian_prob 1.0  \
+    --solarization_prob 0.2  \
+    --crop_size 224  \
+    --crop_size_glob 224 \
+    --crop_size_loc 96 \
+    --num_crop_glob 2 \
+    --num_crop_loc 0 \
+    --crop_type random_uniform \
+    --min_scale_loc 0.005 \
+    --max_scale_loc 0.25 \
+    --min_scale_glob 0.3 \
+    --max_scale_glob 1.0 \
+    --rda_num_ops 2 \
+    --rda_magnitude 9 \
+    --ada_policy imagenet \
+    --fda_policy imagenet \
+    --num_crops_per_aug 1 1  \
+    --shuffle_transforms_crops False\
+    --name MVAR_DINO_2Views_SimCLR_RA_repo_300_cls \
+    --entity tranrick \
+    --project MVAR_SSRL \
+    --wandb \
+    --save_checkpoint \
+    --method dino \
+    --proj_output_dim 256 \
+    --proj_hidden_dim 2048 \
+    --num_prototypes 8192 \
+    --base_tau_momentum 0.996 \
+    --final_tau_momentum 1.0 \
+    --momentum_classifier \
+    --alpha 0.4  \
+    --checkpoint_dir /data1/solo_MASSL_ckpt \
+    --checkpoint_frequency 20 \
+
+python3 ../../../mv_ma_pretrain_edit.py \
+    --dataset mv_ma \
+    --mvar_training True \
+    --experiment_type ablation \
+    --job_name mv_num_augmentation_vit \
+    --backbone vit_small_v1 \
+    --drop_path_rate 0.1 \
+    --patch_size 16  \
+    --data_dir /data1/1K_New/ \
+    --train_dir train \
+    --val_dir val \
+    --subset_classes 300 \
+    --dataset_size 383690 \
+    --num_gpus 7 \
+    --max_epochs 100 \
+    --gpus 0,1,2,3,4,5,6, \
+    --accelerator gpu \
+    --strategy ddp \
+    --sync_batchnorm \
+    --precision 16 \
+    --optimizer adamw \
+    --warmup_teacher_temperature_epochs 10 \
+    --warmup_teacher_temperature 0.04 \
+    --teacher_temperature 0.07 \
+    --eta_lars 0.001 \
+    --exclude_bias_n_norm \
+    --scheduler warmup_cosine \
+    --lr 0.0005 \
+    --min_lr 1e-5  \
+    --accumulate_grad_batches 1 \
+    --classifier_lr 0.1 \
+    --weight_decay 1e-6 \
+    --batch_size 64 \
+    --num_workers 20 \
+    --num_augment_trategy RA_AA_FA \
+    --num_augment_strategies 3\
+    --brightness 0.4 0.4 0.4 \
+    --contrast 0.4 \
+    --saturation 0.2 \
+    --hue 0.1 \
+    --color_jitter_prob 0.8 \
+    --gray_scale_prob 0.2 \
+    --horizontal_flip_prob 0.5 \
+    --gaussian_prob 1.0  \
+    --solarization_prob 0.2  \
+    --crop_size 224  \
+    --crop_size_glob 224 \
+    --crop_size_loc 96 \
+    --num_crop_glob 2 \
+    --num_crop_loc 0 \
+    --crop_type random_uniform \
+    --min_scale_loc 0.005 \
+    --max_scale_loc 0.25 \
+    --min_scale_glob 0.3 \
+    --max_scale_glob 1.0 \
+    --rda_num_ops 2 \
+    --rda_magnitude 9 \
+    --ada_policy imagenet \
+    --fda_policy imagenet \
+    --num_crops_per_aug 1 1 1 \
+    --shuffle_transforms_crops False\
+    --name MVAR_DINO_2Views_RA_AA_FA_repo_300_cls \
+    --entity tranrick \
+    --project MVAR_SSRL \
+    --wandb \
+    --save_checkpoint \
+    --method dino \
+    --proj_output_dim 256 \
+    --proj_hidden_dim 2048 \
+    --num_prototypes 8192 \
+    --base_tau_momentum 0.996 \
+    --final_tau_momentum 1.0 \
+    --momentum_classifier \
+    --alpha 0.4  \
+    --checkpoint_dir /data1/solo_MASSL_ckpt \
+    --checkpoint_frequency 20 \
