@@ -32,7 +32,7 @@ from torchvision.datasets import STL10, ImageFolder
 # pluggin multiple DA support
 from torchvision.transforms import autoaugment as auto_aug
 from MV_MA_SSL.utils.Fast_Auto_Augment.Fast_AutoAugment import Fast_AutoAugment
-from MV_MA_SSL.utils.Custom_RandAugment_v3 import RandAugment 
+from MV_MA_SSL.utils.Custom_RandAugment import RandAugment 
 
 
 def dataset_with_index(DatasetClass: Type[Dataset]) -> Type[Dataset]:
