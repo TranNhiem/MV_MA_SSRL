@@ -768,7 +768,7 @@ class BaseMomentumMethod(BaseMethod):
         ## Supervised classification lOSS, ACC1, ACC5
         
         _, X, targets = batch
-        print("This is BATCH Target shape", targets.shape)
+        #print("This is BATCH Target shape", targets.shape)
         #print(f"this is target length {len(targets)}")
         X = [X] if isinstance(X, torch.Tensor) else X
 
