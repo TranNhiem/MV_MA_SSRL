@@ -25,7 +25,7 @@ import os
 import torch
 import torch.distributed as dist
 import torch.nn as nn
-from MV_MA_SSL.utils.h5_dataset import H5Dataset
+
 from torch.utils.data.dataset import Dataset
 from pathlib import Path
 from torchvision.datasets import  ImageFolder
@@ -33,7 +33,6 @@ from torchvision.datasets import  ImageFolder
 
 def _1d_filter(tensor: torch.Tensor) -> torch.Tensor:
     return tensor.isfinite()
-
 
 def _2d_filter(tensor: torch.Tensor) -> torch.Tensor:
     return tensor.isfinite().all(dim=1)

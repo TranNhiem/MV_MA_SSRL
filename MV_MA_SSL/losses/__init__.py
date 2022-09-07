@@ -17,19 +17,13 @@
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
 
-from MV_MA_SSL.losses.barlow import barlow_loss_func
+
 from MV_MA_SSL.losses.byol import byol_loss_func
-from MV_MA_SSL.losses.deepclusterv2 import deepclusterv2_loss_func
+
 from MV_MA_SSL.losses.dino import DINOLoss
-from MV_MA_SSL.losses.moco import moco_loss_func
+
 from MV_MA_SSL.losses.nnclr import nnclr_loss_func
-from MV_MA_SSL.losses.ressl import ressl_loss_func
-from MV_MA_SSL.losses.simclr import simclr_loss_func
-from MV_MA_SSL.losses.simsiam import simsiam_loss_func
-from MV_MA_SSL.losses.swav import swav_loss_func
-from MV_MA_SSL.losses.vibcreg import vibcreg_loss_func
-from MV_MA_SSL.losses.vicreg import vicreg_loss_func
-from MV_MA_SSL.losses.wmse import wmse_loss_func
+
 
 __all__ = [
     "barlow_loss_func",
