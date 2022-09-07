@@ -10,12 +10,12 @@ import shutil
 import numpy as np
 from torchvision.datasets.utils import extract_archive
 from tqdm import tqdm
-from solo.utils.download import (
+from MV_MA_SSL.utils.download import (
     download_google_drive_url,
     get_redirected_url,
     to_google_drive_download_url,
 )
-from solo.utils.io import cleanup_dir
+from MV_MA_SSL.utils.io import cleanup_dir
 
 
 def get_argument_parser():

@@ -12,8 +12,8 @@ from edownstream.linear_classification.configs.extra_scrips_download_data.downlo
 )
 from iopath.common.file_io import g_pathmgr
 from torchvision.datasets.utils import extract_archive
-from solo.utils.download import download_google_drive_url
-from solo.utils.io import cleanup_dir
+from MV_MA_SSL.utils.download import download_google_drive_url
+from MV_MA_SSL.utils.io import cleanup_dir
 
 
 def get_argument_parser():

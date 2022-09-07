@@ -9,7 +9,7 @@ import os
 
 import numpy as np
 from tqdm import tqdm
-from solo.utils.download import download_and_extract_archive
+from MV_MA_SSL.utils.download import download_and_extract_archive
 
 
 def get_argument_parser():

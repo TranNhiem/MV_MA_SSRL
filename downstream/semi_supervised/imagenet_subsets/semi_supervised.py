@@ -13,9 +13,9 @@ from pytorch_lightning.callbacks import LearningRateMonitor
 from pytorch_lightning.plugins import DDPPlugin
 from torchvision.models import resnet50
 
-from solo.methods.linear import LinearModel  # imports the linear eval class
-from solo.utils.classification_dataloader import prepare_data
-from solo.utils.checkpointer import Checkpointer
+from MV_MA_SSL.methods.linear import LinearModel  # imports the linear eval class
+from MV_MA_SSL.utils.classification_dataloader import prepare_data
+from MV_MA_SSL.utils.checkpointer import Checkpointer
 
 # basic parameters for offline linear evaluation
 # some parameters for extra functionally are missing, but don't mind this for now.

@@ -43,13 +43,13 @@ from MVAR_Dino.ViTs.vision_transformer import DINOHead
 # )
 
 ### Pluging module MVAR Arguments 
-from solo.args.setup import parse_args_pretrain
+from MV_MA_SSL.args.setup import parse_args_pretrain
 
 ### Plugging Multi-Augmentation 
-from solo.utils.custom_augment_transforms import GaussianBlur_v1, Solarization_v1
+from MV_MA_SSL.utils.custom_augment_transforms import GaussianBlur_v1, Solarization_v1
 from torchvision.transforms import autoaugment as auto_aug
-from solo.utils.Fast_Auto_Augment.Fast_AutoAugment import Fast_AutoAugment
-from solo.utils.Custom_RandAugment_v3 import RandAugment 
+from MV_MA_SSL.utils.Fast_Auto_Augment.Fast_AutoAugment import Fast_AutoAugment
+from MV_MA_SSL.utils.Custom_RandAugment_v3 import RandAugment 
 
 # wandb.init(
 #     name= f"Testing MVAR_DINO", 

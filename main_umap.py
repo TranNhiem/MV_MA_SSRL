@@ -21,10 +21,10 @@ import json
 import os
 from pathlib import Path
 
-from solo.args.setup import parse_args_umap
-from solo.methods import METHODS
-from solo.utils.auto_umap import OfflineUMAP
-from solo.utils.classification_dataloader import prepare_data
+from MV_MA_SSL.args.setup import parse_args_umap
+from MV_MA_SSL.methods import METHODS
+from MV_MA_SSL.utils.auto_umap import OfflineUMAP
+from MV_MA_SSL.utils.classification_dataloader import prepare_data
 
 
 def main():

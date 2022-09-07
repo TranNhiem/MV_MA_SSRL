@@ -9,7 +9,7 @@ import shutil
 from typing import List, Tuple
 
 from tqdm import tqdm
-from solo.utils.download import download_and_extract_archive
+from MV_MA_SSL.utils.download import download_and_extract_archive
 
 
 def get_argument_parser():

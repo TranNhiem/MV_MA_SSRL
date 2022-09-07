@@ -21,8 +21,8 @@ import sys
 
 import numpy as np
 from iopath.common.file_io import g_pathmgr
-from solo.utils.download import download_and_extract_archive
-from solo.utils.io import save_file
+from MV_MA_SSL.utils.download import download_and_extract_archive
+from MV_MA_SSL.utils.io import save_file
 
 
 # Initiate the logger

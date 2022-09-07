@@ -10,7 +10,7 @@ import shutil
 import numpy as np
 import scipy.io
 from tqdm import tqdm
-from solo.utils.download import download_and_extract_archive, download_url
+from MV_MA_SSL.utils.download import download_and_extract_archive, download_url
 
 
 def get_argument_parser():

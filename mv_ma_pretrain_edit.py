@@ -24,15 +24,15 @@ from pytorch_lightning import Trainer, seed_everything
 from pytorch_lightning.callbacks import LearningRateMonitor
 from pytorch_lightning.loggers import WandbLogger
 
-from solo.args.setup import parse_args_pretrain
-from solo.methods import METHODS
-from solo.utils.auto_resumer import AutoResumer
+from MV_MA_SSL.args.setup import parse_args_pretrain
+from MV_MA_SSL.methods import METHODS
+from MV_MA_SSL.utils.auto_resumer import AutoResumer
 import torch
 import pickle
 from torchvision import datasets
 
 try:
-    from solo.methods.dali import PretrainABC
+    from MV_MA_SSL.methods.dali import PretrainABC
 except ImportError as e:
     print(e)
     _dali_avaliable = False
@@ -40,7 +40,7 @@ else:
     _dali_avaliable = True
 
 try:
-    from solo.utils.auto_umap import AutoUMAP
+    from MV_MA_SSL.utils.auto_umap import AutoUMAP
 except ImportError:
     _umap_available = False
 else:
@@ -48,16 +48,16 @@ else:
 
 import types
 from MVAR_Dino.main_mvar_dino import DataAugmentationMVAR_DINO
-from solo.utils.checkpointer import Checkpointer
-from solo.utils.classification_dataloader import prepare_data as prepare_data_classification
-from solo.utils.pretrain_dataloader import (
+from MV_MA_SSL.utils.checkpointer import Checkpointer
+from MV_MA_SSL.utils.classification_dataloader import prepare_data as prepare_data_classification
+from MV_MA_SSL.utils.pretrain_dataloader import (
     prepare_dataloader,
     prepare_datasets,
     prepare_n_crop_transform_mv_ma,
     prepare_transform,
 )
 
-from solo.utils.value_schedule import (
+from MV_MA_SSL.utils.value_schedule import (
     Alpha_schedule,
     Beta_schedule,
     batch_size_schedule, 
