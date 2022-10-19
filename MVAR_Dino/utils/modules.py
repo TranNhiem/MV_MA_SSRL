@@ -91,13 +91,13 @@ class DINOProjectionHead(ProjectionHead):
         if not norm_last_layer: 
             self.last_layer.weight_g.requires_grad= False
         
-    def cancel_last_layer_gradients(self, current_epochs: int): 
+    def cancel_last_layer_gradients(self, current_epoch: int): 
         """Cancel last layer gradients to stabilize training. 
         Args: 
             current_epochs: 
                 Current epoch number 
         """
-        if current_epochs >= self.freeze_last_layer: 
+        if current_epoch >= self.freeze_last_layer: 
             return
 
         for param in self.last_layer.parameters(): 

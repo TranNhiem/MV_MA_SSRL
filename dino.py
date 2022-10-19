@@ -28,7 +28,7 @@ from MV_MA_SSL.utils.pretrain_dataloader import (
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument( "--loadertype", type=str, default="mv_ma", help="dataloader type")
-parser.add_argument( "--num_augment_trategy", type=str, default="SimCLR_RA", help="Strategy augmentation type")
+parser.add_argument( "--Dataaugment_strategy", type=dict, default={"strategy": "SimCLR_RA","num_strategy": 2}, help="Type of augmentation Strategy ")
 parser.add_argument( "--num_crops_per_aug", type=list, default=[1, 1], help="Strategy augmentation type")
 parser.add_argument( "--num_crop_glob", type=int, default=2, help="")
 parser.add_argument( "--crop_size_glob", type=int, default=224, help="")
@@ -54,7 +54,7 @@ parser.add_argument( "--project", type=str, default="MVAR_SSRL", help="Training 
 parser.add_argument( "--entity", type=str, default="mlbrl", help="Training batch_size")
 parser.add_argument( "--experiment_type", type=str, default="ablation", help="Training batch_size")
 parser.add_argument( "--job_name", type=str, default="vit_full_imagenet", help="Training batch_size")
-parser.add_argument( "--wandb", type=bool, default=True, help="Using Wanbd loging experiment")
+parser.add_argument( "--wandb_logs", type=bool, default=True, help="Using Wanbd loging experiment")
 
 
 
@@ -111,7 +111,7 @@ class DINO(pl.LightningModule):
         update_momentum(self.student_backbone, self.teacher_backbone, m=0.996)
         update_momentum(self.student_head, self.teacher_head, m=0.996)
 
-        all_views, _, _ = batch
+        _,all_views, _ = batch
         all_views= [views.to(self.deivce) for views in all_views]
         global_views= all_views[:self.num_global_views*self.num_augment]
 
@@ -221,10 +221,22 @@ class DINO(pl.LightningModule):
 
 
 class DINO_(pl.LightningModule):
-    def __init__(self):
+    def __init__(self, backbone, input_dim: int, output_dim: int, hidden_dim: int,bottleneck_dim: int, use_bn: bool,freeze_last_layer: int,   pretrain_epochs: int, 
+        
+        ## Loss function compute correlate DataAugmentation Policy for Global Views
+        num_augmentation_strategy: int, num_glob_views: int,
+        
+        ## Optimizer parameters 
+        optim_type: str = "adamw",scheduler_type: str="warmup_cosine", 
+        lr: float = 0.001, weight_decay: float = 0.0001, warmup_epochs: int = 10,
+        warmup_start_lr: float = 0.001, min_lr: float = 0.00001, lr_decay_steps: List[int] = None,
+        eta_lars: float = 0.001, grad_clip_lars: float = 1.0, 
+        exclude_bias_n_norm: bool = True, lars_optim: bool = False, **kwargs):
+        
+   
         super().__init__()
-        resnet = torchvision.models.resnet18()
-        backbone = nn.Sequential(*list(resnet.children())[:-1])
+       
+        backbone = nn.Sequential(*list(backbone.children())[:-1])
         input_dim = 512
         # instead of a resnet you can also use a vision transformer backbone as in the
         # original paper (you might have to reduce the batch size in this case):
@@ -232,14 +244,32 @@ class DINO_(pl.LightningModule):
         # input_dim = backbone.embed_dim
 
         self.student_backbone = backbone
-        self.student_head = DINOProjectionHead(input_dim, 512, 64, 2048, freeze_last_layer=1)
+        self.student_head = DINOProjectionHead(input_dim, hidden_dim, bottleneck_dim, output_dim,use_bn, freeze_last_layer)
         self.teacher_backbone = copy.deepcopy(backbone)
-        self.teacher_head = DINOProjectionHead(input_dim, 512, 64, 2048)
+        self.teacher_head = DINOProjectionHead(input_dim, hidden_dim, bottleneck_dim, output_dim,use_bn,  )
         deactivate_requires_grad(self.teacher_backbone)
         deactivate_requires_grad(self.teacher_head)
 
-        self.criterion = DINOLoss(output_dim=2048, warmup_teacher_temp_epochs=5)
+        self.criterion = DINOLoss(output_dim=output_dim, warmup_teacher_temp_epochs=5)
 
+        # Optimizer Configuration Parameters 
+        self.optimizer_type = optim_type 
+        self.scheduler_type = scheduler_type
+        self.pretrain_epochs=pretrain_epochs
+        self.warmup_start_lr= warmup_start_lr 
+        self.lr= lr
+        self.min_lr=min_lr
+        self.warmup_epochs= warmup_epochs
+        self.weight_decay= weight_decay
+        ## For Lars Optimizer 
+        self.lars_optimizer=lars_optim 
+        self.eta_lars= eta_lars
+        self.exclude_bias_n_norm= exclude_bias_n_norm 
+        self.grad_clip_lars= grad_clip_lars
+
+        ## Compute loss with given N_glob_views*Num_augmentation_strategy
+        self.num_glob_views = num_glob_views
+        self.num_augmentation_strategy = num_augmentation_strategy
     def forward(self, x):
         y = self.student_backbone(x).flatten(start_dim=1)
         z = self.student_head(y)
@@ -253,20 +283,67 @@ class DINO_(pl.LightningModule):
     def training_step(self, batch, batch_idx):
         update_momentum(self.student_backbone, self.teacher_backbone, m=0.99)
         update_momentum(self.student_head, self.teacher_head, m=0.99)
-        views, _, _ = batch
+        _, views, _ = batch
         views = [view.to(self.device) for view in views]
-        global_views = views[:2]
+        global_views = views[:self.num_glob_views*self.num_augmentation_strategy]
         teacher_out = [self.forward_teacher(view) for view in global_views]
         student_out = [self.forward(view) for view in views]
         loss = self.criterion(teacher_out, student_out, epoch=self.current_epoch)
+        metrics={"cross_entropy_loss": loss}
+        self.log_dict(metrics, on_epoch=True, sync_dist=True)
         return loss
 
     def on_after_backward(self):
         self.student_head.cancel_last_layer_gradients(current_epoch=self.current_epoch)
 
     def configure_optimizers(self):
-        optim = torch.optim.Adam(self.parameters(), lr=0.001)
-        return optim
+
+         # select optimizer
+        if self.optimizer_type == "sgd":
+            optimizer = torch.optim.SGD
+        elif self.optimizer_type == "adam":
+            optimizer = torch.optim.Adam
+        elif self.optimizer_type == "adamw":
+            optimizer = torch.optim.AdamW
+        else:
+            raise ValueError(f"{self.optimizer_type} not in (sgd, adam, adamw)")
+
+
+        # create optimizer
+        optimizer = optimizer(
+            self.parameters(),
+            lr=self.lr,
+            weight_decay=self.weight_decay,
+            #**self.extra_optimizer_args,
+        )
+        if self.lars_optimizer:
+            assert self.optimizer_type == "sgd", "LARS is only compatible with SGD."
+            optimizer = LARSWrapper(
+                optimizer,
+                eta=self.eta_lars,
+                clip=self.grad_clip_lars,
+                exclude_bias_n_norm=self.exclude_bias_n_norm,
+            )
+
+        ### --------------------- Section for scheduler the Optimizer ------------ 
+        if self.scheduler_type == "none":
+                return optimizer
+        if self.scheduler_type == "warmup_cosine":
+            scheduler = LinearWarmupCosineAnnealingLR(
+                optimizer,
+                warmup_epochs=self.warmup_epochs,
+                max_epochs=self.pretrain_epochs,
+                warmup_start_lr=self.warmup_start_lr,
+                eta_min=self.min_lr,
+            )
+        elif self.scheduler_type == "cosine":
+            scheduler = CosineAnnealingLR(optimizer, self.pretrain_epochs, eta_min=self.min_lr)
+        elif self.scheduler_type == "step":
+            scheduler = MultiStepLR(optimizer, self.lr_decay_steps)
+        else:
+            raise ValueError(f"{self.scheduler_type} not in (warmup_cosine, cosine, step)")
+        #optim = torch.optim.Adam(self.parameters(), lr=0.001)
+        return [optimizer], [scheduler]
 
 seed_everything(5)
 transform_kwargs={
@@ -287,7 +364,7 @@ mulda_kwargs={
     "fda_policy":"imagenet",
 }
 
-transform = prepare_transform(args.loadertype, args.num_augment_trategy,transform_kwargs, mulda_kwargs) 
+transform = prepare_transform(args.loadertype, args.Dataaugment_strategy["strategy"],transform_kwargs, mulda_kwargs) 
 transform = prepare_n_crop_transform_mv_ma(transform,  num_crops_per_aug=args.num_crops_per_aug,num_crop_glob=args.num_crop_glob, crop_size_glob=args.crop_size_glob,
                                                num_crop_loc=args.num_crop_loc, crop_size_loc=args.crop_size_loc, crop_type=args.crop_type,
                                                min_loc=args.min_loc, max_loc=args.max_loc,  min_glob=args.min_glob, max_glob=args.max_glob, #shuffle_crop_transform=args.shuffle_transforms_crops
@@ -307,16 +384,41 @@ train_loader = prepare_dataloader(
 callbacks=[] 
 # wandb logging
 
-# model= DINO( backbone= torchvision.models.resnet18(),input_dim=512, num_augment=2,
+# model= DINO( backbone= torchvision.models.resnet18(), input_dim=512, num_augment=2,
 #         optimizer_type="adam")
-model= DINO_( )
-wandb.init( name=args.name,
-        project=args.project,
-        entity=args.entity,
-        #offline= False, #args.offline,
-        group = args.experiment_type,
-        job_type = args.job_name,)
-if args.wandb:
+kwargs={
+    "backbone": torchvision.models.resnet18(),
+    "input_dim": 2048,  
+    "hidden_dim": 2048,
+    "bottleneck_dim": 256,
+    "output_dim": 65536,# for ViTs
+    "use_bn": False, # if True, use BN in the head
+    "freeze_last_layer": -1, # Number epochs keep the ProjectHead's output layer fixed. 
+    "pretrain_epochs": 10, 
+    ## Configure data Augmentation impact to compute the loss 
+    "num_glob_views": args.num_crop_glob, 
+    "num_augmentation_strategy": args.Dataaugment_strategy["num_strategy"],
+
+    "optim_type": "sgd", ## if lars optim --> optim_type: "sgd"
+    "lr": 0.01, # lr will overwrite the lr within the scheduler.
+    "scheduler_type": "warmup_cosine",# ["cosine"(CosineAnnealingLR), "step",None]
+    "min_lr": 0.001,
+    ## Adjust these paras if using warmup_cosine schedule
+    # -----------------------#
+    "warmup_start_lr": 0.0001, # base_lr
+    "warmup_epochs": 10 , 
+    # -----------------------#
+    ## if using Lars Optimizer
+    "lars_optim": True, 
+    "eta_lars": 0.001,
+    "exclude_bias_n_norm": True, 
+    "grad_clip_lars": False, 
+}
+
+
+model= DINO_(**kwargs)
+
+if args.wandb_logs:
     wandb_logger = WandbLogger(
         name=args.name,
         project=args.project,
@@ -348,22 +450,15 @@ if args.wandb:
 #     break
 trainer = Trainer(
        # args,
-        fast_dev_run= True,
+        #fast_dev_run= True,
         # gradient_clip_val=0.6, 
         # gradient_clip_algorithm="value",
         gpus= [7],
-        max_epochs=10,
+        max_epochs=kwargs["pretrain_epochs"],
         # num_nodes=1,max_epochs
-        #logger=wandb_logger if args.wandb else None,
+        logger=wandb_logger if args.wandb_logs else None,
         callbacks=callbacks,
         enable_checkpointing=False,
         strategy="ddp",)
 
-# trainer = pl.Trainer(
-#     max_epochs=10,
-#     gpus=gpus,
-#     strategy='ddp',
-#     sync_batchnorm=True,
-#     replace_sampler_ddp=True,
-# )
 trainer.fit(model, train_loader,)
