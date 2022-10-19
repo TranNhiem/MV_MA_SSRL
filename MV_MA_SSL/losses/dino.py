@@ -31,11 +31,12 @@ class DINOLoss(nn.Module):
         warmup_teacher_temp: float,
         teacher_temp: float,
         warmup_teacher_temp_epochs: float,
-        
         num_epochs: int,
+        num_large_crops: int ,
+        num_small_crops: int ,
+      
         student_temp: float = 0.1,
-        num_large_crops: int = 2,
-        num_small_crops: int = 0,
+      
         center_momentum: float = 0.9,
     ):
         """Auxiliary module to compute DINO's loss.

@@ -26,6 +26,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from pl_bolts.optimizers.lr_scheduler import LinearWarmupCosineAnnealingLR
+
 from MV_MA_SSL.utils.backbones import (
     convnext_base,
     convnext_large,
@@ -57,6 +58,7 @@ from MV_MA_SSL.utils.metrics import accuracy_at_k, weighted_mean
 from MV_MA_SSL.utils.momentum import MomentumUpdater, initialize_momentum_params
 from torch.optim.lr_scheduler import CosineAnnealingLR, MultiStepLR
 from torchvision.models import resnet18, resnet50
+from torchvision.models import regnet_y_8gf, regnet_y_16gf, regnet_y_32gf
 
 def static_lr(
     get_lr: Callable, param_group_indexes: Sequence[int], lrs_to_replace: Sequence[float]
@@ -94,6 +96,9 @@ class BaseMethod(pl.LightningModule):
         "convnext_small": convnext_small,
         "convnext_base": convnext_base,
         "convnext_large": convnext_large,
+        "regnet_y_8gf": regnet_y_8gf,
+        "regnet_y_16gf": regnet_y_16gf,
+        "regnet_y_32gf": regnet_y_32gf,
     }
 
     def __init__(
@@ -243,7 +248,8 @@ class BaseMethod(pl.LightningModule):
         self.backbone = self.base_model(**kwargs)
 
 
-        if "resnet" in self.backbone_name:
+        if "resnet" or "regnet" in self.backbone_name:
+            print("Using standard pytorch ResNet")
             if "wider" in self.backbone_name: 
                 print("Using ResNet wider model")
                 self.backbone = self.base_model(encoder_width=self.encoder_width, **kwargs)
@@ -623,8 +629,8 @@ class BaseMomentumMethod(BaseMethod):
        
            
         
-        if "resnet" in self.backbone_name:
-             
+        if "resnet" or "regnet" in self.backbone_name:
+            print("Using standard pytorch model")
             if "wider"  in self.backbone_name: 
                 print("using Wider resnet architecture")
                 self.momentum_backbone = self.base_model(encoder_width=self.encoder_width, **kwargs)

@@ -108,6 +108,7 @@ class DINOHead(nn.Module):
         return x
 
 
+
 class DINO(BaseMomentumMethod):
     def __init__(
         self,
@@ -328,10 +329,8 @@ class DINO(BaseMomentumMethod):
         out = super().training_step(batch, batch_idx)
         class_loss = out["loss"]
         # p = torch.cat(out["z"])
-        # momentum_p = torch.cat(out["momentum_z"])
-
+        # momentum_p = torch.cat(out["momentum_z"]
        
-
         # ------- contrastive loss -------
         # dino_loss = self.dino_loss_func(p, momentun_p)
         dino_loss= self._sharded_step(out['feats'], out["momentum_feats"])

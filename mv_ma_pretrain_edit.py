@@ -212,6 +212,9 @@ def main():
     trainer = Trainer.from_argparse_args(
         args,
         #fast_dev_run= True,
+        # gradient_clip_val=0.6, 
+        # gradient_clip_algorithm="value",
+        num_nodes=1,
         logger=wandb_logger if args.wandb else None,
         callbacks=callbacks,
         enable_checkpointing=False,)

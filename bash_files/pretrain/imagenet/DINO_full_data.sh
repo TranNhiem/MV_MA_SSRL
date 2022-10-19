@@ -2,38 +2,39 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --dataset mv_ma \
     --mvar_training True \
     --experiment_type ablation \
-    --job_name num_augmentation_mv \
+    --job_name vit_full_imagenet \
     --backbone vit_small_v1 \
-    --drop_path_rate 0. \
+    --drop_path_rate 0.1 \
     --patch_size 16  \
     --data_dir /data1/1K_New/ \
     --train_dir train \
     --val_dir val \
     --subset_classes 1000 \
     --dataset_size 1281167 \
-    --num_gpus 7 \
+    --num_gpus 8 \
     --max_epochs 200 \
     --gpus 0,1,2,3,4,5,6,7 \
     --accelerator gpu \
     --strategy ddp \
     --sync_batchnorm \
     --precision 16 \
-    --optimizer lar \
-    --warmup_teacher_temperature_epochs 30 \
-    --warmup_teacher_temperature 0.07 \
+    --optimizer adamw \
+    --warmup_teacher_temperature_epochs 10 \
+    --warmup_teacher_temperature 0.04 \
+    --teacher_temperature 0.07 \
     --eta_lars 0.001 \
     --exclude_bias_n_norm \
     --scheduler warmup_cosine \
-    --lr 0.01 \
+    --lr 0.0005 \
     --min_lr 1e-5  \
     --accumulate_grad_batches 1 \
     --classifier_lr 0.1 \
-    --weight_decay 1e-6 \
-    --batch_size 64 \
+    --weight_decay 1e-3 \
+    --batch_size 128 \
     --num_workers 20 \
-    --num_augment_trategy SimCLR_RA_FA \
-    --num_augment_strategies 3\
-    --brightness 0.4 0.4 0.4 \
+    --num_augment_trategy SimCLR_RA \
+    --num_augment_strategies 2 \
+    --brightness 0.4 0.4 \
     --contrast 0.4 \
     --saturation 0.2 \
     --hue 0.1 \
@@ -46,7 +47,7 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --crop_size_glob 224 \
     --crop_size_loc 96 \
     --num_crop_glob 2 \
-    --num_crop_loc 8 \
+    --num_crop_loc 10 \
     --crop_type random_uniform \
     --min_scale_loc 0.1 \
     --max_scale_loc 0.3 \
@@ -56,20 +57,20 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --rda_magnitude 9 \
     --ada_policy imagenet \
     --fda_policy imagenet \
-    --num_crops_per_aug 1 1 1 \
+    --num_crops_per_aug 1 1 \
     --shuffle_transforms_crops False\
-    --name Test \
-    --entity mlbrl \
+    --name MVMA_DINO_ViTsmall_1048_SimCLR_RA_2_glob_10_loc_master \
+    --entity tranrick \
     --project MVAR_SSRL \
     --wandb \
     --save_checkpoint \
     --method dino \
     --proj_output_dim 256 \
     --proj_hidden_dim 2048 \
-    --num_prototypes 4096 \
+    --num_prototypes 65536 \
     --base_tau_momentum 0.996 \
     --final_tau_momentum 1.0 \
     --momentum_classifier \
-    --alpha 0.4  \
+    --alpha 0.5  \
     --checkpoint_dir /data1/solo_MASSL_ckpt \
     --checkpoint_frequency 20 
