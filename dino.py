@@ -2,6 +2,7 @@ import copy
 import torch 
 from torch import nn 
 import pytorch_lightning as pl
+import torch.nn.functional as F
 from functools import partial
 import torchvision
 from typing import List, Tuple, Optional, Dict, Any
@@ -13,17 +14,20 @@ from torch.optim.lr_scheduler import CosineAnnealingLR, MultiStepLR
 from pl_bolts.optimizers.lr_scheduler import LinearWarmupCosineAnnealingLR
 from MV_MA_SSL.utils.knn import WeightedKNNClassifier
 from MV_MA_SSL.utils.lars import LARSWrapper
+from MV_MA_SSL.utils.metrics import accuracy_at_k, weighted_mean
+## Dataloader Import  Logging import
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning import Trainer, seed_everything
 from pytorch_lightning.callbacks import LearningRateMonitor
 import wandb
+## Dataloader Import 
 from MV_MA_SSL.utils.pretrain_dataloader import (
     prepare_dataloader,
     prepare_datasets,
     prepare_n_crop_transform_mv_ma,
     prepare_transform,
 )
-
+from MV_MA_SSL.utils.classification_dataloader import prepare_data as prepare_data_classification
 
 import argparse
 parser = argparse.ArgumentParser()
@@ -45,7 +49,7 @@ parser.add_argument( "--train_dir", type=str, default="train", help="")
 parser.add_argument( "--val_dir", type=str, default="val", help="")
 parser.add_argument( "--subset_classes", type=int, default=10, help="number of classes to use from training set")
 parser.add_argument( "--ckpt_path", type=str, default=None, help="path to checkpoint")
-parser.add_argument( "--batch_size", type=int, default=10, help="Training batch_size")
+parser.add_argument( "--batch_size", type=int, default=100, help="Training batch_size")
 parser.add_argument( "--num_workers", type=int, default=20, help="Training batch_size")
 
 
@@ -56,193 +60,55 @@ parser.add_argument( "--experiment_type", type=str, default="ablation", help="Tr
 parser.add_argument( "--job_name", type=str, default="vit_full_imagenet", help="Training batch_size")
 parser.add_argument( "--wandb_logs", type=bool, default=True, help="Using Wanbd loging experiment")
 
-
-
 args = parser.parse_args()
 
-class DINO(pl.LightningModule): 
-    def __init__(self, backbone,input_dim, num_augment,
-        optimizer_type, scheduler_type="warmup_cosine", lr=0.03, weight_decay=0.0001, warmup_epochs=10, warmup_start_lr=0.0, min_lr=0.0, max_epochs=100, 
-        classifier_lr: float =1e-4,num_classes: int=1000,knn_k: int = 20,
-         num_global_views=2): 
 
-        super().__init__()
-        self.num_augment= num_augment
-        self.num_global_views= num_global_views
-        self.optimizer= optimizer_type
-        self.scheduler= scheduler_type
-        self.lr=lr
-        self.warmup_start_lr= warmup_start_lr
-        self.min_lr= min_lr
-        self.max_epochs= max_epochs
-        self.weight_decay= weight_decay
-        self.warmup_epochs= warmup_epochs
-        ## Linear Classifier and KNN 
-        self.classifier_lr = classifier_lr
-        self.num_classes= num_classes
-        self.knn_eval=False
-        self.knn_k= knn_k
-        self.student_backbone= backbone
-        self.teacher_backbone= copy.deepcopy(backbone)
-        self.student_head= DINOProjectionHead(input_dim, 512, 64, 2048,freeze_last_layer=1)
-        self.teacher_head= DINOProjectionHead(input_dim, 512,64, 2048,)
-
-        deactivate_requires_grad(self.teacher_backbone)
-        deactivate_requires_grad(self.teacher_head)
-        self.criterion= DINOLoss(output_dim=2048, warmup_teacher_temp_epochs=5)
-        self.classifier = nn.Linear(2048, num_classes)
-
-        if self.knn_eval:
-            self.knn = WeightedKNNClassifier(k=self.knn_k, distance_fx="euclidean")
-
-
-    def forward(self, x):
-        student_output= self.student_backbone(x).flatten(start_dim=1)
-        student_output= self.student_head(student_output)
-       
-        return student_output
-    
-    def teacher_forward(self, x):
-        teacher_output= self.teacher_backbone(x).flatten(start_dim=1)
-        teacher_output= self.teacher_head(teacher_output)
-        return teacher_output
-    
-    def training_steps(self, batch, batch_idx):
-        update_momentum(self.student_backbone, self.teacher_backbone, m=0.996)
-        update_momentum(self.student_head, self.teacher_head, m=0.996)
-
-        _,all_views, _ = batch
-        all_views= [views.to(self.deivce) for views in all_views]
-        global_views= all_views[:self.num_global_views*self.num_augment]
-
-        student_output=[self.forward(x) for x in all_views]
-        teacher_output=[self.teacher_forward(x) for x in global_views]
-        loss= self.criterion( teacher_output, student_output, epoch=self.current_epoch)
-        self.log("train_loss", loss)
-        return loss
+class MVAR_DINO(pl.LightningModule):
+    def __init__(self, 
         
-    def on_after_backward(self):
-        self.student_head.cancel_last_layer_gradients(current_epoch=self.current_epoch)
-
-    def configure_optimizers(self):
-            optim = torch.optim.Adam(self.parameters(), lr=0.001)
-            return optim
-
-
-    def configure_optimizers_test(self) -> Tuple[List, List]:
-            """Collects learnable parameters and configures the optimizer and learning rate scheduler.
-
-            Returns:
-                Tuple[List, List]: two lists containing the optimizer and the scheduler.
-            """
-
-            # collect learnable parameters
-            idxs_no_scheduler = [
-                i for i, m in enumerate(self.learnable_params) if m.pop("static_lr", False)
-            ]
-
-            # select optimizer
-            if self.optimizer == "sgd":
-                optimizer = torch.optim.SGD
-            elif self.optimizer == "adam":
-                optimizer = torch.optim.Adam
-            elif self.optimizer == "adamw":
-                optimizer = torch.optim.AdamW
-            else:
-                raise ValueError(f"{self.optimizer} not in (sgd, adam, adamw)")
-
-            # create optimizer
-            optimizer = optimizer(
-                #self.learnable_params,
-                self.parameters(),
-                #lr=self.lr,
-                lr=self.lr,
-                weight_decay=self.weight_decay,
-                ## Continue adding parameters here
-                #**self.extra_optimizer_args,
-            )
-            # optionally wrap with lars
-            # if self.lars:
-            #     assert self.optimizer == "sgd", "LARS is only compatible with SGD."
-            #     optimizer = LARSWrapper(
-            #         optimizer,
-            #         eta=self.eta_lars,
-            #         clip=self.grad_clip_lars,
-            #         exclude_bias_n_norm=self.exclude_bias_n_norm,
-            #     )
-
-            if self.scheduler == "none":
-                return optimizer
-
-            if self.scheduler == "warmup_cosine":
-                scheduler = LinearWarmupCosineAnnealingLR(
-                    optimizer,
-                    warmup_epochs=self.warmup_epochs,
-                    max_epochs=self.max_epochs,
-                    warmup_start_lr=self.warmup_start_lr,
-                    eta_min=self.min_lr,
-                )
-            elif self.scheduler == "cosine":
-                scheduler = CosineAnnealingLR(optimizer, self.max_epochs, eta_min=self.min_lr)
-            elif self.scheduler == "step":
-                scheduler = MultiStepLR(optimizer, self.lr_decay_steps)
-            else:
-                raise ValueError(f"{self.scheduler} not in (warmup_cosine, cosine, step)")
-
-            # if idxs_no_scheduler:
-            #     partial_fn = partial(
-            #         static_lr,
-            #         get_lr=scheduler.get_lr,
-            #         param_group_indexes=idxs_no_scheduler,
-            #         lrs_to_replace=[self.lr] * len(idxs_no_scheduler),
-            #     )
-            #     scheduler.get_lr = partial_fn
-
-            return [optimizer], [scheduler]
-
-    @property
-    def learnable_params(self) -> List[Dict[str, Any]]:
-        """Defines learnable parameters for the base class.
-
-        Returns:
-            List[Dict[str, Any]]:
-                list of dicts containing learnable parameters and possible settings.
-        """
-
-        return [
-            {"name": "backbone", "params": self.backbone.parameters()},
-            {
-                "name": "classifier",
-                "params": self.classifier.parameters(),
-                "lr": self.classifier_lr,
-                "weight_decay": 0,
-            },
-        ]
-
-
-class DINO_(pl.LightningModule):
-    def __init__(self, backbone, input_dim: int, output_dim: int, hidden_dim: int,bottleneck_dim: int, use_bn: bool,freeze_last_layer: int,   pretrain_epochs: int, 
+        ## Network Achitecture parameters
+        backbone, input_dim: int, output_dim: int, hidden_dim: int,
+        bottleneck_dim: int, use_bn: bool,freeze_last_layer: int,   
+        pretrain_epochs: int, 
         
         ## Loss function compute correlate DataAugmentation Policy for Global Views
         num_augmentation_strategy: int, num_glob_views: int,
         
         ## Optimizer parameters 
+        accumulate_grad_batches: int= None, 
         optim_type: str = "adamw",scheduler_type: str="warmup_cosine", 
         lr: float = 0.001, weight_decay: float = 0.0001, warmup_epochs: int = 10,
         warmup_start_lr: float = 0.001, min_lr: float = 0.00001, lr_decay_steps: List[int] = None,
         eta_lars: float = 0.001, grad_clip_lars: float = 1.0, 
-        exclude_bias_n_norm: bool = True, lars_optim: bool = False, **kwargs):
+        exclude_bias_n_norm: bool = True, lars_optim: bool = False,
+        ## Loss parameters 
+        tau_momentum: float= 0.99,   warmup_teacher_temp: float = 0.04, 
+        teacher_temp: float = 0.04, warmup_teacher_temp_epochs: int = 30, 
+        student_temp: float = 0.1, center_momentum: float = 0.9,
+
+        ## Parameters for Online Downstream tasks 
+        use_ConvNet: bool= True, 
+        num_classes: int=10,
+        linear_classifier_lr: float = 0.0002,
+        use_knn: bool = False,
+        knn_k: int=20, distance_fx: str="euclidean", 
+        
+        
+        **kwargs):
         
    
         super().__init__()
        
-        backbone = nn.Sequential(*list(backbone.children())[:-1])
-        input_dim = 512
+        #backbone = nn.Sequential(*list(backbone.children())[:-1])
         # instead of a resnet you can also use a vision transformer backbone as in the
         # original paper (you might have to reduce the batch size in this case):
         # backbone = torch.hub.load('facebookresearch/dino:main', 'dino_vits16', pretrained=False)
         # input_dim = backbone.embed_dim
-
+        if use_ConvNet: 
+            backbone.fc = nn.Identity()
+        else: 
+            backbone= nn.Sequential(*list(backbone.children())[:-1])
+        self.accumulate_grad_batches=accumulate_grad_batches
         self.student_backbone = backbone
         self.student_head = DINOProjectionHead(input_dim, hidden_dim, bottleneck_dim, output_dim,use_bn, freeze_last_layer)
         self.teacher_backbone = copy.deepcopy(backbone)
@@ -250,8 +116,7 @@ class DINO_(pl.LightningModule):
         deactivate_requires_grad(self.teacher_backbone)
         deactivate_requires_grad(self.teacher_head)
 
-        self.criterion = DINOLoss(output_dim=output_dim, warmup_teacher_temp_epochs=5)
-
+      
         # Optimizer Configuration Parameters 
         self.optimizer_type = optim_type 
         self.scheduler_type = scheduler_type
@@ -270,6 +135,73 @@ class DINO_(pl.LightningModule):
         ## Compute loss with given N_glob_views*Num_augmentation_strategy
         self.num_glob_views = num_glob_views
         self.num_augmentation_strategy = num_augmentation_strategy
+
+        ### Loss parameters  
+        self.tau_momentum=tau_momentum
+        self.criterion = DINOLoss(output_dim, warmup_teacher_temp, teacher_temp, warmup_teacher_temp_epochs,student_temp, center_momentum )
+
+
+        ### Online Downstream task Linear evaluation and KNN 
+        self.use_knn= use_knn
+        if use_ConvNet: 
+            self.feature_dim= self.student_backbone.inplanes
+        else: 
+            self.feature_dim= self.student_backbone.num_features
+         
+        self.classifier= nn.Linear(self.feature_dim, num_classes)
+        self.classifier_lr= linear_classifier_lr
+        if use_knn:
+            self.knn = WeightedKNNClassifier(k=self.knn_k, distance_fx="euclidean")
+
+        if self.accumulate_grad_batches:
+            self.lr = self.lr * self.accumulate_grad_batches
+            self.classifier_lr = self.classifier_lr * self.accumulate_grad_batches
+            self.min_lr = self.min_lr * self.accumulate_grad_batches
+            self.warmup_start_lr = self.warmup_start_lr * self.accumulate_grad_batches
+    
+    def base_forward(self, X: torch.Tensor) -> Dict:
+        """Basic forward that allows children classes to override forward().
+
+        Args:
+            X (torch.Tensor): batch of images in tensor format.
+
+        Returns:
+            Dict: dict of logits and features.
+        """
+
+        feats = self.student_backbone(X)
+        print(feats.shape)
+        logits = self.classifier(feats.detach())
+
+
+        return {
+            "logits": logits,
+            "feats": feats,
+        }
+    
+    def _base_shared_step(self, X: torch.Tensor, targets: torch.Tensor) -> Dict:
+        """Forwards a batch of images X and computes the classification loss, the logits, the
+        features, acc@1 and acc@5.
+
+        Args:
+            X (torch.Tensor): batch of images in tensor format.
+            targets (torch.Tensor): batch of labels for X.
+
+        Returns:
+            Dict: dict containing the classification loss, logits, features, acc@1 and acc@5.
+        """
+
+        out = self.base_forward(X)
+        logits = out["logits"]
+
+        loss = F.cross_entropy(logits, targets, ignore_index=-1)
+        # handle when the number of classes is smaller than 5
+        top_k_max = min(5, logits.size(1))
+        acc1, acc5 = accuracy_at_k(logits, targets, top_k=(1, top_k_max))
+
+        return {**out, "loss": loss, "acc1": acc1, "acc5": acc5}
+
+
     def forward(self, x):
         y = self.student_backbone(x).flatten(start_dim=1)
         z = self.student_head(y)
@@ -281,8 +213,8 @@ class DINO_(pl.LightningModule):
         return z
 
     def training_step(self, batch, batch_idx):
-        update_momentum(self.student_backbone, self.teacher_backbone, m=0.99)
-        update_momentum(self.student_head, self.teacher_head, m=0.99)
+        update_momentum(self.student_backbone, self.teacher_backbone, m=self.tau_momentum)
+        update_momentum(self.student_head, self.teacher_head, m=self.tau_momentum)
         _, views, _ = batch
         views = [view.to(self.device) for view in views]
         global_views = views[:self.num_glob_views*self.num_augmentation_strategy]
@@ -293,12 +225,65 @@ class DINO_(pl.LightningModule):
         self.log_dict(metrics, on_epoch=True, sync_dist=True)
         return loss
 
+    def validation_step(
+        self, batch: List[torch.Tensor], batch_idx: int, dataloader_idx: int = None
+    ) -> Dict[str, Any]:
+        """Validation step for pytorch lightning. It does all the shared operations, such as
+        forwarding a batch of images, computing logits and computing metrics.
+
+        Args:
+            batch (List[torch.Tensor]):a batch of data in the format of [img_indexes, X, Y].
+            batch_idx (int): index of the batch.
+
+        Returns:
+            Dict[str, Any]: dict with the batch_size (used for averaging), the classification loss
+                and accuracies.
+        """
+
+        X, targets = batch
+        batch_size = targets.size(0)
+
+        out = self._base_shared_step(X, targets)
+
+        if self.use_knn and not self.trainer.sanity_checking:
+            self.knn(test_features=out.pop("feats").detach(), test_targets=targets.detach())
+
+        metrics = {
+            "batch_size": batch_size,
+            "val_loss": out["loss"],
+            "val_acc1": out["acc1"],
+            "val_acc5": out["acc5"],
+        }
+        return metrics
+
+    def validation_epoch_end(self, outs: List[Dict[str, Any]]):
+        """Averages the losses and accuracies of all the validation batches.
+        This is needed because the last batch can be smaller than the others,
+        slightly skewing the metrics.
+
+        Args:
+            outs (List[Dict[str, Any]]): list of outputs of the validation step.
+        """
+
+        val_loss = weighted_mean(outs, "val_loss", "batch_size")
+        val_acc1 = weighted_mean(outs, "val_acc1", "batch_size")
+        val_acc5 = weighted_mean(outs, "val_acc5", "batch_size")
+
+        log = {"val_loss": val_loss, "val_acc1": val_acc1, "val_acc5": val_acc5}
+
+        if self.use_knn and not self.trainer.sanity_checking:
+            val_knn_acc1, val_knn_acc5 = self.knn.compute()
+            log.update({"val_knn_acc1": val_knn_acc1, "val_knn_acc5": val_knn_acc5})
+
+        self.log_dict(log, sync_dist=True)
+
+
     def on_after_backward(self):
         self.student_head.cancel_last_layer_gradients(current_epoch=self.current_epoch)
 
     def configure_optimizers(self):
 
-         # select optimizer
+        ### ----------select optimizer type --------------
         if self.optimizer_type == "sgd":
             optimizer = torch.optim.SGD
         elif self.optimizer_type == "adam":
@@ -308,10 +293,10 @@ class DINO_(pl.LightningModule):
         else:
             raise ValueError(f"{self.optimizer_type} not in (sgd, adam, adamw)")
 
-
         # create optimizer
         optimizer = optimizer(
-            self.parameters(),
+            #self.parameters(),
+            self.learnable_params,
             lr=self.lr,
             weight_decay=self.weight_decay,
             #**self.extra_optimizer_args,
@@ -325,7 +310,7 @@ class DINO_(pl.LightningModule):
                 exclude_bias_n_norm=self.exclude_bias_n_norm,
             )
 
-        ### --------------------- Section for scheduler the Optimizer ------------ 
+        ### --------------------- Select for scheduler the Optimizer ------------ 
         if self.scheduler_type == "none":
                 return optimizer
         if self.scheduler_type == "warmup_cosine":
@@ -344,6 +329,25 @@ class DINO_(pl.LightningModule):
             raise ValueError(f"{self.scheduler_type} not in (warmup_cosine, cosine, step)")
         #optim = torch.optim.Adam(self.parameters(), lr=0.001)
         return [optimizer], [scheduler]
+
+    @property
+    def learnable_params(self) -> List[Dict[str, Any]]:
+        """Defines learnable parameters for the base class.
+
+        Returns:
+            List[Dict[str, Any]]:
+                list of dicts containing learnable parameters and possible settings.
+        """
+
+        return [
+            {"name": "backbone", "params": self.student_backbone.parameters()},
+            {
+                "name": "classifier",
+                "params": self.classifier.parameters(),
+                "lr": self.classifier_lr,
+                "weight_decay": 0,
+            },
+        ]
 
 seed_everything(5)
 transform_kwargs={
@@ -377,24 +381,44 @@ train_dataset = prepare_datasets(
             no_labels= None, #args.no_labels,
             subset_class_num=args.subset_classes, 
         )
+
 train_loader = prepare_dataloader(
             train_dataset, batch_size=args.batch_size, num_workers=args.num_workers
         )
+if args.val_dir is not None:
+    _, val_loader = prepare_data_classification(
+        args.loadertype,
+        data_dir=args.data_dir,
+        train_dir=args.train_dir,
+        val_dir=args.val_dir,
+        subset_class_num=args.subset_classes, 
+        batch_size=args.batch_size,
+        num_workers=args.num_workers,
+    )
+else: 
+    val_loader=None
+### ------------------ Model Hyperparameter setting SSL Pretraining ---------------------
 
-callbacks=[] 
-# wandb logging
-
-# model= DINO( backbone= torchvision.models.resnet18(), input_dim=512, num_augment=2,
-#         optimizer_type="adam")
 kwargs={
-    "backbone": torchvision.models.resnet18(),
+    "backbone": torchvision.models.resnet50(),
+    "use_ConvNet": True, # if backbone is ConvNet
     "input_dim": 2048,  
     "hidden_dim": 2048,
     "bottleneck_dim": 256,
     "output_dim": 65536,# for ViTs
     "use_bn": False, # if True, use BN in the head
-    "freeze_last_layer": -1, # Number epochs keep the ProjectHead's output layer fixed. 
-    "pretrain_epochs": 10, 
+    "freeze_last_layer": -1, # Number epochs keep the ProjectHead's output layer fixed.  
+    "tau_momentum": 0.996,
+    "accumulate_grad_batches": None, # for larger batch forward N times
+    "pretrain_epochs": 10,
+    
+    ## Loss Computinng Hyperparameters for SSL Pretraining 
+    "warmup_teacher_temp": 0.04, 
+    "teacher_temp":  0.04,
+    "warmup_teacher_temp_epochs": 5, 
+    "student_temp": 0.1,
+    "center_momentum": 0.9,
+
     ## Configure data Augmentation impact to compute the loss 
     "num_glob_views": args.num_crop_glob, 
     "num_augmentation_strategy": args.Dataaugment_strategy["num_strategy"],
@@ -403,21 +427,35 @@ kwargs={
     "lr": 0.01, # lr will overwrite the lr within the scheduler.
     "scheduler_type": "warmup_cosine",# ["cosine"(CosineAnnealingLR), "step",None]
     "min_lr": 0.001,
+    "weight_decay": 0.0001,
     ## Adjust these paras if using warmup_cosine schedule
     # -----------------------#
     "warmup_start_lr": 0.0001, # base_lr
-    "warmup_epochs": 10 , 
+    "warmup_epochs": 2 , 
     # -----------------------#
     ## if using Lars Optimizer
+    # -----------------------#
     "lars_optim": True, 
     "eta_lars": 0.001,
     "exclude_bias_n_norm": True, 
     "grad_clip_lars": False, 
-}
+    # -----------------------#
 
+    ## Downstream Task Hyperparameters
+    # KNN evaluation
+    "use_knn": False, 
+    "knn_k": 200,
+    "distance_fx": "euclidean", 
+    # Linear Evaluation
+    "linear_classifier_lr": 0.1,
+    "num_classes": args.subset_classes,
 
-model= DINO_(**kwargs)
+    }
 
+model= MVAR_DINO(**kwargs)
+
+### --------------------- Logging model during training --------------------- ###
+callbacks=[] 
 if args.wandb_logs:
     wandb_logger = WandbLogger(
         name=args.name,
@@ -434,7 +472,7 @@ if args.wandb_logs:
     lr_monitor = LearningRateMonitor(logging_interval="epoch")
     callbacks.append(lr_monitor)
 
-
+## ---------------Debug Dataloader ---------------------##
 # for x1, x2, x3 in train_loader:
 #     #print(im.shape)
 #     # unpack
@@ -448,6 +486,8 @@ if args.wandb_logs:
 # # #     #print(x1_.shape)
 # # #     print(x3.shape)
 #     break
+
+### --------------------- Training --------------------- ###
 trainer = Trainer(
        # args,
         #fast_dev_run= True,
@@ -459,6 +499,7 @@ trainer = Trainer(
         logger=wandb_logger if args.wandb_logs else None,
         callbacks=callbacks,
         enable_checkpointing=False,
-        strategy="ddp",)
-
-trainer.fit(model, train_loader,)
+        strategy="ddp",
+        check_val_every_n_epoch=2,
+        )
+trainer.fit(model, train_loader,val_loader)
