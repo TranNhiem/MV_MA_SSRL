@@ -25,7 +25,6 @@ import pytorch_lightning as pl
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from pl_bolts.optimizers.lr_scheduler import LinearWarmupCosineAnnealingLR
 
 from MV_MA_SSL.utils.backbones import (
     convnext_base,
@@ -56,6 +55,8 @@ from MV_MA_SSL.utils.lars import LARSWrapper
 
 from MV_MA_SSL.utils.metrics import accuracy_at_k, weighted_mean
 from MV_MA_SSL.utils.momentum import MomentumUpdater, initialize_momentum_params
+from pl_bolts.optimizers.lr_scheduler import LinearWarmupCosineAnnealingLR
+from MV_MA_SSL.utils import cosine_scheduler, get_world_size
 from torch.optim.lr_scheduler import CosineAnnealingLR, MultiStepLR
 from torchvision.models import resnet18, resnet50
 from torchvision.models import regnet_y_8gf, regnet_y_16gf, regnet_y_32gf
@@ -118,6 +119,8 @@ class BaseMethod(pl.LightningModule):
         accumulate_grad_batches: Union[int, None],
         extra_optimizer_args: Dict,
         scheduler: str,
+        interval: str, 
+
         min_lr: float,
         warmup_start_lr: float,
         warmup_epochs: float,
@@ -205,6 +208,7 @@ class BaseMethod(pl.LightningModule):
         self.accumulate_grad_batches = accumulate_grad_batches
         self.extra_optimizer_args = extra_optimizer_args
         self.scheduler = scheduler
+        self.scheduler_interval= interval
         self.lr_decay_steps = lr_decay_steps
         self.min_lr = min_lr
         self.warmup_start_lr = warmup_start_lr
@@ -303,7 +307,7 @@ class BaseMethod(pl.LightningModule):
         parser.add_argument("--batch_size", type=int, default=128)
         parser.add_argument("--lr", type=float, default=0.3)
         parser.add_argument("--classifier_lr", type=float, default=0.3)
-        parser.add_argument("--weight_decay", type=float, default=0.0001)
+        parser.add_argument("--weight_decay", type=float, default=0.004)
         parser.add_argument("--num_workers", type=int, default=4)
 
         # wandb
@@ -339,6 +343,7 @@ class BaseMethod(pl.LightningModule):
         parser.add_argument("--min_lr", default=0.0, type=float)
         parser.add_argument("--warmup_start_lr", default=0.00003, type=float)
         parser.add_argument("--warmup_epochs", default=10, type=int)
+        parser.add_argument("--interval",type=str,  default="step", type=float)
 
         # DALI only
         # uses sample indexes as labels and then gets the labels from a lookup table
@@ -414,13 +419,36 @@ class BaseMethod(pl.LightningModule):
             return optimizer
 
         if self.scheduler == "warmup_cosine":
-            scheduler = LinearWarmupCosineAnnealingLR(
-                optimizer,
-                warmup_epochs=self.warmup_epochs,
-                max_epochs=self.max_epochs,
-                warmup_start_lr=self.warmup_start_lr,
-                eta_min=self.min_lr,
+            # scheduler = LinearWarmupCosineAnnealingLR(
+            #     optimizer,
+            #     warmup_epochs=self.warmup_epochs,
+            #     max_epochs=self.max_epochs,
+            #     warmup_start_lr=self.warmup_start_lr,
+            #     eta_min=self.min_lr,
+            # )
+            max_warmup_steps = (
+                self.warmup_epochs * (self.trainer.estimated_stepping_batches / self.max_epochs)
+                if self.scheduler_interval == "step"
+                else self.warmup_epochs
             )
+            max_scheduler_steps = (
+                self.trainer.estimated_stepping_batches
+                if self.scheduler_interval == "step"
+                else self.max_epochs
+            )
+            scheduler = {
+                "scheduler": LinearWarmupCosineAnnealingLR(
+                    optimizer,
+                    warmup_epochs=max_warmup_steps,
+                    max_epochs=max_scheduler_steps,
+                    warmup_start_lr=self.warmup_start_lr if self.warmup_epochs > 0 else self.lr,
+                    eta_min=self.min_lr,
+                ),
+                "interval": self.scheduler_interval,
+                "frequency": 1,
+            }
+            
+        
         elif self.scheduler == "cosine":
             scheduler = CosineAnnealingLR(optimizer, self.max_epochs, eta_min=self.min_lr)
         elif self.scheduler == "step":

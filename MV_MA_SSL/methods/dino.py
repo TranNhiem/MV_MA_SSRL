@@ -25,10 +25,13 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from MV_MA_SSL.losses.dino import DINOLoss
+from MVAR_Dino.utils.dino_loss import DINOLoss as DINOLossMVAR
 from MV_MA_SSL.methods.base_v1 import BaseMomentumMethod
 from MV_MA_SSL.utils.momentum import initialize_momentum_params
 from MV_MA_SSL.utils.misc import trunc_normal_
 from MVAR_Dino.utils import utils 
+
+from MVAR_Dino.utils.modules import DINOProjectionHead
 
 class DINOHead(nn.Module):
     mlp: Any
@@ -112,17 +115,20 @@ class DINOHead(nn.Module):
 class DINO(BaseMomentumMethod):
     def __init__(
         self,
+        proj_input_dim: int, 
         proj_hidden_dim: int,
-        proj_output_dim: int,
+        proj_bottleneck_dim: int,
         num_prototypes: int,
         use_bn_in_head: bool,
         norm_last_layer: bool,
         clip_grad: float,
         freeze_last_layer: bool,
+        freeze_last_layer_ : int, 
         student_temperature: float,
         teacher_temperature: float,
         warmup_teacher_temperature: float,
         warmup_teacher_temperature_epochs: int,
+        center_momentum: float, 
         **kwargs,
     ):
         """Adds DINO head to the student and momentum DINO head to the teacher.
@@ -146,38 +152,46 @@ class DINO(BaseMomentumMethod):
         self.clip_grad = clip_grad
         self.freeze_last_layer = freeze_last_layer
 
-        # dino head
-        self.head = DINOHead(
-            in_dim=self.features_dim,
-            hidden_dim=proj_hidden_dim,
-            use_bn=use_bn_in_head,
-            bottleneck_dim=proj_output_dim,
-            num_prototypes=num_prototypes,
-            norm_last_layer=norm_last_layer,
-        )
+        ## ----------- dino head design 1 --------------
+        # self.head = DINOHead(
+        #     in_dim=self.features_dim,
+        #     hidden_dim=proj_hidden_dim,
+        #     use_bn=use_bn_in_head,
+        #     bottleneck_dim=proj_output_dim,
+        #     num_prototypes=num_prototypes,
+        #     norm_last_layer=norm_last_layer,
+        # )
 
         # instantiate and initialize momentum dino head
-        self.momentum_head = DINOHead(
-            in_dim=self.features_dim,
-            hidden_dim=proj_hidden_dim,
-            use_bn=use_bn_in_head,
-            bottleneck_dim=proj_output_dim,
-            num_prototypes=num_prototypes,
-            norm_last_layer=norm_last_layer,
-        )
+        # self.momentum_head = DINOHead(
+        #     in_dim=self.features_dim,
+        #     hidden_dim=proj_hidden_dim,
+        #     use_bn=use_bn_in_head,
+        #     bottleneck_dim=proj_output_dim,
+        #     num_prototypes=num_prototypes,
+        #     norm_last_layer=norm_last_layer,
+        # )
+
+        ## ----------- dino head design 2 --------------
+        self.head=DINOProjectionHead(proj_input_dim, proj_hidden_dim, proj_bottleneck_dim, num_prototypes,use_bn_in_head, freeze_last_layer_)
+        self.momentum_head=DINOProjectionHead(proj_input_dim, proj_hidden_dim, proj_bottleneck_dim, num_prototypes,use_bn_in_head, freeze_last_layer_)
+
         initialize_momentum_params(self.head, self.momentum_head)
 
-        # dino loss
-        self.dino_loss_func = DINOLoss(
-            num_large_crops= self.num_large_crops, 
-            num_small_crops= self.num_small_crops,
-            num_prototypes=num_prototypes,
-            student_temp=student_temperature,
-            warmup_teacher_temp=warmup_teacher_temperature,
-            teacher_temp=teacher_temperature,
-            warmup_teacher_temp_epochs=warmup_teacher_temperature_epochs,
-            num_epochs=self.max_epochs,
-        )
+        ## -------------dino loss 1 -----------------------
+        # self.dino_loss_func = DINOLoss(
+        #     num_large_crops= self.num_large_crops, 
+        #     num_small_crops= self.num_small_crops,
+        #     num_prototypes=num_prototypes,
+        #     student_temp=student_temperature,
+        #     warmup_teacher_temp=warmup_teacher_temperature,
+        #     teacher_temp=teacher_temperature,
+        #     warmup_teacher_temp_epochs=warmup_teacher_temperature_epochs,
+        #     num_epochs=self.max_epochs,
+        # )
+        ## -------------dino loss 2 -----------------------
+
+        self.dino_loss_func= DINOLossMVAR(num_prototypes, warmup_teacher_temperature, teacher_temperature, warmup_teacher_temperature_epochs,student_temperature, center_momentum )
 
     @staticmethod
     def add_model_specific_args(parent_parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
@@ -185,14 +199,18 @@ class DINO(BaseMomentumMethod):
         parser = parent_parser.add_argument_group("dino")
 
         # optimization settings
-        parser.add_argument("--clip_grad", type=float, default=0)
+        parser.add_argument("--clip_grad", type=float, default=3.0, )
         parser.add_argument("--freeze_last_layer", type=int, default=1)
 
         # dino head
-        parser.add_argument("--proj_output_dim", type=int, default=256)
+        parser.add_argument("--proj_input_dim", type=int, default=2048)
+        parser.add_argument("--proj_bottleneck_dim", type=int, default=256)
         parser.add_argument("--proj_hidden_dim", type=int, default=2048)
-        parser.add_argument("--num_prototypes", type=int, default=4096)
-        parser.add_argument("--norm_last_layer", type=distutils.util.strtobool, default=True)
+        parser.add_argument("--proj_output_dim", type=int, default=65536)
+        parser.add_argument("--num_prototypes", type=int, default=65536)
+        parser.add_argument("--freeze_last_layer_", type=int, default=-1)
+        
+        parser.add_argument("--norm_last_layer", type=distutils.util.strtobool, default=False)
         parser.add_argument("--use_bn_in_head", type=distutils.util.strtobool, default=False)
         # parameters
         parser.add_argument("--alpha", type=str, default="0.5")
@@ -202,6 +220,7 @@ class DINO(BaseMomentumMethod):
         parser.add_argument("--teacher_temperature", default=0.07, type=float)
         parser.add_argument("--warmup_teacher_temperature", default=0.04, type=float)
         parser.add_argument("--warmup_teacher_temperature_epochs", default=50, type=int)
+        parser.add_argument("--center_momentum", default=0.9, type=float)
         return parent_parser
 
     @property

@@ -9,7 +9,7 @@ from typing import List, Tuple, Optional, Dict, Any
 from MVAR_Dino.utils.update_momentum import update_momentum, normalize_weight, deactivate_requires_grad
 from MVAR_Dino.utils.modules import DINOProjectionHead, static_lr
 from MVAR_Dino.utils.dino_loss import DINOLoss
-from MVAR_Dino.ViTs.vision_transformer import vit_tiny, vit_base, vit_small
+from  MV_MA_SSL.utils.backbones import vit_tiny_v1, vit_base_v1, vit_small_v1
 from torch.optim.lr_scheduler import CosineAnnealingLR, MultiStepLR
 from pl_bolts.optimizers.lr_scheduler import LinearWarmupCosineAnnealingLR
 from MV_MA_SSL.utils.knn import WeightedKNNClassifier
@@ -91,6 +91,7 @@ class MVAR_DINO(pl.LightningModule):
         num_classes: int=10,
         linear_classifier_lr: float = 0.0002,
         use_knn: bool = False,
+        use_linear: bool= False, 
         knn_k: int=20, distance_fx: str="euclidean", 
         
         
@@ -107,11 +108,12 @@ class MVAR_DINO(pl.LightningModule):
         if use_ConvNet: 
             backbone.fc = nn.Identity()
         else: 
-            backbone= nn.Sequential(*list(backbone.children())[:-1])
+            backbone=backbone
+            #backbone= nn.Sequential(*list(backbone.children())[:-1])
         self.accumulate_grad_batches=accumulate_grad_batches
         self.student_backbone = backbone
         self.student_head = DINOProjectionHead(input_dim, hidden_dim, bottleneck_dim, output_dim,use_bn, freeze_last_layer)
-        self.teacher_backbone = copy.deepcopy(backbone)
+        self.teacher_backbone =copy.deepcopy(backbone)
         self.teacher_head = DINOProjectionHead(input_dim, hidden_dim, bottleneck_dim, output_dim,use_bn,  )
         deactivate_requires_grad(self.teacher_backbone)
         deactivate_requires_grad(self.teacher_head)
@@ -143,6 +145,7 @@ class MVAR_DINO(pl.LightningModule):
 
         ### Online Downstream task Linear evaluation and KNN 
         self.use_knn= use_knn
+        self.use_linear= use_linear
         if use_ConvNet: 
             self.feature_dim= self.student_backbone.inplanes
         else: 
@@ -150,8 +153,10 @@ class MVAR_DINO(pl.LightningModule):
          
         self.classifier= nn.Linear(self.feature_dim, num_classes)
         self.classifier_lr= linear_classifier_lr
+        self.knn_k= knn_k
+        self.distance_fx= distance_fx
         if use_knn:
-            self.knn = WeightedKNNClassifier(k=self.knn_k, distance_fx="euclidean")
+            self.knn = WeightedKNNClassifier(k=self.knn_k, distance_fx=self.distance_fx)
 
         if self.accumulate_grad_batches:
             self.lr = self.lr * self.accumulate_grad_batches
@@ -170,8 +175,11 @@ class MVAR_DINO(pl.LightningModule):
         """
 
         feats = self.student_backbone(X)
-        print(feats.shape)
-        logits = self.classifier(feats.detach())
+        #print(feats.shape)
+        if self.use_linear: 
+            logits = self.classifier(feats.detach())
+        else: 
+            logits=None
 
 
         return {
@@ -192,13 +200,19 @@ class MVAR_DINO(pl.LightningModule):
         """
 
         out = self.base_forward(X)
-        logits = out["logits"]
+        if self.use_linear: 
+            #loss = F.cross_entropy(out["logits"], targets)
+            logits = out["logits"]
+            loss = F.cross_entropy(logits, targets, ignore_index=-1)
+            # handle when the number of classes is smaller than 5
+            top_k_max = min(5, logits.size(1))
+            acc1, acc5 = accuracy_at_k(logits, targets, top_k=(1, top_k_max))
 
-        loss = F.cross_entropy(logits, targets, ignore_index=-1)
-        # handle when the number of classes is smaller than 5
-        top_k_max = min(5, logits.size(1))
-        acc1, acc5 = accuracy_at_k(logits, targets, top_k=(1, top_k_max))
-
+        else: 
+            loss=None
+            acc1=None
+            acc5=None
+           
         return {**out, "loss": loss, "acc1": acc1, "acc5": acc5}
 
 
@@ -208,6 +222,9 @@ class MVAR_DINO(pl.LightningModule):
         return z
 
     def forward_teacher(self, x):
+        # self.teacher_backbone.eval()
+        # self.teacher_head.eval()
+        #with torch.no_grad():
         y = self.teacher_backbone(x).flatten(start_dim=1)
         z = self.teacher_head(y)
         return z
@@ -244,16 +261,22 @@ class MVAR_DINO(pl.LightningModule):
         batch_size = targets.size(0)
 
         out = self._base_shared_step(X, targets)
-
+        metrics = {
+                "batch_size": batch_size,}
+        if self.use_linear: 
+            metrics = {
+                "batch_size": batch_size,
+                "val_loss": out["loss"],
+                "val_acc1": out["acc1"],
+                "val_acc5": out["acc5"],
+            }
+            
         if self.use_knn and not self.trainer.sanity_checking:
             self.knn(test_features=out.pop("feats").detach(), test_targets=targets.detach())
-
-        metrics = {
-            "batch_size": batch_size,
-            "val_loss": out["loss"],
-            "val_acc1": out["acc1"],
-            "val_acc5": out["acc5"],
-        }
+            # val_knn_acc1, val_knn_acc5 = self.knn.compute()
+            # metrics["val_knn_acc1"] = val_knn_acc1
+            # metrics["val_knn_val_knn_acc5acc1"] = val_knn_acc5
+        
         return metrics
 
     def validation_epoch_end(self, outs: List[Dict[str, Any]]):
@@ -264,18 +287,19 @@ class MVAR_DINO(pl.LightningModule):
         Args:
             outs (List[Dict[str, Any]]): list of outputs of the validation step.
         """
+        log={}
+        if self.use_linear:
+            val_loss = weighted_mean(outs, "val_loss", "batch_size")
+            val_acc1 = weighted_mean(outs, "val_acc1", "batch_size")
+            val_acc5 = weighted_mean(outs, "val_acc5", "batch_size")
 
-        val_loss = weighted_mean(outs, "val_loss", "batch_size")
-        val_acc1 = weighted_mean(outs, "val_acc1", "batch_size")
-        val_acc5 = weighted_mean(outs, "val_acc5", "batch_size")
-
-        log = {"val_loss": val_loss, "val_acc1": val_acc1, "val_acc5": val_acc5}
+            log = {"val_loss": val_loss, "val_acc1": val_acc1, "val_acc5": val_acc5}
 
         if self.use_knn and not self.trainer.sanity_checking:
             val_knn_acc1, val_knn_acc5 = self.knn.compute()
             log.update({"val_knn_acc1": val_knn_acc1, "val_knn_acc5": val_knn_acc5})
 
-        self.log_dict(log, sync_dist=True)
+        self.log_dict(log, sync_dist=True, on_epoch=True)
 
 
     def on_after_backward(self):
@@ -443,13 +467,13 @@ kwargs={
 
     ## Downstream Task Hyperparameters
     # KNN evaluation
-    "use_knn": False, 
-    "knn_k": 200,
+    "use_knn": True, 
+    "knn_k": 20,
     "distance_fx": "euclidean", 
     # Linear Evaluation
+    "use_linear": False, 
     "linear_classifier_lr": 0.1,
     "num_classes": args.subset_classes,
-
     }
 
 model= MVAR_DINO(**kwargs)
@@ -493,13 +517,15 @@ trainer = Trainer(
         #fast_dev_run= True,
         # gradient_clip_val=0.6, 
         # gradient_clip_algorithm="value",
-        gpus= [7],
+        gpus= [6,7],
         max_epochs=kwargs["pretrain_epochs"],
         # num_nodes=1,max_epochs
         logger=wandb_logger if args.wandb_logs else None,
         callbacks=callbacks,
-        enable_checkpointing=False,
+        enable_checkpointing=True,
         strategy="ddp",
         check_val_every_n_epoch=2,
+        default_root_dir= "./results/ssl_dino_small.ckpt",
+        sync_batchnorm=True, 
         )
-trainer.fit(model, train_loader,val_loader)
+trainer.fit(model, train_loader,val_loader,  )

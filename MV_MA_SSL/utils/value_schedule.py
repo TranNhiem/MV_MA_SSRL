@@ -52,7 +52,6 @@ class batch_size_schedule():
 
         return accumulator
 
-
 class Stochastic_Weight_Avg():
     def __init__(
         self,
@@ -106,8 +105,6 @@ class Alpha_schedule(Callback):
         self.current_alpha = self.init_alpha
         self.alpha = alpha
 
-
-
     def on_train_epoch_start(self, trainer: Trainer, pl_module: LightningModule) -> float:
 
         if self.alpha == "schedule":
@@ -125,7 +122,7 @@ class Alpha_schedule(Callback):
             max_steps = len(trainer.train_dataloader) * trainer.max_epochs
             # self.current_alpha = 1 - \
             #     (1 - self.init_alpha) * (math.cos(math.pi *pl_module.global_step / max_steps) + 1) / 2
-            self.current_alpha = self.init_alpha * (math.cos(math.pi * module.global_step / max_steps) + 1) / 2
+            self.current_alpha = self.init_alpha * (math.cos(math.pi * pl_module.global_step / max_steps) + 1) / 2
             #if self.current_alpha =0.5: 
 
             pl_module.alpha = self.current_alpha
@@ -186,3 +183,42 @@ class Beta_schedule(Callback):
             module.beta = self.current_beta
         else:
             module.beta = float(self.beta)
+
+class WD_cosine_schedule(Callback):
+    """
+        2. Cosine Schedule.
+        Note:: Automatically increases (Alpha and Beta) from ``initial_value`` to 1.0 with  training step
+
+    """
+
+    def __init__(
+        self,
+        args,
+        total_epoch: int = 1,
+        init_wd: float = 0.04,
+        final_wd: float= 0.4, 
+        weight_decay_scheduler="cosine_schedule"
+    ):
+        """
+            Args: -> for cosine schedule
+                initial_value: starting value. Auto-updates with every training step
+        """
+        super().__init__()
+        self.args = args
+        self.total_epoch = total_epoch
+        self.init_wd = init_wd
+        self.final_wd=final_wd
+        self.current_wd= init_wd
+        self.wd_schedule = weight_decay_scheduler
+        
+    def on_train_epoch_start(self, trainer: Trainer, pl_module: LightningModule) -> float:
+
+        if "cosine_schedule" in self.wd_schedule:
+            print("You implement Weight Decay Cosine schedule")
+            max_steps = len(trainer.train_dataloader) * trainer.max_epochs
+            self.current_wd = self.final_wd -  (self.final_wd - self.init_wd) * (math.cos(math.pi *pl_module.global_step / max_steps) + 1) / 2
+            pl_module.weight_decay = self.current_wd
+        else:
+            print("You implement Fixed Weight Decay")
+            pl_module.weight_decay = self.init_wd
+

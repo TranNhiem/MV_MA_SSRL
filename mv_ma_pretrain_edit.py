@@ -59,6 +59,7 @@ from MV_MA_SSL.utils.pretrain_dataloader import (
 
 from MV_MA_SSL.utils.value_schedule import (
     Alpha_schedule,
+    WD_cosine_schedule,
     Beta_schedule,
     batch_size_schedule, 
     Stochastic_Weight_Avg
@@ -207,8 +208,11 @@ def main():
         del args.resume_from_checkpoint
 
     alpha_schedule = Alpha_schedule(args,args.max_epochs, 0.6,args.alpha)
+   
+    Weight_Decay_schedule= WD_cosine_schedule(args, args.max_epochs, args.wd_init, args.wd_final, args.weight_decay_scheduler)
     callbacks.append(alpha_schedule)
-    
+    callbacks.append(Weight_Decay_schedule)
+
     trainer = Trainer.from_argparse_args(
         args,
         #fast_dev_run= True,
