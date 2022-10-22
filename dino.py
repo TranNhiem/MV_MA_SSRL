@@ -88,6 +88,7 @@ class MVAR_DINO(pl.LightningModule):
 
         ## Parameters for Online Downstream tasks 
         use_ConvNet: bool= True, 
+        use_torchvision: bool= True,
         num_classes: int=10,
         linear_classifier_lr: float = 0.0002,
         use_knn: bool = False,
@@ -112,11 +113,19 @@ class MVAR_DINO(pl.LightningModule):
             #backbone= nn.Sequential(*list(backbone.children())[:-1])
         self.accumulate_grad_batches=accumulate_grad_batches
         self.student_backbone = backbone
-        self.student_head = DINOProjectionHead(input_dim, hidden_dim, bottleneck_dim, output_dim,use_bn, freeze_last_layer)
         self.teacher_backbone =copy.deepcopy(backbone)
-        self.teacher_head = DINOProjectionHead(input_dim, hidden_dim, bottleneck_dim, output_dim,use_bn,  )
-        deactivate_requires_grad(self.teacher_backbone)
-        deactivate_requires_grad(self.teacher_head)
+        if use_ConvNet: 
+            self.feature_dim= self.student_backbone.inplanes
+        else: 
+            self.feature_dim= self.student_backbone.num_features
+        self.student_head = DINOProjectionHead(self.feature_dim, hidden_dim, bottleneck_dim, output_dim,use_bn, freeze_last_layer)
+        
+        self.teacher_head = DINOProjectionHead(self.feature_dim, hidden_dim, bottleneck_dim, output_dim,use_bn,  )
+        self.use_torchvision=use_torchvision
+        if use_torchvision:
+            deactivate_requires_grad(self.teacher_backbone)
+            deactivate_requires_grad(self.teacher_head)
+        
 
       
         # Optimizer Configuration Parameters 
@@ -146,11 +155,7 @@ class MVAR_DINO(pl.LightningModule):
         ### Online Downstream task Linear evaluation and KNN 
         self.use_knn= use_knn
         self.use_linear= use_linear
-        if use_ConvNet: 
-            self.feature_dim= self.student_backbone.inplanes
-        else: 
-            self.feature_dim= self.student_backbone.num_features
-         
+   
         self.classifier= nn.Linear(self.feature_dim, num_classes)
         self.classifier_lr= linear_classifier_lr
         self.knn_k= knn_k
@@ -224,9 +229,13 @@ class MVAR_DINO(pl.LightningModule):
     def forward_teacher(self, x):
         # self.teacher_backbone.eval()
         # self.teacher_head.eval()
-        #with torch.no_grad():
-        y = self.teacher_backbone(x).flatten(start_dim=1)
-        z = self.teacher_head(y)
+        if self.use_torchvision:
+            y = self.teacher_backbone(x).flatten(start_dim=1)
+            z = self.teacher_head(y)
+        else: 
+            with torch.no_grad():
+                y = self.teacher_backbone(x).flatten(start_dim=1)
+                z = self.teacher_head(y)
         return z
 
     def training_step(self, batch, batch_idx):
@@ -424,8 +433,9 @@ else:
 ### ------------------ Model Hyperparameter setting SSL Pretraining ---------------------
 
 kwargs={
-    "backbone": torchvision.models.resnet50(),
-    "use_ConvNet": True, # if backbone is ConvNet
+    "use_torchvision": True,
+    "use_ConvNet": False, # if backbone is ConvNet
+    "backbone": torch.hub.load('facebookresearch/dino:main', 'dino_vits16', pretrained=False), #torchvision.models.resnet50(),
     "input_dim": 2048,  
     "hidden_dim": 2048,
     "bottleneck_dim": 256,
@@ -467,11 +477,11 @@ kwargs={
 
     ## Downstream Task Hyperparameters
     # KNN evaluation
-    "use_knn": True, 
+    "use_knn": False,  ## Bugs Not support for now
     "knn_k": 20,
     "distance_fx": "euclidean", 
     # Linear Evaluation
-    "use_linear": False, 
+    "use_linear": True, 
     "linear_classifier_lr": 0.1,
     "num_classes": args.subset_classes,
     }

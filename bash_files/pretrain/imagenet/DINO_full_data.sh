@@ -14,13 +14,14 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --num_gpus 8 \
     --max_epochs 300 \
     --gpus 0,1,2,3,4,5,6,7 \
+    --check_val_every_n_epoch 4 \
     --accelerator gpu \
     --strategy ddp \
     --sync_batchnorm \
     --precision 16 \
     --optimizer adamw \
     --student_temperature 0.1 \
-    --warmup_teacher_temperature_epochs 10 \
+    --warmup_teacher_temperature_epochs 30 \
     --warmup_teacher_temperature 0.04 \
     --teacher_temperature 0.07 \
     --center_momentum 0.9 \
@@ -33,14 +34,16 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --min_lr 1e-5  \
     --accumulate_grad_batches 1 \
     --classifier_lr 0.1 \
+    --knn_eval \
+    --knn_k 20 \
     --weight_decay_scheduler cosine_schedule \
     --wd_init 0.004 \
     --wd_final 0.4 \
     --batch_size 128 \
     --num_workers 20 \
-    --num_augment_trategy SimCLR_RA_FA \
-    --num_augment_strategies 3 \
-    --brightness 0.4 0.4 0.4 \
+    --num_augment_trategy SimCLR_RA \
+    --num_augment_strategies 2 \
+    --brightness 0.4 0.4  \
     --contrast 0.4 \
     --saturation 0.2 \
     --hue 0.1 \
@@ -63,9 +66,9 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --rda_magnitude 9 \
     --ada_policy imagenet \
     --fda_policy imagenet \
-    --num_crops_per_aug 1 1 1 \
+    --num_crops_per_aug 1 1 \
     --shuffle_transforms_crops False\
-    --name MVMA_DINO_ViTsmall_1048_SimCLR_RA_FA_2_glob_10_loc_master \
+    --name MVMA_DINO_ViTsmall_1048_SimCLR_RA_2_glob_10_loc_master \
     --entity tranrick \
     --project MVAR_SSRL \
     --wandb \

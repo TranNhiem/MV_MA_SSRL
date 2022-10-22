@@ -110,8 +110,6 @@ class DINOHead(nn.Module):
         x = self.last_layer(x)
         return x
 
-
-
 class DINO(BaseMomentumMethod):
     def __init__(
         self,
@@ -173,8 +171,8 @@ class DINO(BaseMomentumMethod):
         # )
 
         ## ----------- dino head design 2 --------------
-        self.head=DINOProjectionHead(proj_input_dim, proj_hidden_dim, proj_bottleneck_dim, num_prototypes,use_bn_in_head, freeze_last_layer_)
-        self.momentum_head=DINOProjectionHead(proj_input_dim, proj_hidden_dim, proj_bottleneck_dim, num_prototypes,use_bn_in_head, freeze_last_layer_)
+        self.head=DINOProjectionHead(self.features_dim, proj_hidden_dim, proj_bottleneck_dim, num_prototypes,use_bn_in_head, freeze_last_layer_)
+        self.momentum_head=DINOProjectionHead(self.features_dim, proj_hidden_dim, proj_bottleneck_dim, num_prototypes,use_bn_in_head, freeze_last_layer_)
 
         initialize_momentum_params(self.head, self.momentum_head)
 
@@ -332,7 +330,7 @@ class DINO(BaseMomentumMethod):
         with torch.no_grad(): 
             teacher_out=[self.momentum_head(f) for f in momentum_feats]
         # ------- contrastive loss -------
-        dino_loss = self.dino_loss_func(student_out, teacher_out)
+        dino_loss = self.dino_loss_func(student_out, teacher_out,  epoch=self.current_epoch)
         return dino_loss
     
     def training_step(self, batch: Sequence[Any], batch_idx: int) -> torch.Tensor:

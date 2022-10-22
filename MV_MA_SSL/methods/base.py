@@ -56,7 +56,6 @@ from MV_MA_SSL.utils.lars import LARSWrapper
 from MV_MA_SSL.utils.metrics import accuracy_at_k, weighted_mean
 from MV_MA_SSL.utils.momentum import MomentumUpdater, initialize_momentum_params
 from pl_bolts.optimizers.lr_scheduler import LinearWarmupCosineAnnealingLR
-from MV_MA_SSL.utils import cosine_scheduler, get_world_size
 from torch.optim.lr_scheduler import CosineAnnealingLR, MultiStepLR
 from torchvision.models import resnet18, resnet50
 from torchvision.models import regnet_y_8gf, regnet_y_16gf, regnet_y_32gf
@@ -340,10 +339,10 @@ class BaseMethod(pl.LightningModule):
 
         parser.add_argument("--scheduler", choices=SUPPORTED_SCHEDULERS, type=str, default="reduce")
         parser.add_argument("--lr_decay_steps", default=None, type=int, nargs="+")
-        parser.add_argument("--min_lr", default=0.0, type=float)
-        parser.add_argument("--warmup_start_lr", default=0.00003, type=float)
+        parser.add_argument("--min_lr", type=float, default=0.0, )
+        parser.add_argument("--warmup_start_lr",type=float,  default=0.00003, )
         parser.add_argument("--warmup_epochs", default=10, type=int)
-        parser.add_argument("--interval",type=str,  default="step", type=float)
+        parser.add_argument("--interval",type=str,  default="step")
 
         # DALI only
         # uses sample indexes as labels and then gets the labels from a lookup table
@@ -447,7 +446,6 @@ class BaseMethod(pl.LightningModule):
                 "interval": self.scheduler_interval,
                 "frequency": 1,
             }
-            
         
         elif self.scheduler == "cosine":
             scheduler = CosineAnnealingLR(optimizer, self.max_epochs, eta_min=self.min_lr)

@@ -70,11 +70,13 @@ class DINO(pl.LightningModule):
 
         self.student_backbone= backbone
         self.teacher_backbone= copy.deepcopy(backbone)
+
         self.student_head= DINOProjectionHead(input_dim, 512, 64, 2048,freeze_last_layer=1)
         self.teacher_head= DINOProjectionHead(input_dim, 512,64, 2048,)
 
         deactivate_requires_grad(self.teacher_backbone)
         deactivate_requires_grad(self.teacher_head)
+        
         self.criterion= DINOLoss(output_dim=2048, warmup_teacher_temp_epochs=5)
         self.classifier = nn.Linear(self.features_dim, num_classes)
 
