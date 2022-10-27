@@ -1,34 +1,43 @@
-
 python3 ../../../mv_ma_pretrain_edit.py \
     --dataset mv_ma \
     --mvar_training True \
-    --local_contrast_global local_global \
     --experiment_type ablation \
-    --job_name NumberView_ablation_subset \
-    --backbone resnet50 \
+    --job_name vit_full_imagenet \
+    --backbone vit_small_v1 \
+    --drop_path_rate 0.1 \
+    --patch_size 16  \
     --data_dir /data1/1K_New/ \
     --train_dir train \
     --val_dir val \
-    --subset_classes 300 \
-    --max_epochs 100 \
-    --gpus 0,1,2,3,4,5,6,7 \
+    --subset_classes 10 \
+    --dataset_size 12800 \
+    --num_gpus 2 \
+    --max_epochs 10 \
+    --gpus 6,7 \
     --accelerator gpu \
     --strategy ddp \
     --sync_batchnorm \
     --precision 16 \
-    --optimizer sgd \
-    --lars \
+    --optimizer adamw \
+    --student_temperature 0.1 \
+    --warmup_teacher_temperature_epochs 10 \
+    --warmup_teacher_temperature 0.04 \
+    --teacher_temperature 0.07 \
+    --center_momentum 0.9 \
     --eta_lars 0.001 \
     --exclude_bias_n_norm \
     --scheduler warmup_cosine \
-    --lr 0.4 \
-    --accumulate_grad_batches 2 \
-    --classifier_lr 0.2 \
-    --weight_decay 1e-6 \
-    --batch_size 200 \
-    --num_workers 4 \
-    --num_augment_trategy SimCLR_FA \
-    --num_augment_strategies 2\
+    --lr 0.0005 \
+    --min_lr 1e-5  \
+    --accumulate_grad_batches 1 \
+    --knn_eval \
+    --knn_k 20 \
+    --classifier_lr 0.1 \
+    --weight_decay 1e-3 \
+    --batch_size 128 \
+    --num_workers 20 \
+    --num_augment_trategy SimCLR_RA \
+    --num_augment_strategies 2 \
     --brightness 0.4 0.4 \
     --contrast 0.4 \
     --saturation 0.2 \
@@ -40,9 +49,9 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --solarization_prob 0.2  \
     --crop_size 224  \
     --crop_size_glob 224 \
-    --crop_size_loc 94 \
+    --crop_size_loc 96 \
     --num_crop_glob 2 \
-    --num_crop_loc 7 \
+    --num_crop_loc 10 \
     --crop_type random_uniform \
     --min_scale_loc 0.1 \
     --max_scale_loc 0.3 \
@@ -54,19 +63,20 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --fda_policy imagenet \
     --num_crops_per_aug 1 1 \
     --shuffle_transforms_crops False\
-    --name MV_MASSL_AA_FA_224_2_94_7_Lossobj_2_res50_Dim_256_imagenet-300ep \
-    --entity mlbrl \
-    --project solo_MASSL_V2 \
+    --name MVMA_DINO_ViTsmall_1048_SimCLR_RA_2_glob_10_loc_master \
+    --entity tranrick \
+    --project MVAR_SSRL \
     --wandb \
     --save_checkpoint \
-    --method mvar \
-    --proj_output_dim 256 \
-    --proj_hidden_dim 4096 \
-    --pred_hidden_dim 4096 \
-    --base_tau_momentum 0.99 \
+    --method dino \
+    --proj_input_dim 2048 \
+    --proj_bottleneck_dim 256 \
+    --proj_hidden_dim 2048 \
+    --num_prototypes 65536 \
+    --freeze_last_layer_ -1 \
+    --base_tau_momentum 0.996 \
     --final_tau_momentum 1.0 \
     --momentum_classifier \
-    --alpha 0.4\
+    --alpha 0.5  \
     --checkpoint_dir /data1/solo_MASSL_ckpt \
-    --checkpoint_frequency 20 \
-  
+    --checkpoint_frequency 20 

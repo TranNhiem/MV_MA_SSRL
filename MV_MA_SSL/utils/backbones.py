@@ -732,6 +732,7 @@ def convnext_large(**kwargs):
     model_args = dict(depths=[3, 3, 27, 3], dims=[192, 384, 768, 1536], **kwargs)
     model = _create_convnext("convnext_large", pretrained=False, num_classes=0, **model_args)
     return model
+    
 class ResNet_Wider(ResNet):
 
     def __init__(

@@ -7,7 +7,7 @@ wandb*/
 
 # umap dir
 auto_umap/
-
+.*log
 # datasets dir
 datasets/
 # saved models

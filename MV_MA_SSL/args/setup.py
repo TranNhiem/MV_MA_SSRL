@@ -86,9 +86,13 @@ def parse_args_pretrain() -> argparse.Namespace:
     parser.add_argument("--subset_classes",  type=int, default=1000, help="Subset ImageNet Class or Others Dataset")
     parser.add_argument("--num_large_crops",  type=int, default=4)
     parser.add_argument("--num_small_crops",  type=int, default=0)
+    parser.add_argument("--weight_decay_scheduler",  type=str, default="cosine_scheduler")
+    parser.add_argument("--wd_init",  type=float, default=0.004)
+    parser.add_argument("--wd_final",  type=float, default=0.4)
     parser.add_argument("--num_classes",  type=int, default=1000)
     parser.add_argument("--backbone_args",  type=str, default="resnet50")
     parser.add_argument("--extra_optimizer_args",  type=str, default="LARS")
+    parser.add_argument("--interval",  type=str, default="step")
 
     temp_args, _ = parser.parse_known_args()
 
