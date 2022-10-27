@@ -64,12 +64,10 @@ class DINOLoss(nn.Module):
         self.register_buffer("center", torch.zeros(1, num_prototypes))
         # we apply a warm up for the teacher temperature because
         # a too high temperature makes the training instable at the beginning
-        self.teacher_temp_schedule = np.concatenate(
-            (
+        self.teacher_temp_schedule = np.concatenate((
                 np.linspace(warmup_teacher_temp, teacher_temp, warmup_teacher_temp_epochs),
                 np.ones(num_epochs - warmup_teacher_temp_epochs) * teacher_temp,
-            )
-        )
+            ))
         
 
     def forward(self, student_output: torch.Tensor, teacher_output: torch.Tensor) -> torch.Tensor:

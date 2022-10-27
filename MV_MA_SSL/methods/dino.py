@@ -151,45 +151,46 @@ class DINO(BaseMomentumMethod):
         self.freeze_last_layer = freeze_last_layer
 
         ## ----------- dino head design 1 --------------
-        # self.head = DINOHead(
-        #     in_dim=self.features_dim,
-        #     hidden_dim=proj_hidden_dim,
-        #     use_bn=use_bn_in_head,
-        #     bottleneck_dim=proj_output_dim,
-        #     num_prototypes=num_prototypes,
-        #     norm_last_layer=norm_last_layer,
-        # )
+        self.head = DINOHead(
+            in_dim=self.features_dim,
+            hidden_dim=proj_hidden_dim,
+            use_bn=use_bn_in_head,
+            bottleneck_dim=proj_bottleneck_dim,
+            num_prototypes=num_prototypes,
+            norm_last_layer=norm_last_layer,
+        )
 
-        # instantiate and initialize momentum dino head
-        # self.momentum_head = DINOHead(
-        #     in_dim=self.features_dim,
-        #     hidden_dim=proj_hidden_dim,
-        #     use_bn=use_bn_in_head,
-        #     bottleneck_dim=proj_output_dim,
-        #     num_prototypes=num_prototypes,
-        #     norm_last_layer=norm_last_layer,
-        # )
+        ##instantiate and initialize momentum dino head
+        self.momentum_head = DINOHead(
+            in_dim=self.features_dim,
+            hidden_dim=proj_hidden_dim,
+            use_bn=use_bn_in_head,
+            bottleneck_dim=proj_bottleneck_dim,
+            num_prototypes=num_prototypes,
+            norm_last_layer=norm_last_layer,
+        )
 
         ## ----------- dino head design 2 --------------
-        self.head=DINOProjectionHead(self.features_dim, proj_hidden_dim, proj_bottleneck_dim, num_prototypes,use_bn_in_head, freeze_last_layer_)
-        self.momentum_head=DINOProjectionHead(self.features_dim, proj_hidden_dim, proj_bottleneck_dim, num_prototypes,use_bn_in_head, freeze_last_layer_)
+        # self.head=DINOProjectionHead(self.features_dim, proj_hidden_dim, proj_bottleneck_dim, num_prototypes,use_bn_in_head, freeze_last_layer_)
+        # self.momentum_head=DINOProjectionHead(self.features_dim, proj_hidden_dim, proj_bottleneck_dim, num_prototypes,use_bn_in_head, freeze_last_layer_)
 
         initialize_momentum_params(self.head, self.momentum_head)
 
         ## -------------dino loss 1 -----------------------
-        # self.dino_loss_func = DINOLoss(
-        #     num_large_crops= self.num_large_crops, 
-        #     num_small_crops= self.num_small_crops,
-        #     num_prototypes=num_prototypes,
-        #     student_temp=student_temperature,
-        #     warmup_teacher_temp=warmup_teacher_temperature,
-        #     teacher_temp=teacher_temperature,
-        #     warmup_teacher_temp_epochs=warmup_teacher_temperature_epochs,
-        #     num_epochs=self.max_epochs,
-        # )
+        self.dino_loss_func = DINOLoss(
+            num_large_crops= self.num_large_crops, 
+            num_small_crops= self.num_small_crops,
+            num_prototypes=num_prototypes,
+            student_temp=student_temperature,
+            warmup_teacher_temp=warmup_teacher_temperature,
+            teacher_temp=teacher_temperature,
+            warmup_teacher_temp_epochs=warmup_teacher_temperature_epochs,
+            num_epochs=self.max_epochs,
+            center_momentum=center_momentum,
+        )
         ## -------------dino loss 2 -----------------------
 
-        self.dino_loss_func= DINOLossMVAR(num_prototypes, warmup_teacher_temperature, teacher_temperature, warmup_teacher_temperature_epochs,student_temperature, center_momentum )
+        #self.dino_loss_func= DINOLossMVAR(num_prototypes, warmup_teacher_temperature, teacher_temperature, warmup_teacher_temperature_epochs,student_temperature, center_momentum )
 
     @staticmethod
     def add_model_specific_args(parent_parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
@@ -330,7 +331,7 @@ class DINO(BaseMomentumMethod):
         with torch.no_grad(): 
             teacher_out=[self.momentum_head(f) for f in momentum_feats]
         # ------- contrastive loss -------
-        dino_loss = self.dino_loss_func(student_out, teacher_out,  epoch=self.current_epoch)
+        dino_loss = self.dino_loss_func(student_out, teacher_out,)#  epoch=self.current_epoch)
         return dino_loss
     
     def training_step(self, batch: Sequence[Any], batch_idx: int) -> torch.Tensor:

@@ -34,11 +34,9 @@ python3 ../../../mv_ma_pretrain_edit.py \
     --min_lr 1e-5  \
     --accumulate_grad_batches 1 \
     --classifier_lr 0.1 \
-    --knn_eval \
-    --knn_k 20 \
     --weight_decay_scheduler cosine_schedule \
-    --wd_init 0.004 \
-    --wd_final 0.4 \
+    --wd_init 0.0004 \
+    --wd_final 0.04 \
     --batch_size 128 \
     --num_workers 20 \
     --num_augment_trategy SimCLR_RA \
