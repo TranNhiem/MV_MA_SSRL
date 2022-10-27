@@ -35,6 +35,8 @@ from timm.models.swin_transformer import _create_swin_transformer
 from timm.models.vision_transformer import _create_vision_transformer
 
 from torchvision.models.resnet import ResNet, BasicBlock, Bottleneck
+
+
 from typing import Type, Any, Callable, Union, List, Optional
 
 from MVAR_Dino.ViTs import vision_transformer as vits 

@@ -56,7 +56,7 @@ from MV_MA_SSL.utils.lars import LARSWrapper
 from MV_MA_SSL.utils.metrics import accuracy_at_k, weighted_mean
 from MV_MA_SSL.utils.momentum import MomentumUpdater, initialize_momentum_params
 from torch.optim.lr_scheduler import CosineAnnealingLR, MultiStepLR
-from torchvision.models import resnet18, resnet50
+from torchvision.models import resnet18, resnet50, regnet_y_8gf, regnet_y_16gf, regnet_y_32gf
 
 def static_lr(
     get_lr: Callable, param_group_indexes: Sequence[int], lrs_to_replace: Sequence[float]

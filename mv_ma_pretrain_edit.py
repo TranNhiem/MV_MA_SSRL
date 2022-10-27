@@ -64,6 +64,9 @@ from MV_MA_SSL.utils.value_schedule import (
     Stochastic_Weight_Avg
 )
 
+## For multiNode training bash 
+#--network host 
+#MASTER_ADDR=10.0.0.6 MASTER_PORT=3300 NODE_RANK=1 WORLD_SIZE=2 bash DINO_full_data.sh
 def main():
     seed_everything(5)
 
@@ -163,8 +166,8 @@ def main():
         wandb_logger.log_hyperparams(args)
 
         # lr logging
-        lr_monitor = LearningRateMonitor(logging_interval="epoch")
-        callbacks.append(lr_monitor)
+        # lr_monitor = LearningRateMonitor(logging_interval="epoch")
+        # callbacks.append(lr_monitor)
 
     if args.save_checkpoint:
         # save checkpoint on last epoch only
@@ -212,7 +215,11 @@ def main():
     trainer = Trainer.from_argparse_args(
         args,
         #fast_dev_run= True,
-        logger=wandb_logger if args.wandb else None,
+        # gradient_clip_val=0.6, 
+        # gradient_clip_algorithm="value",
+        num_nodes=2, 
+        #logger=wandb_logger if args.wandb else None,
+        logger= None , 
         callbacks=callbacks,
         enable_checkpointing=False,)
 
