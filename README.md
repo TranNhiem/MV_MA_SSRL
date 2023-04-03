@@ -49,7 +49,7 @@ pip or conda installs these dependents in your local machine
 
 ###  Preparing  Dataset: 
 
-**NOTE:** Currently, This repository support self-supervised pretraining on the ImageNet dataset. 
+**NOTE:** Self-supervised pretraining on the ImageNet dataset. 
 + 1. Download ImageNet-1K dataset (https://www.image-net.org/download.php). Then unzip folder follow imageNet folder structure. 
 
 
@@ -57,45 +57,71 @@ pip or conda installs these dependents in your local machine
 `
 Naviaging to the 
 
-bash_files/pretrain/imagenet/HARL.sh
+bash_files/pretrain/imagenet/MV_MA.sh
 `
 
 **1 Changing the dataset directory according to your path**
     `
     --train_dir ILSVRC2012/train \
     --val_dir ILSVRC2012/val \
-    --mask_dir train_binary_mask_by_USS \
-    `
-**2 Other Hyperparameters setting** 
+    
+**2 Setting Number of Global and Local Views** 
+    -- crop_size_glob 224 \
+    -- num_crop_glob 2 \
+    --crop_size_loc 94 \
+    --num_crop_loc 7 \
+ 
+**3 Setting of Data Augmentation Policies (SimCLR Augmentation Policies,Random Augmentation (RA) Policies, FastAuto Augmentation Policies FA , AutoAugmentation Policies AA)**
+  <div align="center">
+    <img width="30%" alt="Multi-Augmentation Strategy" src="images/multi-augmentation.jpg">
+  </div>
   
-  - Use a large init learning rate {0.3, 0.4} for `short training epochs`. This would archieve better performance, which could be hidden by the initialization if the learning rate is too small.Use a small init learning rate for Longer training epochs should use value around 0.2.
+   --num_augment_trategy SimCLR_FA \  
+   --num_augment_strategies 2\
+
+      `
+**4 Other Hyperparameters setting** 
+  
+  - Use a large init learning rate {0.2, 0.3} for `short training epochs`. This would archieve better performance, which could be hidden by the initialization if the learning rate is too small. Use a small init learning rate for Longer training epochs should use value around 0.2.
 
     `
     --max_epochs 100 \
-    --batch_size 512 \
-    --lr 0.5 \
+    --batch_size 256 \
+    --lr 0.2 \
     `
 **3 Distributed training in 1 Note**
 
-`
 Controlling number of GPUs in your machine by change the --gpus flag
     --gpus 0,1,2,3,4,5,6,7\
     --accelerator gpu \
     --strategy ddp \
 
 
-## HARL Pre-trained models  
+## MVMA Pre-trained models  
 
-We opensourced total 8 pretrained models here, corresponding to those in Table 1 of the <a href="">HARL</a> paper:
+**1 We open-sourced total 8 pretrained models here **:
 
 |   Pre-trained Models | Width   |    Param (M)  | Pretrained epochs| Linear eval  |
 |--------:|--------:|--------:|-------------:|--------------:|
-| [ResNet50 (1x)](https://drive.google.com/file/d/1IZW3ffuiBKQKX9pdAkHcLyuiTsBeaRXz/view?usp=sharing) | 1X | 24 | 100 |    ## |     
+| [ResNet50 (1x)](https://drive.google.com/file/d/1IZW3ffuiBKQKX9pdAkHcLyuiTsBeaRXz/view?usp=sharing) | 1X | 24 | 100 |    69.5 |     
 | [ResNet50 (1x)](https://drive.google.com/file/d/1I_b5fxrrCkWTOTZl3-YNjJLM-05KqLrn/view?usp=sharing) | 1X  |  24 | 200 |    ## |  
 | [ResNet50 (1x)](https://drive.google.com/file/d/1IPlgbD_OfEiEKFVTC3jY9DT7FW3gK9RO/view?usp=sharing) | 1X  | 24 | 300 |    ## |  
-| [ViT Small](https://drive.google.com/file/d/1IxPCeOKzl5VuB0ktagiiHCAeIdmZXEYT/view?usp=sharing) | 1X  |  22.2 | 100 |   ## |  
+| [ViT Small](https://drive.google.com/file/d/1IxPCeOKzl5VuB0ktagiiHCAeIdmZXEYT/view?usp=sharing) | 1X  |  22.2 | 100 |   70.1 |  
 | [ViT Small](https://drive.google.com/file/d/1J-alo3u8h_Iaz8mfpZGbpOpF3gVIQGds/view?usp=sharing) | 1X  | 22.2 | 200 |  ## |  
 | [ViT Small](https://drive.google.com/file/d/1JcQr8Hpe6Q4LHjFiTq_Mn-pRVEefN8LY/view?usp=sharing) | 1X  |  22.2 | 300 |    ## |  
+
+**2 Self-Supervised Pretraining Log** 
+  <div class="row">
+  <div class="column">
+    <img src="images/imagenet_pretrained.png" style="width:30%">
+  </div>
+  <div class="column">
+    <img src="images/experiment_logs.png" style="width:30%">
+  </div>
+</div>
+
+[Report Logs Experiments](https://api.wandb.ai/links/tranrick/n95w8lqn )
+
 
 
 These checkpoints are stored in Google Drive Storage:
