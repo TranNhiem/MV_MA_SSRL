@@ -88,14 +88,14 @@ Controlling number of GPUs in your machine by change the --gpus flag
 
 We opensourced total 8 pretrained models here, corresponding to those in Table 1 of the <a href="">HARL</a> paper:
 
-|   Depth | Width   |    Param (M)  | Pretrained epochs| Linear eval  |
+|   Pre-trained Models | Width   |    Param (M)  | Pretrained epochs| Linear eval  |
 |--------:|--------:|--------:|-------------:|--------------:|
-| [ResNet50 (1x)]() | 1X | 24 | 100 |    ## |     
-| [ResNet50 (1x)]() | 1X  |  24 | 200 |    ## |  
-| [ResNet50 (1x)]() | 1X  | 24 | 300 |    ## |  
-| [ViT Small]() | 1X  |  22.2 | 100 |   ## |  
-| [ViT Small]() | 1X  | 22.2 | 200 |  ## |  
-| [ViT Small]() | 1X  |  22.2 | 300 |    ## |  
+| [ResNet50 (1x)](https://drive.google.com/file/d/1IZW3ffuiBKQKX9pdAkHcLyuiTsBeaRXz/view?usp=sharing) | 1X | 24 | 100 |    ## |     
+| [ResNet50 (1x)](https://drive.google.com/file/d/1I_b5fxrrCkWTOTZl3-YNjJLM-05KqLrn/view?usp=sharing) | 1X  |  24 | 200 |    ## |  
+| [ResNet50 (1x)](https://drive.google.com/file/d/1IPlgbD_OfEiEKFVTC3jY9DT7FW3gK9RO/view?usp=sharing) | 1X  | 24 | 300 |    ## |  
+| [ViT Small](https://drive.google.com/file/d/1IxPCeOKzl5VuB0ktagiiHCAeIdmZXEYT/view?usp=sharing) | 1X  |  22.2 | 100 |   ## |  
+| [ViT Small](https://drive.google.com/file/d/1J-alo3u8h_Iaz8mfpZGbpOpF3gVIQGds/view?usp=sharing) | 1X  | 22.2 | 200 |  ## |  
+| [ViT Small](https://drive.google.com/file/d/1JcQr8Hpe6Q4LHjFiTq_Mn-pRVEefN8LY/view?usp=sharing) | 1X  |  22.2 | 300 |    ## |  
 
 
 These checkpoints are stored in Google Drive Storage:
