@@ -2,7 +2,7 @@
 
 <span style="color: red"><strong> </strong></span> This is offical implemenation of MVMA framework</a>.
 <div align="center">
-  <img width="80%" alt="MVMA Framework Illustration" src="images/MV_MA.jpg">
+  <img width="50%" alt="MVMA Framework Illustration" src="images/MV_MA.jpg">
 </div>
 
 ## Features 
