@@ -179,7 +179,7 @@ To fine-tune the whole network on ImageNet (1% of labels), refer to the followin
 Stay tune! The instructions will update soon
 `
 
-## Other resources
-update soon
 
+## Acknowledgement 
 
+- [Solo-Learn SSL Library] (https://github.com/vturrisi/solo-learn) 
