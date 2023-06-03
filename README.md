@@ -96,20 +96,23 @@ Controlling number of GPUs in your machine by change the --gpus flag
 
 ## MVMA Pre-trained models  
 
-**1 We open-sourced total 8 pretrained models here **:
+**1 We open-sourced total 10 pretrained models here **:
 + Augmentation Strategies: AA (AutoAugmentation), FA (FastAuto Augmentation), RA (Random Augmentation), SimAug (SimCLR Augmentation pipeline)
 + These checkpoints are stored in Google Drive Storage:
 
-|   Pre-trained Models | Width   |    Param (M)  | Pretrained epochs| Augmentation Strategies| Linear eval  |
+|   Pre-trained Models | Width| Param (M) | Pretrained epochs| Augmentation Strategies|Number of Crops | 
 |--------:|--------:|--------:|-------------:|--------------:|--------------:|
-| [ResNet50 (1x)](https://drive.google.com/file/d/1IZW3ffuiBKQKX9pdAkHcLyuiTsBeaRXz/view?usp=sharing) | 1X | 24 | 100 | FA |  69.5 |     
-| [ResNet50 (1x)](https://drive.google.com/file/d/1I_b5fxrrCkWTOTZl3-YNjJLM-05KqLrn/view?usp=sharing) | 1X  |  24 | 200 | -- |  ## |  
-| [ResNet50 (1x)](https://drive.google.com/file/d/1IPlgbD_OfEiEKFVTC3jY9DT7FW3gK9RO/view?usp=sharing) | 1X  | 24 | 300 | -- |  ##| 
-| [ResNet50 (2x)]() | 1X | 24 | 100 | -- |  69.5|   
-| [ViT Small](https://drive.google.com/file/d/1IxPCeOKzl5VuB0ktagiiHCAeIdmZXEYT/view?usp=sharing) | 1X  |  22.2 | 100 | -- | 70.1| 
-| [ViT Small](https://drive.google.com/file/d/1J-alo3u8h_Iaz8mfpZGbpOpF3gVIQGds/view?usp=sharing) | 1X  | 22.2 | 200 | --  | ## | 
-| [ViT Small](https://drive.google.com/file/d/1JcQr8Hpe6Q4LHjFiTq_Mn-pRVEefN8LY/view?usp=sharing) | 1X  |  22.2 | 300 | --  | ## | 
-| [ViT Base]() | 1X  |  22.2 | 300 | -- |  ## |  
+| [ResNet50 (1x)](https://drive.google.com/file/d/1yAjfYOD91QoS95Nm6-2n83OxJQNYzdux/view?usp=sharing) | 1X | 24 | 100 | SimAug-FA| 2 View-(224), 4 View-(96) |  
+| [ResNet50 (1x)](https://drive.google.com/file/d/1HsrS8fTvEX4Nx1mEehDPwyCGRXJ833lH/view?usp=sharing) | 1X | 24 | 100 | SimAug - AA - FA |2 View-(224), 4 View-(96) |  
+| [ResNet50 (1x)](https://drive.google.com/file/d/1I_b5fxrrCkWTOTZl3-YNjJLM-05KqLrn/view?usp=sharing) | 1X  |  24 | 200 | SimAug - RA |2 View-(224), 2 View-(96) |  
+| [ResNet50 (1x)](https://drive.google.com/file/d/11v7SgwbFB3F-l5YlIE27R5Gu3U7SAnQB/view?usp=sharing) | 1X  | 24 | 300 | SimAug-RA-FA | 2 View-(224), 4 View-(96) | 
+| [ResNet50 (2x)](https://drive.google.com/file/d/1IfbewfR-taGYcGCYA0iPGp_Xpg6BUxuA/view?usp=sharing) | 1X | 24 | 100 | SimAug - RA |2 View-(224), 3 View-(96)| 
+| [ViT Small](https://drive.google.com/file/d/1I__AeokYZWOZvc6WHm2Qvfks-BmLU_5I/view?usp=sharing) | 1X  |  22.2 | 100 | SimAug - RA |  2 View-(224), 10 View-(96) |
+| [ViT Small](https://drive.google.com/file/d/1IxPCeOKzl5VuB0ktagiiHCAeIdmZXEYT/view?usp=sharing) | 1X  |  22.2 | 100 | SimAug - RA - FA | 2 View-(224), 10 View-(96) |
+| [ViT Small](https://drive.google.com/file/d/1IpxJuhB2mr1cX6S0zs3EV1997XcG4S2m/view?usp=sharing) | 1X  |  22.2 | 100 | SimAug | 2 View-(224), 10 View-(96) |
+| [ViT Small](https://drive.google.com/file/d/1J-alo3u8h_Iaz8mfpZGbpOpF3gVIQGds/view?usp=sharing) | 1X  | 22.2 | 200 | SimAug-RA  | 2 View-(224), 10 View-(96) |
+| [ViT Small](https://drive.google.com/file/d/1JcQr8Hpe6Q4LHjFiTq_Mn-pRVEefN8LY/view?usp=sharing) | 1X  |  22.2 | 300 | SimAug-RA  | 2 View-(224), 10 View-(96) | 
+ 
 
 **2 Model Performance monitor During Training with attached Linear classification layer  **:
 + MVMA (ResNet-50) Pretraining on 100 Epochs on ImageNet 1k comparision via With BYOL method
