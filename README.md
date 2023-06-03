@@ -1,6 +1,6 @@
 # Multi-View, multi-data augmentation (MVMA_SSRL)
 
-<span style="color: red"><strong> </strong></span> This is offical implemenation of MVMA framework</a>.
+<span style="color: red"><strong> </strong></span> The offical implemenation of MVMA (Multi-View, Multi-Augmentation) framework</a>.
 <div align="center">
   <img width="50%" alt="MVMA Framework Illustration" src="images/MV_MA.png">
 </div>
@@ -15,7 +15,7 @@
 
 # Table of Contents
 
-  - [Installation](#installation)
+  - [Installation Requirement](#installation)
   - [Configure Self-Supervised Pretraining](#Setup-self-supervised-pretraining)
     - [Dataset](#Natural-Image-Dataset)
     - [Hyperamters Setting](#Important-Hyperparameter-Setting)
@@ -29,20 +29,17 @@
   
  ## Installation
 
-```
-pip or conda installs these dependents in your local machine
-```
-### Requirements
-* torch
-* torchvision
-* tqdm
-* einops
-* wandb
-* pytorch-lightning
-* lightning-bolts
-* torchmetrics
-* scipy
-* timm
+
+  ### Using pip
+  python -m venv myenv
+  source myenv/bin/activate
+  pip install -r requirements.txt
+
+  ### Using conda
+  conda create --name myenv
+  conda activate myenv
+  conda install --file requirements.txt
+
 
 
 ## Self-supervised Pretraining
@@ -53,7 +50,7 @@ pip or conda installs these dependents in your local machine
 + 1. Download ImageNet-1K dataset (https://www.image-net.org/download.php). Then unzip folder follow imageNet folder structure. 
 
 
-###  in pretraining Flags: 
+###  Setting SSL Pretraining Hyperparameter Flags: 
 `
 Naviaging to the 
 
@@ -100,31 +97,60 @@ Controlling number of GPUs in your machine by change the --gpus flag
 ## MVMA Pre-trained models  
 
 **1 We open-sourced total 8 pretrained models here **:
++ Augmentation Strategies: AA (AutoAugmentation), FA (FastAuto Augmentation), RA (Random Augmentation), SimAug (SimCLR Augmentation pipeline)
++ These checkpoints are stored in Google Drive Storage:
 
-|   Pre-trained Models | Width   |    Param (M)  | Pretrained epochs| Linear eval  |
+|   Pre-trained Models | Width   |    Param (M)  | Pretrained epochs| Augmentation Strategies| Linear eval  |
 |--------:|--------:|--------:|-------------:|--------------:|
-| [ResNet50 (1x)](https://drive.google.com/file/d/1IZW3ffuiBKQKX9pdAkHcLyuiTsBeaRXz/view?usp=sharing) | 1X | 24 | 100 |    69.5 |     
-| [ResNet50 (1x)](https://drive.google.com/file/d/1I_b5fxrrCkWTOTZl3-YNjJLM-05KqLrn/view?usp=sharing) | 1X  |  24 | 200 |    ## |  
-| [ResNet50 (1x)](https://drive.google.com/file/d/1IPlgbD_OfEiEKFVTC3jY9DT7FW3gK9RO/view?usp=sharing) | 1X  | 24 | 300 |    ## |  
-| [ViT Small](https://drive.google.com/file/d/1IxPCeOKzl5VuB0ktagiiHCAeIdmZXEYT/view?usp=sharing) | 1X  |  22.2 | 100 |   70.1 |  
-| [ViT Small](https://drive.google.com/file/d/1J-alo3u8h_Iaz8mfpZGbpOpF3gVIQGds/view?usp=sharing) | 1X  | 22.2 | 200 |  ## |  
-| [ViT Small](https://drive.google.com/file/d/1JcQr8Hpe6Q4LHjFiTq_Mn-pRVEefN8LY/view?usp=sharing) | 1X  |  22.2 | 300 |    ## |  
+| [ResNet50 (1x)](https://drive.google.com/file/d/1IZW3ffuiBKQKX9pdAkHcLyuiTsBeaRXz/view?usp=sharing) | 1X | 24 | 100 | FA |  69.5 |     
+| [ResNet50 (1x)](https://drive.google.com/file/d/1I_b5fxrrCkWTOTZl3-YNjJLM-05KqLrn/view?usp=sharing) | 1X  |  24 | 200 |  |  ## |  
+| [ResNet50 (1x)](https://drive.google.com/file/d/1IPlgbD_OfEiEKFVTC3jY9DT7FW3gK9RO/view?usp=sharing) | 1X  | 24 | 300 |  |  ## | 
 
-**2 Self-Supervised Pretraining Log** 
+| [ResNet50 (2x)]() | 1X | 24 | 100 | FA |  69.5|   
+
+| [ViT Small](https://drive.google.com/file/d/1IxPCeOKzl5VuB0ktagiiHCAeIdmZXEYT/view?usp=sharing) | 1X  |  22.2 | 100 |  | 70.1 | 
+| [ViT Small](https://drive.google.com/file/d/1J-alo3u8h_Iaz8mfpZGbpOpF3gVIQGds/view?usp=sharing) | 1X  | 22.2 | 200 |   | ## |  
+| [ViT Small](https://drive.google.com/file/d/1JcQr8Hpe6Q4LHjFiTq_Mn-pRVEefN8LY/view?usp=sharing) | 1X  |  22.2 | 300 |  |  ## |  
+| [ViT Base]() | 1X  |  22.2 | 300 |  |  ## |  
+
+**2 Model Performance monitor During Training with attached Linear classification layer  **:
++ MVMA (ResNet-50) Pretraining on 100 Epochs on ImageNet 1k comparision via With BYOL method
   <div class="row">
   <div class="column">
-    <img src="images/imagenet_pretrained.png" style="width:30%">
+    <img src="images/" style="width:45%">
+  </div>
+ 
++ MVMA (ResNet-50) Scaling Wider 2x on 100 Epochs on ImageNet 1k comparision via With BYOL method
+ <div class="column">
+    <img src="images/100_epoch_ResNet_mvma.png" style="width:45%">
+  </div>
+</div>
+
++ MVMA (ResNet-50) on 300 Epochs on ImageNet 1k comparision via With BYOL method
+ 
+ <div class="column">
+    <img src="images/300_epochs_pretraining.png" style="width:45%">
+  </div>
+</div>
+
++ ViT Small 
++ ViT Base 
+
+
+**3 Self-Supervised Pretraining Log** 
+  
+  <div class="row">
+  <div class="column">
+    <img src="images/imagenet_pretrained.png" style="width:45%">
   </div>
   <div class="column">
-    <img src="images/experiment_logs.png" style="width:30%">
+    <img src="images/experiment_logs.png" style="width:45%">
   </div>
 </div>
 
 [Report Logs Experiments](https://api.wandb.ai/links/tranrick/n95w8lqn )
 
 
-
-These checkpoints are stored in Google Drive Storage:
 
 ## Finetuning the linear head (linear eval)
 
@@ -134,6 +160,11 @@ For fine-tuning a linear head on ImageNet using GPUs, first set the `CHKPT_DIR` 
 `
 Stay tune! The instructions will update soon
 `
+
+** Performance of Linear Evaluation on ImageNet Validation Set 
+
+Convolution ResNet (ResNet-50) 
+
 
 ## Semi-supervised learning and fine-tuning the whole network
 
