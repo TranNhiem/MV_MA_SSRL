@@ -101,7 +101,7 @@ Controlling number of GPUs in your machine by change the --gpus flag
 + These checkpoints are stored in Google Drive Storage:
 
 |   Pre-trained Models | Width   |    Param (M)  | Pretrained epochs| Augmentation Strategies| Linear eval  |
-|--------:|--------:|--------:|-------------:|--------------:|
+|--------:|--------:|--------:|-------------:|--------------:|--------------:|
 | [ResNet50 (1x)](https://drive.google.com/file/d/1IZW3ffuiBKQKX9pdAkHcLyuiTsBeaRXz/view?usp=sharing) | 1X | 24 | 100 | FA |  69.5 |     
 | [ResNet50 (1x)](https://drive.google.com/file/d/1I_b5fxrrCkWTOTZl3-YNjJLM-05KqLrn/view?usp=sharing) | 1X  |  24 | 200 |  |  ## |  
 | [ResNet50 (1x)](https://drive.google.com/file/d/1IPlgbD_OfEiEKFVTC3jY9DT7FW3gK9RO/view?usp=sharing) | 1X  | 24 | 300 |  |  ## | 
@@ -117,7 +117,7 @@ Controlling number of GPUs in your machine by change the --gpus flag
 + MVMA (ResNet-50) Pretraining on 100 Epochs on ImageNet 1k comparision via With BYOL method
   <div class="row">
   <div class="column">
-    <img src="images/" style="width:45%">
+    <img src="images/100_epochs_pretraining.png" style="width:45%">
   </div>
  
 + MVMA (ResNet-50) Scaling Wider 2x on 100 Epochs on ImageNet 1k comparision via With BYOL method
