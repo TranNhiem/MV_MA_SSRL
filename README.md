@@ -106,7 +106,7 @@ Controlling number of GPUs in your machine by change the --gpus flag
 | [ResNet50 (1x)](https://drive.google.com/file/d/1HsrS8fTvEX4Nx1mEehDPwyCGRXJ833lH/view?usp=sharing) | 1X | 24 | 100 | SimAug - AA - FA |2 View-(224), 4 View-(96) |  
 | [ResNet50 (1x)](https://drive.google.com/file/d/1I_b5fxrrCkWTOTZl3-YNjJLM-05KqLrn/view?usp=sharing) | 1X  |  24 | 200 | SimAug - RA |2 View-(224), 2 View-(96) |  
 | [ResNet50 (1x)](https://drive.google.com/file/d/11v7SgwbFB3F-l5YlIE27R5Gu3U7SAnQB/view?usp=sharing) | 1X  | 24 | 300 | SimAug-RA-FA | 2 View-(224), 4 View-(96) | 
-| [ResNet50 (2x)](https://drive.google.com/file/d/1IfbewfR-taGYcGCYA0iPGp_Xpg6BUxuA/view?usp=sharing) | 1X | 24 | 100 | SimAug - RA |2 View-(224), 3 View-(96)| 
+| [ResNet50 (2x)](https://drive.google.com/file/d/1IfbewfR-taGYcGCYA0iPGp_Xpg6BUxuA/view?usp=sharing) | 2X | 	51.0 | 100 | SimAug - RA |2 View-(224), 3 View-(96)| 
 | [ViT Small](https://drive.google.com/file/d/1I__AeokYZWOZvc6WHm2Qvfks-BmLU_5I/view?usp=sharing) | 1X  |  22.2 | 100 | SimAug - RA |  2 View-(224), 10 View-(96) |
 | [ViT Small](https://drive.google.com/file/d/1IxPCeOKzl5VuB0ktagiiHCAeIdmZXEYT/view?usp=sharing) | 1X  |  22.2 | 100 | SimAug - RA - FA | 2 View-(224), 10 View-(96) |
 | [ViT Small](https://drive.google.com/file/d/1IpxJuhB2mr1cX6S0zs3EV1997XcG4S2m/view?usp=sharing) | 1X  |  22.2 | 100 | SimAug | 2 View-(224), 10 View-(96) |
