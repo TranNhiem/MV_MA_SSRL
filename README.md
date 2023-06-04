@@ -46,7 +46,7 @@
 ###  Preparing Dataset: 
 
 **NOTE:** Pretraining on ImageNet 1K dataset. 
-+ 1. Download ImageNet-1K dataset (https://www.image-net.org/download.php). Then unzip the imageNet as follow original data files structure. 
++ Download ImageNet-1K dataset (https://www.image-net.org/download.php). Then unzip the imageNet as follow original data files structure. 
 
 
 ###  Setting SSL Pretraining Hyperparameter Flags: 
@@ -58,24 +58,24 @@ Naviaging to the `bash_files/pretrain/imagenet/MV_MA.sh`.
 
 **1 Changing the dataset directory according to your path**
 
-
-    `
-    --train_dir ILSVRC2012/train \
+   `--train_dir ILSVRC2012/train \
     
     --val_dir ILSVRC2012/val \
-    `
+   `
+    
     
 **2 Setting Number of Global and Local Views** 
 
-   `
-   -- crop_size_glob 224 \ # Global View Crop Size
+   
+   `-- crop_size_glob 224 \ # Global View Crop Size
    
    -- num_crop_glob 2 \ # Number of Global Views
    
    --crop_size_loc 96 \ # Local View Crop Size
    
    --num_crop_loc 7 \ # Number of Local Views
-   `
+  `
+   
  
 **3 Setting of Data Augmentation Policies**
 
@@ -90,8 +90,7 @@ Naviaging to the `bash_files/pretrain/imagenet/MV_MA.sh`.
   
 + **How To Setting Augmentation Strategy Flag in Pretraining**
   
-  `
-   --num_augment_trategy SimCLR_FA \  # Setting different type of Augmentation strategies
+  `--num_augment_trategy SimCLR_FA \  # Setting different type of Augmentation strategies
    
    --num_augment_strategies 2\ # adjust number strategies based on num_augment_strategy flag to make effect in Dataloader
    `
@@ -105,19 +104,17 @@ Naviaging to the `bash_files/pretrain/imagenet/MV_MA.sh`.
     
     --batch_size 256 \
     
-    --lr 0.2 \
-    `
+    --lr 0.2 \`
 
 **5 Distributed training in 1 Note**
 
 Controlling number of GPUs in your machine by change the --gpus flag
-`
-    --gpus 0,1,2,3,4,5,6,7\ # Setting Number GPUs 
+
+    `--gpus 0,1,2,3,4,5,6,7\ # Setting Number GPUs 
     
     --accelerator gpu \
     
-    --strategy ddp \ # Setting training Strategy in Pytorch Lightning 
-`
+    --strategy ddp \ # Setting training Strategy in Pytorch Lightning`
 
 ## MVMA Pre-trained models  
 
@@ -139,7 +136,8 @@ Controlling number of GPUs in your machine by change the --gpus flag
 | [ViT Small](https://drive.google.com/file/d/1JcQr8Hpe6Q4LHjFiTq_Mn-pRVEefN8LY/view?usp=sharing) | 1X  |  22.2 | 300 | SimAug-RA  | 2 View-(224), 10 View-(96) | 
  
 
-**2 Model Performance monitor During Training with attached Linear classification layer  **:
+**2 Model Performance monitor During Training with attached Linear classification layer**
+
 + MVMA (ResNet-50) Pretraining on 100 Epochs on ImageNet 1k comparision via With BYOL method
   <div class="row">
   <div class="column">
