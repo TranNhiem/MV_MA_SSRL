@@ -27,8 +27,7 @@
      - [Other Vision Tasks](#Object-Detection-Segmentation)
   - [Contributing](#contributing)
   
- ## Installation
-
+ ## Installation Environment
 
   ### Using pip
   python -m venv myenv
@@ -44,37 +43,47 @@
 
 ## Self-supervised Pretraining
 
-###  Preparing  Dataset: 
+###  Preparing Dataset: 
 
-**NOTE:** Self-supervised pretraining on the ImageNet dataset. 
-+ 1. Download ImageNet-1K dataset (https://www.image-net.org/download.php). Then unzip folder follow imageNet folder structure. 
+**NOTE:** Pretraining on ImageNet 1K dataset. 
++ 1. Download ImageNet-1K dataset (https://www.image-net.org/download.php). Then unzip the imageNet as follow original data files structure. 
 
 
 ###  Setting SSL Pretraining Hyperparameter Flags: 
-`
-Naviaging to the 
 
-bash_files/pretrain/imagenet/MV_MA.sh
+`
+All Setting can handel in setting through bash file. 
+
+Naviaging to the bash_files/pretrain/imagenet/MV_MA.sh
 `
 
 **1 Changing the dataset directory according to your path**
     `
     --train_dir ILSVRC2012/train \
     --val_dir ILSVRC2012/val \
+    `
     
 **2 Setting Number of Global and Local Views** 
-    -- crop_size_glob 224 \
-    -- num_crop_glob 2 \
-    --crop_size_loc 94 \
-    --num_crop_loc 7 \
+   `
+   -- crop_size_glob 224 \ # Global View Crop Size
+    -- num_crop_glob 2 \ # Number of Global Views
+    --crop_size_loc 96 \ # Local View Crop Size
+    --num_crop_loc 7 \ # Number of Local Views
+   `
  
-**3 Setting of Data Augmentation Policies (SimCLR Augmentation Policies,Random Augmentation (RA) Policies, FastAuto Augmentation Policies FA , AutoAugmentation Policies AA)**
+**3 Setting of Data Augmentation Policies**
+
++ SimAug: SimCLR Augmentation Policies. 
++ RA: Random Augmentation Policies. 
++ FA: FastAuto Augmentation Policies. 
++ AA: AutoAugmentation Policies. 
+
   <div align="center">
     <img width="50%" alt="Multi-Augmentation Strategy" src="images/multi-augmentation_strategies.png">
   </div>
-  
-   --num_augment_trategy SimCLR_FA \  
-   --num_augment_strategies 2\
++ **How To Setting Augmentation Strategy Flag in Pretraining**
+   --num_augment_trategy SimCLR_FA \  # Setting different type of Augmentation strategies
+   --num_augment_strategies 2\ # adjust number strategies based on num_augment_strategy flag to make effect in Dataloader
 
       `
 **4 Other Hyperparameters setting** 
@@ -86,12 +95,12 @@ bash_files/pretrain/imagenet/MV_MA.sh
     --batch_size 256 \
     --lr 0.2 \
     `
-**3 Distributed training in 1 Note**
+**5 Distributed training in 1 Note**
 
 Controlling number of GPUs in your machine by change the --gpus flag
-    --gpus 0,1,2,3,4,5,6,7\
+    --gpus 0,1,2,3,4,5,6,7\ # Setting Number GPUs 
     --accelerator gpu \
-    --strategy ddp \
+    --strategy ddp \ # Setting training Strategy in Pytorch Lightning 
 
 
 ## MVMA Pre-trained models  
