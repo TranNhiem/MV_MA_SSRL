@@ -51,24 +51,29 @@
 
 ###  Setting SSL Pretraining Hyperparameter Flags: 
 
-`
-All Setting can handel in setting through bash file. 
+`All Setting can handel in setting through bash file. 
 
-Naviaging to the bash_files/pretrain/imagenet/MV_MA.sh
-`
+Naviaging to the bash_files/pretrain/imagenet/MV_MA.sh`
 
 **1 Changing the dataset directory according to your path**
+
+
     `
     --train_dir ILSVRC2012/train \
+    
     --val_dir ILSVRC2012/val \
     `
     
 **2 Setting Number of Global and Local Views** 
+
    `
    -- crop_size_glob 224 \ # Global View Crop Size
-    -- num_crop_glob 2 \ # Number of Global Views
-    --crop_size_loc 96 \ # Local View Crop Size
-    --num_crop_loc 7 \ # Number of Local Views
+   
+   -- num_crop_glob 2 \ # Number of Global Views
+   
+   --crop_size_loc 96 \ # Local View Crop Size
+   
+   --num_crop_loc 7 \ # Number of Local Views
    `
  
 **3 Setting of Data Augmentation Policies**
