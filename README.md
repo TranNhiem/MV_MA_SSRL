@@ -58,11 +58,9 @@ Naviaging to the `bash_files/pretrain/imagenet/MV_MA.sh`.
 
 **1 Changing the dataset directory according to your path**
 
-  `
     --train_dir ILSVRC2012/train \
     
     --val_dir ILSVRC2012/val \
-  `
     
     
 **2 Setting Number of Global and Local Views** 
