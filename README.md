@@ -94,12 +94,12 @@ Naviaging to the `bash_files/pretrain/imagenet/MV_MA.sh`.
 **4 Other Hyperparameters setting** 
   
   - Use a large init learning rate {0.2, 0.3} for `short training epochs`. This would archieve better performance, which could be hidden by the initialization if the learning rate is too small. Use a small init learning rate for Longer training epochs should use value around 0.2.
-    
-    --max_epochs 100 \
-    
-    --batch_size 256 \
-    
-    --lr 0.2 \
+ 
+  --max_epochs 100 \
+  
+  --batch_size 256 \
+  
+  --lr 0.2 \
 
 **5 Distributed training in 1 Note**
 
