@@ -70,7 +70,7 @@ bash_files/pretrain/imagenet/MV_MA.sh
  
 **3 Setting of Data Augmentation Policies (SimCLR Augmentation Policies,Random Augmentation (RA) Policies, FastAuto Augmentation Policies FA , AutoAugmentation Policies AA)**
   <div align="center">
-    <img width="50%" alt="Multi-Augmentation Strategy" src="images/multi-augmentation.jpg">
+    <img width="50%" alt="Multi-Augmentation Strategy" src="images/multi-augmentation_strategies.png">
   </div>
   
    --num_augment_trategy SimCLR_FA \  
