@@ -65,13 +65,13 @@ Naviaging to the `bash_files/pretrain/imagenet/MV_MA.sh`.
     
 **2 Setting Number of Global and Local Views** 
 
-   -- crop_size_glob 224 \ # Global View Crop Size
+    --crop_size_glob 224 \ # Global View Crop Size
    
-   -- num_crop_glob 2 \ # Number of Global Views
+    -- num_crop_glob 2 \ # Number of Global Views
    
-   --crop_size_loc 96 \ # Local View Crop Size
+    --crop_size_loc 96 \ # Local View Crop Size
    
-   --num_crop_loc 7 \ # Number of Local Views
+    --num_crop_loc 7 \ # Number of Local Views
    
  
 **3 Setting of Data Augmentation Policies**
