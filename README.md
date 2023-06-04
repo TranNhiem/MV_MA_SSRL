@@ -86,7 +86,7 @@ Naviaging to the `bash_files/pretrain/imagenet/MV_MA.sh`.
   </div>
   
 + **How To Setting Augmentation Strategy Flag in Pretraining**
-  
+    
     --num_augment_trategy SimCLR_FA \  # Setting different type of Augmentation strategies
     
     --num_augment_strategies 2\ # adjust number strategies based on num_augment_strategy flag to make effect in Dataloader.
