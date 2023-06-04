@@ -51,9 +51,10 @@
 
 ###  Setting SSL Pretraining Hyperparameter Flags: 
 
-`All Setting can handel in setting through bash file. 
+**NOTE:** All Setting can handel in setting through bash file. 
 
-Naviaging to the bash_files/pretrain/imagenet/MV_MA.sh`
+Naviaging to the `bash_files/pretrain/imagenet/MV_MA.sh`. 
+
 
 **1 Changing the dataset directory according to your path**
 
@@ -86,23 +87,27 @@ Naviaging to the bash_files/pretrain/imagenet/MV_MA.sh`
   <div align="center">
     <img width="60%" alt="Multi-Augmentation Strategy" src="images/multi-augmentation_strategies.png">
   </div>
+  
 + **How To Setting Augmentation Strategy Flag in Pretraining**
+  
   `
    --num_augment_trategy SimCLR_FA \  # Setting different type of Augmentation strategies
    
-   --num_augment_strategies 2\ # adjust number strategies based on num_augment_strategy flag to make effect in Dataloader`
+   --num_augment_strategies 2\ # adjust number strategies based on num_augment_strategy flag to make effect in Dataloader
+   `
    
 **4 Other Hyperparameters setting** 
   
   - Use a large init learning rate {0.2, 0.3} for `short training epochs`. This would archieve better performance, which could be hidden by the initialization if the learning rate is too small. Use a small init learning rate for Longer training epochs should use value around 0.2.
+  
 
-    `
-    --max_epochs 100 \
+    `--max_epochs 100 \
     
     --batch_size 256 \
     
     --lr 0.2 \
     `
+
 **5 Distributed training in 1 Note**
 
 Controlling number of GPUs in your machine by change the --gpus flag
