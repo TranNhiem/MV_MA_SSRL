@@ -1,6 +1,6 @@
 # Multi-View, multi-data augmentation (MVMA_SSRL)
 
-<span style="color: red"><strong> </strong></span> The offical implemenation of MVMA (Multi-View, Multi-Augmentation) framework</a>.
+<span style="color: red"><strong> </strong></span> The offical implemenation of MVMA framework</a>.
 <div align="center">
   <img width="50%" alt="MVMA Framework Illustration" src="images/MV_MA.png">
 </div>
