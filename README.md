@@ -82,7 +82,7 @@ Naviaging to the `bash_files/pretrain/imagenet/MV_MA.sh`.
 + AA: AutoAugmentation Policies. 
 
   <div align="center">
-    <img width="60%" alt="Multi-Augmentation Strategy" src="images/multi-augmentation_strategies.png">
+    <img width="70%" alt="Multi-Augmentation Strategy" src="images/multi-augmentation_strategies.png">
   </div>
   
 + **How To Setting Augmentation Strategy Flag in Pretraining**
